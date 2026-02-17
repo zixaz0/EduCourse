@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('no_hp');
             $table->string('nama_orangtua');
             $table->string('no_orangtua');
+            $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
             $table->timestamps();
         });
     }

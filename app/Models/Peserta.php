@@ -17,7 +17,8 @@ class Peserta extends Model
         'kelas',
         'no_hp',
         'nama_orangtua',
-        'no_orangtua'
+        'no_orangtua',
+        'status'
     ];
 
     public function transaksi()
