@@ -3,12 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Peserta extends Model
 {
-    use HasFactory;
-
     protected $table = 'peserta';
 
     protected $fillable = [
@@ -18,11 +15,28 @@ class Peserta extends Model
         'no_hp',
         'nama_orangtua',
         'no_orangtua',
-        'status'
+        'status',
     ];
 
+    protected $casts = [
+        'status' => 'string',
+    ];
+
+    // Relasi ke Tagihan
+    public function tagihan()
+    {
+        return $this->hasMany(Tagihan::class, 'id_peserta');
+    }
+
+    // Relasi ke Transaksi
     public function transaksi()
     {
         return $this->hasMany(Transaksi::class, 'id_peserta');
+    }
+
+    // Relasi Many-to-Many ke Kelas
+    public function kelas()
+    {
+        return $this->belongsToMany(Kelas::class, 'peserta_kelas', 'id_peserta', 'id_kelas');
     }
 }

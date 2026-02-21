@@ -3,33 +3,33 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Transaksi extends Model
 {
-    use HasFactory;
-
     protected $table = 'transaksi';
 
     protected $fillable = [
-        'id_produk',
+        'id_tagihan',
         'id_peserta',
         'nomor_unik',
         'uang_bayar',
         'uang_kembali',
-        'id_user'
+        'id_user',
     ];
 
-    public function produk()
+    // Relasi ke Tagihan
+    public function tagihan()
     {
-        return $this->belongsTo(Produk::class, 'id_produk');
+        return $this->belongsTo(Tagihan::class, 'id_tagihan');
     }
 
+    // Relasi ke Peserta
     public function peserta()
     {
         return $this->belongsTo(Peserta::class, 'id_peserta');
     }
 
+    // Relasi ke User (kasir)
     public function user()
     {
         return $this->belongsTo(User::class, 'id_user');
