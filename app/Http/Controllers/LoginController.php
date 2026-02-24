@@ -9,29 +9,23 @@ use App\Models\User;
 
 class LoginController extends Controller
 {
-    // Tampilkan form login
     public function showLoginForm()
     {
         return view('login');
     }
 
-    // Proses login
     public function login(Request $request)
     {
-        // 1. Validasi input
         $credentials = $request->validate([
             'email'    => ['required', 'email'],
             'password' => ['required', 'min:6'],
         ]);
 
-        // 2. Coba login
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            // 3. Ambil data user
             $user = Auth::user();
 
-            // 4. Redirect sesuai role
             switch ($user->role) {
                 case 'admin':
                     return redirect()->route('admin.dashboard');
@@ -52,7 +46,6 @@ class LoginController extends Controller
     }
 
 
-    // Logout
     public function logout(Request $request)
     {
         Auth::logout();

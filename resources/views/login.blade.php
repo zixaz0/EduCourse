@@ -38,40 +38,29 @@
 </head>
 <body class="min-h-screen flex">
 
-    <!-- LEFT: Gambar fullscreen -->
-    <div class="hidden md:block flex-1 relative overflow-hidden">
+    <!-- Kiri: Gambar — tepat 50% lebar layar -->
+    <div class="hidden md:block" style="width: 50%; flex-shrink: 0; position: relative; overflow: hidden;">
         <img
             src="images/panel_kiri.jpg"
             alt="Background"
-            class="absolute inset-0 w-full h-full object-cover object-center"
+            style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center;"
         >
     </div>
 
-    <!-- RIGHT: Area abu-abu, card floating di tengah -->
-    <div class="w-full md:w-[520px] md:min-w-[480px] flex items-center justify-center px-10 py-12" style="background-color: #e2e2e2;">
-
-        <!-- Card -->
-        <div class="w-full rounded-3xl flex flex-col items-center px-10 py-12" style="background-color: #ebebeb;">
-
-            <!-- Logo PNG -->
+    <!-- Kanan: Form — tepat 50% lebar layar -->
+    <div style="width: 50%; flex-shrink: 0; background-color: #e2e2e2;" class="flex items-center justify-center px-10 py-12">
+        <div class="w-full max-w-md rounded-3xl flex flex-col items-center px-10 py-12" style="background-color: #ebebeb;">
             <div class="mb-4">
                 <img src="images/logo.png" alt="Logo EduCourse" style="width: 90px; height: auto; object-fit: contain;">
             </div>
-
-            <!-- Brand Name -->
             <h1 class="text-[28px] font-extrabold mb-2 tracking-tight" style="color: #1a2e6e;">
                 EduCourse
             </h1>
-
-            <!-- Subtitle -->
             <p class="text-sm mb-7 text-center" style="color: #999;">
                 Masukkan email dan password untuk melanjutkan
             </p>
-
             <form class="w-full" method="POST" action="{{ route('login') }}" id="loginForm">
                 @csrf
-
-                <!-- Email -->
                 <div class="mb-5">
                     <label class="block text-sm mb-1.5" style="color: #999;">Email</label>
                     <div class="relative">
@@ -98,7 +87,6 @@
                     @enderror
                 </div>
 
-                <!-- Password -->
                 <div class="mb-8">
                     <label class="block text-sm mb-1.5" style="color: #999;">Password</label>
                     <div class="relative">
@@ -118,7 +106,6 @@
                             onfocus="this.style.borderColor='#1a2e6e'; this.style.boxShadow='0 0 0 3px rgba(26,46,110,0.1)'; this.classList.remove('input-error')"
                             onblur="this.style.boxShadow='none'"
                         >
-                        {{-- Toggle show/hide password --}}
                         <button
                             type="button"
                             onclick="togglePassword()"
@@ -141,8 +128,6 @@
                         <p class="text-xs mt-1.5 ml-4" style="color: #ef4444;">{{ $message }}</p>
                     @enderror
                 </div>
-
-                <!-- Tombol Login -->
                 <button
                     type="submit"
                     class="w-full text-white font-semibold text-sm rounded-full py-3 transition-all active:scale-[.98]"
@@ -152,13 +137,11 @@
                 >
                     Login
                 </button>
-
             </form>
         </div>
     </div>
 
     <script>
-        // Shake animation saat ada error
         document.addEventListener('DOMContentLoaded', function () {
             const hasError = {{ $errors->any() ? 'true' : 'false' }};
             if (hasError) {
@@ -168,7 +151,6 @@
             }
         });
 
-        // Toggle show/hide password
         function togglePassword() {
             const input = document.getElementById('passwordInput');
             const eyeIcon = document.getElementById('eyeIcon');
