@@ -75,6 +75,9 @@
             </div>
             <span class="text-white font-bold text-lg tracking-wide">EduCourse</span>
         </div>
+        <div class="px-4 pt-4 pb-1">
+            <span class="text-xs font-bold text-blue-300 uppercase tracking-widest">Kasir Panel</span>
+        </div>
         <nav class="flex-1 px-3 py-4 space-y-1">
             <a href="{{ url('/kasir/dashboard') }}"
                 class="sidebar-link active flex items-center gap-3 px-3 py-2.5 text-white text-sm font-medium">
@@ -188,7 +191,9 @@
             if (!href || href === '#') return;
 
             let linkPath = href;
-            try { linkPath = new URL(href).pathname; } catch(e) {}
+            try {
+                linkPath = new URL(href).pathname;
+            } catch (e) {}
 
             if (currentPath === linkPath || currentPath.startsWith(linkPath + '/')) {
                 link.classList.add('active', 'text-white');

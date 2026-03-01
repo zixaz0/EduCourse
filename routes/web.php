@@ -13,11 +13,6 @@ Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-// Owner
-Route::middleware(['auth', 'role:owner'])->group(function () {
-    Route::get('/owner/dashboard', [OwnerDashboardController::class, 'index'])->name('owner.dashboard');
-});
-
 Route::prefix('kasir')->middleware(['auth', RoleMiddleware::class . ':kasir'])->group(function () {
 
     // Dashboard
@@ -424,6 +419,9 @@ Route::prefix('kasir')->middleware(['auth', RoleMiddleware::class . ':kasir'])->
 }); // ← tutup prefix('kasir')
 
 
+// ================================
+// ADMIN ROUTES
+// ================================
 Route::prefix('admin')->middleware(['auth', RoleMiddleware::class . ':admin'])->group(function () {
 
     Route::get('/dashboard', function () {
@@ -503,6 +501,7 @@ Route::prefix('admin')->middleware(['auth', RoleMiddleware::class . ':admin'])->
             (object)['id' => 3, 'username' => 'kasir02',  'email' => 'kasir02@educourse.id',  'role' => 'kasir',  'status' => 'aktif',    'created_at' => now()->subDays(20)],
             (object)['id' => 4, 'username' => 'kasir03',  'email' => 'kasir03@educourse.id',  'role' => 'kasir',  'status' => 'nonaktif', 'created_at' => now()->subDays(15)],
             (object)['id' => 5, 'username' => 'kasir04',  'email' => 'kasir04@educourse.id',  'role' => 'kasir',  'status' => 'aktif',    'created_at' => now()->subDays(5)],
+            (object)['id' => 6, 'username' => 'admin02',  'email' => 'admin02@educourse.id',  'role' => 'admin',  'status' => 'aktif',    'created_at' => now()->subDays(2)],
         ]);
         // ---- END DATA DUMMY ----
 
@@ -741,4 +740,197 @@ Route::prefix('admin')->middleware(['auth', RoleMiddleware::class . ':admin'])->
 
     }); // ← tutup prefix('log')
 
+
+    // ========================
+    // RIWAYAT TRANSAKSI (ADMIN)
+    // ========================
+    Route::get('riwayat', function () {
+
+        $dummyRiwayat = collect([
+            (object)['id' => 1, 'nomor_unik' => 'TRX-A1B2C3D4', 'uang_bayar' => 400000, 'uang_kembali' => 50000, 'created_at' => now()->subMinutes(5),
+                'peserta' => (object)['nama' => 'Andi Saputra'],
+                'user'    => (object)['username' => 'kasir01'],
+                'tagihan' => (object)['total_tagihan' => 350000, 'bulan_tahun' => 'Februari/2026',
+                    'peserta' => (object)['kelas' => collect([(object)['nama_kelas' => 'Matematika'], (object)['nama_kelas' => 'Bahasa Inggris']])]]],
+            (object)['id' => 2, 'nomor_unik' => 'TRX-E5F6G7H8', 'uang_bayar' => 500000, 'uang_kembali' => 100000, 'created_at' => now()->subHours(2),
+                'peserta' => (object)['nama' => 'Siti Maimunah'],
+                'user'    => (object)['username' => 'kasir02'],
+                'tagihan' => (object)['total_tagihan' => 400000, 'bulan_tahun' => 'Februari/2026',
+                    'peserta' => (object)['kelas' => collect([(object)['nama_kelas' => 'Python Dasar']])]]],
+            (object)['id' => 3, 'nomor_unik' => 'TRX-I9J0K1L2', 'uang_bayar' => 500000, 'uang_kembali' => 50000, 'created_at' => now()->subHours(5),
+                'peserta' => (object)['nama' => 'Rizky Pratama'],
+                'user'    => (object)['username' => 'kasir01'],
+                'tagihan' => (object)['total_tagihan' => 450000, 'bulan_tahun' => 'Februari/2026',
+                    'peserta' => (object)['kelas' => collect([(object)['nama_kelas' => 'Web Design'], (object)['nama_kelas' => 'Desain Grafis']])]]],
+            (object)['id' => 4, 'nomor_unik' => 'TRX-M3N4O5P6', 'uang_bayar' => 400000, 'uang_kembali' => 25000, 'created_at' => now()->subDay(),
+                'peserta' => (object)['nama' => 'Erika Putri'],
+                'user'    => (object)['username' => 'kasir02'],
+                'tagihan' => (object)['total_tagihan' => 375000, 'bulan_tahun' => 'Januari/2026',
+                    'peserta' => (object)['kelas' => collect([(object)['nama_kelas' => 'Matematika']])]]],
+            (object)['id' => 5, 'nomor_unik' => 'TRX-Q7R8S9T0', 'uang_bayar' => 600000, 'uang_kembali' => 100000, 'created_at' => now()->subDays(2),
+                'peserta' => (object)['nama' => 'Gita Rahayu'],
+                'user'    => (object)['username' => 'kasir01'],
+                'tagihan' => (object)['total_tagihan' => 500000, 'bulan_tahun' => 'Januari/2026',
+                    'peserta' => (object)['kelas' => collect([(object)['nama_kelas' => 'Python Dasar'], (object)['nama_kelas' => 'Desain Grafis']])]]],
+            (object)['id' => 6, 'nomor_unik' => 'TRX-U1V2W3X4', 'uang_bayar' => 400000, 'uang_kembali' => 50000, 'created_at' => now()->subDays(3),
+                'peserta' => (object)['nama' => 'Andi Saputra'],
+                'user'    => (object)['username' => 'kasir02'],
+                'tagihan' => (object)['total_tagihan' => 350000, 'bulan_tahun' => 'Januari/2026',
+                    'peserta' => (object)['kelas' => collect([(object)['nama_kelas' => 'Matematika'], (object)['nama_kelas' => 'Bahasa Inggris']])]]],
+            (object)['id' => 7, 'nomor_unik' => 'TRX-Y5Z6A7B8', 'uang_bayar' => 500000, 'uang_kembali' => 125000, 'created_at' => now()->subDays(5),
+                'peserta' => (object)['nama' => 'Siti Maimunah'],
+                'user'    => (object)['username' => 'kasir01'],
+                'tagihan' => (object)['total_tagihan' => 375000, 'bulan_tahun' => 'Desember/2025',
+                    'peserta' => (object)['kelas' => collect([(object)['nama_kelas' => 'Bahasa Inggris']])]]],
+        ]);
+
+        $dummyKasirList = collect([
+            (object)['username' => 'kasir01'],
+            (object)['username' => 'kasir02'],
+        ]);
+
+        $dummyKelas = collect([
+            (object)['nama_kelas' => 'Python Dasar'],
+            (object)['nama_kelas' => 'Web Design'],
+            (object)['nama_kelas' => 'Matematika'],
+            (object)['nama_kelas' => 'Bahasa Inggris'],
+            (object)['nama_kelas' => 'Desain Grafis'],
+        ]);
+
+        return view('admin.riwayat.index', [
+            'riwayat'   => $dummyRiwayat,
+            'kasirList' => $dummyKasirList,
+            'kelasList' => $dummyKelas,
+        ]);
+
+    })->name('admin.riwayat');
+
 }); // ← tutup prefix('admin')
+
+
+// ============================================================
+//  OWNER ROUTES
+// ============================================================
+Route::prefix('owner')->middleware(['auth', RoleMiddleware::class . ':owner'])->group(function () {
+
+    // ---- SHARED DUMMY DATA ----
+    $dummyLogs = collect([
+        (object)['id'=>1,  'id_user'=>1, 'aktifitas'=>'Login ke sistem',                    'created_at'=>now()->subMinutes(3),    'user'=>(object)['username'=>'admin01','email'=>'admin01@educourse.id','role'=>'admin']],
+        (object)['id'=>2,  'id_user'=>1, 'aktifitas'=>'Tambah kelas baru: Python Lanjutan', 'created_at'=>now()->subMinutes(20),   'user'=>(object)['username'=>'admin01','email'=>'admin01@educourse.id','role'=>'admin']],
+        (object)['id'=>3,  'id_user'=>2, 'aktifitas'=>'Login ke sistem',                    'created_at'=>now()->subMinutes(35),   'user'=>(object)['username'=>'kasir01','email'=>'kasir01@educourse.id','role'=>'kasir']],
+        (object)['id'=>4,  'id_user'=>2, 'aktifitas'=>'Bayar tagihan Andi Saputra',         'created_at'=>now()->subHours(1),      'user'=>(object)['username'=>'kasir01','email'=>'kasir01@educourse.id','role'=>'kasir']],
+        (object)['id'=>5,  'id_user'=>3, 'aktifitas'=>'Login ke sistem',                    'created_at'=>now()->subHours(2),      'user'=>(object)['username'=>'kasir02','email'=>'kasir02@educourse.id','role'=>'kasir']],
+        (object)['id'=>6,  'id_user'=>1, 'aktifitas'=>'Edit kelas: Web Design',             'created_at'=>now()->subHours(3),      'user'=>(object)['username'=>'admin01','email'=>'admin01@educourse.id','role'=>'admin']],
+        (object)['id'=>7,  'id_user'=>3, 'aktifitas'=>'Bayar tagihan Rizky Pratama',        'created_at'=>now()->subHours(4),      'user'=>(object)['username'=>'kasir02','email'=>'kasir02@educourse.id','role'=>'kasir']],
+        (object)['id'=>8,  'id_user'=>1, 'aktifitas'=>'Hapus peserta: Budi Lama',           'created_at'=>now()->subHours(5),      'user'=>(object)['username'=>'admin01','email'=>'admin01@educourse.id','role'=>'admin']],
+        (object)['id'=>9,  'id_user'=>2, 'aktifitas'=>'Edit data peserta: Citra Dewi',      'created_at'=>now()->subDay(),         'user'=>(object)['username'=>'kasir01','email'=>'kasir01@educourse.id','role'=>'kasir']],
+        (object)['id'=>10, 'id_user'=>1, 'aktifitas'=>'Tambah user baru: kasir03',          'created_at'=>now()->subDay(),         'user'=>(object)['username'=>'admin01','email'=>'admin01@educourse.id','role'=>'admin']],
+        (object)['id'=>11, 'id_user'=>3, 'aktifitas'=>'Logout dari sistem',                 'created_at'=>now()->subDays(2),       'user'=>(object)['username'=>'kasir02','email'=>'kasir02@educourse.id','role'=>'kasir']],
+        (object)['id'=>12, 'id_user'=>1, 'aktifitas'=>'Hapus kelas: Matematika Lanjutan',   'created_at'=>now()->subDays(3),       'user'=>(object)['username'=>'admin01','email'=>'admin01@educourse.id','role'=>'admin']],
+        (object)['id'=>13, 'id_user'=>2, 'aktifitas'=>'Bayar tagihan Gita Rahayu',          'created_at'=>now()->subDays(3),       'user'=>(object)['username'=>'kasir01','email'=>'kasir01@educourse.id','role'=>'kasir']],
+        (object)['id'=>14, 'id_user'=>3, 'aktifitas'=>'Login ke sistem',                    'created_at'=>now()->subDays(4),       'user'=>(object)['username'=>'kasir02','email'=>'kasir02@educourse.id','role'=>'kasir']],
+        (object)['id'=>15, 'id_user'=>1, 'aktifitas'=>'Edit user: kasir02',                 'created_at'=>now()->subDays(5),       'user'=>(object)['username'=>'admin01','email'=>'admin01@educourse.id','role'=>'admin']],
+    ]);
+
+    $dummyTransaksi = collect([
+        (object)['id'=>1,'nomor_unik'=>'TRX-A1B2C3D4','peserta'=>'Andi Saputra','kelas'=>'Matematika, Bahasa Inggris','bulan_tahun'=>'Februari/2026','total_tagihan'=>350000,'uang_bayar'=>400000,'uang_kembali'=>50000,'kasir'=>'kasir01','created_at'=>now()->subMinutes(5)],
+        (object)['id'=>2,'nomor_unik'=>'TRX-E5F6G7H8','peserta'=>'Siti Maimunah','kelas'=>'Python Dasar','bulan_tahun'=>'Februari/2026','total_tagihan'=>400000,'uang_bayar'=>500000,'uang_kembali'=>100000,'kasir'=>'kasir02','created_at'=>now()->subHours(2)],
+        (object)['id'=>3,'nomor_unik'=>'TRX-I9J0K1L2','peserta'=>'Rizky Pratama','kelas'=>'Web Design, Desain Grafis','bulan_tahun'=>'Februari/2026','total_tagihan'=>450000,'uang_bayar'=>500000,'uang_kembali'=>50000,'kasir'=>'kasir01','created_at'=>now()->subHours(5)],
+        (object)['id'=>4,'nomor_unik'=>'TRX-M3N4O5P6','peserta'=>'Erika Putri','kelas'=>'Matematika','bulan_tahun'=>'Januari/2026','total_tagihan'=>375000,'uang_bayar'=>400000,'uang_kembali'=>25000,'kasir'=>'kasir02','created_at'=>now()->subDay()],
+        (object)['id'=>5,'nomor_unik'=>'TRX-Q7R8S9T0','peserta'=>'Gita Rahayu','kelas'=>'Python Dasar, Desain Grafis','bulan_tahun'=>'Januari/2026','total_tagihan'=>500000,'uang_bayar'=>600000,'uang_kembali'=>100000,'kasir'=>'kasir01','created_at'=>now()->subDays(2)],
+        (object)['id'=>6,'nomor_unik'=>'TRX-U1V2W3X4','peserta'=>'Andi Saputra','kelas'=>'Matematika, Bahasa Inggris','bulan_tahun'=>'Januari/2026','total_tagihan'=>350000,'uang_bayar'=>400000,'uang_kembali'=>50000,'kasir'=>'kasir02','created_at'=>now()->subDays(3)],
+        (object)['id'=>7,'nomor_unik'=>'TRX-Y5Z6A7B8','peserta'=>'Siti Maimunah','kelas'=>'Bahasa Inggris','bulan_tahun'=>'Desember/2025','total_tagihan'=>375000,'uang_bayar'=>500000,'uang_kembali'=>125000,'kasir'=>'kasir01','created_at'=>now()->subDays(5)],
+        (object)['id'=>8,'nomor_unik'=>'TRX-C9D0E1F2','peserta'=>'Citra Dewi','kelas'=>'Desain Grafis','bulan_tahun'=>'Desember/2025','total_tagihan'=>500000,'uang_bayar'=>500000,'uang_kembali'=>0,'kasir'=>'kasir02','created_at'=>now()->subDays(7)],
+    ]);
+
+    $dummyKelas = collect([
+        (object)['id'=>1,'nama_kelas'=>'Python Dasar','harga_kelas'=>400000,'hari_kelas'=>'Senin, Rabu','jumlah_peserta'=>12,
+            'peserta'=>collect([(object)['nama'=>'Andi Saputra','email'=>'andi@mail.com','status'=>'aktif'],(object)['nama'=>'Gita Rahayu','email'=>'gita@mail.com','status'=>'aktif'],(object)['nama'=>'Siti Maimunah','email'=>'siti@mail.com','status'=>'aktif']])],
+        (object)['id'=>2,'nama_kelas'=>'Web Design','harga_kelas'=>450000,'hari_kelas'=>'Selasa, Kamis','jumlah_peserta'=>8,
+            'peserta'=>collect([(object)['nama'=>'Rizky Pratama','email'=>'rizky@mail.com','status'=>'aktif'],(object)['nama'=>'Erika Putri','email'=>'erika@mail.com','status'=>'nonaktif']])],
+        (object)['id'=>3,'nama_kelas'=>'Matematika','harga_kelas'=>350000,'hari_kelas'=>'Senin, Jumat','jumlah_peserta'=>15,
+            'peserta'=>collect([(object)['nama'=>'Andi Saputra','email'=>'andi@mail.com','status'=>'aktif'],(object)['nama'=>'Erika Putri','email'=>'erika@mail.com','status'=>'aktif'],(object)['nama'=>'Budi Santoso','email'=>'budi@mail.com','status'=>'aktif']])],
+        (object)['id'=>4,'nama_kelas'=>'Bahasa Inggris','harga_kelas'=>375000,'hari_kelas'=>'Rabu, Sabtu','jumlah_peserta'=>10,
+            'peserta'=>collect([(object)['nama'=>'Siti Maimunah','email'=>'siti@mail.com','status'=>'aktif'],(object)['nama'=>'Andi Saputra','email'=>'andi@mail.com','status'=>'aktif']])],
+        (object)['id'=>5,'nama_kelas'=>'Desain Grafis','harga_kelas'=>500000,'hari_kelas'=>'Kamis, Sabtu','jumlah_peserta'=>6,
+            'peserta'=>collect([(object)['nama'=>'Rizky Pratama','email'=>'rizky@mail.com','status'=>'aktif'],(object)['nama'=>'Gita Rahayu','email'=>'gita@mail.com','status'=>'aktif'],(object)['nama'=>'Citra Dewi','email'=>'citra@mail.com','status'=>'aktif']])],
+    ]);
+    // ---- END SHARED DUMMY DATA ----
+
+
+    // DATA USER (view only)
+    Route::get('users', function () {
+        $users = collect([
+            (object)['id'=>1,'username'=>'admin01','email'=>'admin01@educourse.id','role'=>'admin','status'=>'aktif',   'created_at'=>now()->subDays(30)],
+            (object)['id'=>2,'username'=>'kasir01','email'=>'kasir01@educourse.id','role'=>'kasir','status'=>'aktif',   'created_at'=>now()->subDays(25)],
+            (object)['id'=>3,'username'=>'kasir02','email'=>'kasir02@educourse.id','role'=>'kasir','status'=>'aktif',   'created_at'=>now()->subDays(20)],
+            (object)['id'=>4,'username'=>'kasir03','email'=>'kasir03@educourse.id','role'=>'kasir','status'=>'nonaktif','created_at'=>now()->subDays(15)],
+            (object)['id'=>5,'username'=>'kasir04','email'=>'kasir04@educourse.id','role'=>'kasir','status'=>'aktif',   'created_at'=>now()->subDays(5)],
+            (object)['id'=>6,'username'=>'admin02','email'=>'admin02@educourse.id','role'=>'admin','status'=>'aktif',   'created_at'=>now()->subDays(2)],
+        ]);
+        return view('owner.users.index', compact('users'));
+    })->name('owner.users');
+
+
+    // DASHBOARD
+    Route::get('dashboard', function () use ($dummyLogs, $dummyTransaksi, $dummyKelas) {
+        $maxPeserta = $dummyKelas->max('jumlah_peserta');
+        $kelasTerpopuler = $dummyKelas->sortByDesc('jumlah_peserta')->values()->map(function($k) use ($maxPeserta) {
+            $k->persentase = $maxPeserta > 0 ? round(($k->jumlah_peserta / $maxPeserta) * 100) : 0;
+            return $k;
+        });
+
+        return view('owner.dashboard', [
+            'stats' => [
+                'totalKelas'        => $dummyKelas->count(),
+                'totalPeserta'      => $dummyKelas->sum('jumlah_peserta'),
+                'pemasukanBulanIni' => $dummyTransaksi->sum('total_tagihan'),
+                'totalTransaksi'    => $dummyTransaksi->count(),
+            ],
+            'kelasTerpopuler'  => $kelasTerpopuler,
+            'recentLog'        => $dummyLogs->take(6),
+            'recentTransaksi'  => $dummyTransaksi->take(5)->map(fn($t) => (object)[
+                'peserta' => $t->peserta,
+                'kursus'  => $t->kelas,
+                'jumlah'  => $t->total_tagihan,
+                'kasir'   => $t->kasir,
+                'waktu'   => $t->created_at,
+            ]),
+        ]);
+    })->name('owner.dashboard');
+
+
+    // DATA KELAS
+    Route::get('kelas', function () use ($dummyKelas) {
+        return view('owner.kelas.index', ['kelas' => $dummyKelas]);
+    })->name('owner.kelas');
+
+
+    // LOG AKTIVITAS — semua user
+    Route::get('log', function () use ($dummyLogs) {
+        $userList = collect([
+            (object)['username'=>'admin01','role'=>'admin'],
+            (object)['username'=>'kasir01','role'=>'kasir'],
+            (object)['username'=>'kasir02','role'=>'kasir'],
+        ]);
+        return view('owner.log.index', [
+            'logs'     => $dummyLogs,
+            'userList' => $userList,
+        ]);
+    })->name('owner.log');
+
+
+    // LAPORAN TRANSAKSI
+    Route::get('laporan', function () use ($dummyTransaksi, $dummyKelas) {
+        $kasirList = collect([
+            (object)['username'=>'kasir01'],
+            (object)['username'=>'kasir02'],
+        ]);
+        return view('owner.laporan.index', [
+            'transaksi' => $dummyTransaksi,
+            'kasirList' => $kasirList,
+            'kelasList' => $dummyKelas,
+        ]);
+    })->name('owner.laporan');
+
+}); // ← tutup prefix('owner')

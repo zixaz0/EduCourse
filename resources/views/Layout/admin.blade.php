@@ -66,10 +66,7 @@
 
             <p class="text-xs text-blue-400 font-semibold px-3 pt-3 pb-1 uppercase tracking-wider">Keuangan</p>
 
-            <a href="{{ url('/admin/tagihan') }}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium">
-                <i class="fa-solid fa-file-invoice-dollar w-5 text-center"></i><span>Tagihan</span>
-            </a>
-            <a href="{{ url('/admin/transaksi') }}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium">
+            <a href="{{ url('/admin/riwayat') }}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium">
                 <i class="fa-solid fa-clock-rotate-left w-5 text-center"></i><span>Riwayat Transaksi</span>
             </a>
 
