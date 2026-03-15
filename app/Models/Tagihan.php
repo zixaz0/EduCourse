@@ -9,7 +9,7 @@ class Tagihan extends Model
     protected $table = 'tagihan';
 
     protected $fillable = [
-        'id_peserta',
+        'peserta_id',
         'total_tagihan',
         'bulan_tahun',
         'status',
@@ -22,12 +22,12 @@ class Tagihan extends Model
     // Relasi ke Peserta
     public function peserta()
     {
-        return $this->belongsTo(Peserta::class, 'id_peserta');
+        return $this->belongsTo(Peserta::class, 'peserta_id'); // ← tambah 'peserta_id'
     }
 
     // Relasi ke Transaksi
     public function transaksi()
     {
-        return $this->hasMany(Transaksi::class, 'id_tagihan');
+        return $this->hasMany(Transaksi::class, 'tagihan_id');
     }
 }

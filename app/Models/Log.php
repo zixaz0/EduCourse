@@ -6,16 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Log extends Model
 {
-    protected $table = 'log';
+    protected $table = 'logs';
 
     protected $fillable = [
-        'id_user',
-        'aktifitas',
+        'user_id',
+        'aktivitas',
     ];
 
     // Relasi ke User
     public function user()
     {
-        return $this->belongsTo(User::class, 'id_user');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

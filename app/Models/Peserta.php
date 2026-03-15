@@ -25,18 +25,18 @@ class Peserta extends Model
     // Relasi ke Tagihan
     public function tagihan()
     {
-        return $this->hasMany(Tagihan::class, 'id_peserta');
+        return $this->hasMany(Tagihan::class, 'peserta_id');
     }
 
     // Relasi ke Transaksi
     public function transaksi()
     {
-        return $this->hasMany(Transaksi::class, 'id_peserta');
+        return $this->hasMany(Transaksi::class, 'peserta_id');
     }
 
     // Relasi Many-to-Many ke Kelas
     public function kelas()
     {
-        return $this->belongsToMany(Kelas::class, 'peserta_kelas', 'id_peserta', 'id_kelas');
+        return $this->belongsToMany(Kelas::class, 'peserta_kelas', 'peserta_id', 'kelas_id');
     }
 }

@@ -5,7 +5,7 @@
     {{-- Greeting --}}
     <div class="mb-6">
         <h1 class="text-xl font-bold text-gray-800">
-            Selamat datang, {{ Auth::user()->name ?? Auth::user()->username ?? 'Admin' }} 👋
+            Selamat datang, {{ Auth::user()->nama ?? Auth::user()->username ?? 'Admin' }} 👋
         </h1>
         <p class="text-sm text-gray-500 mt-0.5">Berikut ringkasan data sistem EduCourse hari ini</p>
     </div>
@@ -139,7 +139,6 @@
                             <th class="px-5 py-3">Peserta</th>
                             <th class="px-5 py-3">Kursus</th>
                             <th class="px-5 py-3">Jumlah</th>
-                            <th class="px-5 py-3">Kasir</th>
                             <th class="px-5 py-3">Waktu</th>
                         </tr>
                     </thead>
@@ -150,10 +149,10 @@
                                     <div class="flex items-center gap-2">
                                         <div class="w-7 h-7 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
                                             <span class="text-primary-700 font-bold text-xs">
-                                                {{ strtoupper(substr($t->peserta->nama ?? 'P', 0, 1)) }}
+                                                {{ strtoupper(substr( $t->tagihan->peserta->nama ?? 'P', 0, 1)) }}
                                             </span>
                                         </div>
-                                        <span class="font-medium text-gray-800 text-xs">{{ $t->peserta->nama ?? '-' }}</span>
+                                        <span class="font-medium text-gray-800 text-xs">{{  $t->tagihan->peserta->nama ?? '-' }}</span>
                                     </div>
                                 </td>
                                 <td class="px-5 py-3 text-xs text-gray-600">
@@ -161,9 +160,6 @@
                                 </td>
                                 <td class="px-5 py-3 text-xs font-semibold text-green-700">
                                     Rp {{ number_format($t->uang_bayar ?? 0, 0, ',', '.') }}
-                                </td>
-                                <td class="px-5 py-3 text-xs text-gray-500">
-                                    {{ $t->user->name ?? '-' }}
                                 </td>
                                 <td class="px-5 py-3 text-xs text-gray-400">
                                     {{ \Carbon\Carbon::parse($t->created_at)->format('d M, H:i') }}
@@ -224,7 +220,7 @@
             <div class="divide-y divide-gray-50">
                 @forelse($recentLog ?? [] as $log)
                     @php
-                        $akt = strtolower($log->aktifitas ?? '');
+                        $akt = strtolower($log->aktivitas ?? '');
                         $icon = 'fa-circle-info'; $color = 'text-gray-400'; $bg = 'bg-gray-50';
                         if (str_contains($akt, 'login'))   { $icon = 'fa-right-to-bracket'; $color = 'text-green-600'; $bg = 'bg-green-50'; }
                         if (str_contains($akt, 'logout'))  { $icon = 'fa-right-from-bracket'; $color = 'text-gray-500'; $bg = 'bg-gray-100'; }
@@ -238,8 +234,8 @@
                             <i class="fa-solid {{ $icon }} {{ $color }} text-xs"></i>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="text-xs font-medium text-gray-700 truncate">{{ $log->aktifitas }}</p>
-                            <p class="text-xs text-gray-400">{{ $log->user->name ?? '-' }}</p>
+                            <p class="text-xs font-medium text-gray-700 truncate">{{ $log->aktivitas }}</p>
+                            <p class="text-xs text-gray-400">{{ $log->user->username ?? '-' }}</p>
                         </div>
                         <span class="text-xs text-gray-300 whitespace-nowrap">
                             {{ \Carbon\Carbon::parse($log->created_at)->diffForHumans() }}

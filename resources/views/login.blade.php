@@ -36,7 +36,7 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex">
+<body class="h-screen flex overflow-hidden">
 
     <!-- Kiri: Gambar — tepat 50% lebar layar -->
     <div class="hidden md:block" style="width: 50%; flex-shrink: 0; position: relative; overflow: hidden;">
@@ -48,7 +48,7 @@
     </div>
 
     <!-- Kanan: Form — tepat 50% lebar layar -->
-    <div style="width: 50%; flex-shrink: 0; background-color: #e2e2e2;" class="flex items-center justify-center px-10 py-12">
+    <div style="width: 50%; flex-shrink: 0; background-color: #e2e2e2; overflow-y: auto;" class="flex items-center justify-center px-10 py-8">
         <div class="w-full max-w-md rounded-3xl flex flex-col items-center px-10 py-12" style="background-color: #ebebeb;">
             <div class="mb-4">
                 <img src="images/logo.png" alt="Logo EduCourse" style="width: 90px; height: auto; object-fit: contain;">
@@ -57,12 +57,14 @@
                 EduCourse
             </h1>
             <p class="text-sm mb-7 text-center" style="color: #999;">
-                Masukkan email dan password untuk melanjutkan
+                Masukkan email/username dan password untuk melanjutkan
             </p>
             <form class="w-full" method="POST" action="{{ route('login') }}" id="loginForm">
                 @csrf
+
+                {{-- ── Field Email / Username ── --}}
                 <div class="mb-5">
-                    <label class="block text-sm mb-1.5" style="color: #999;">Email</label>
+                    <label class="block text-sm mb-1.5" style="color: #999;">Email / Username</label>
                     <div class="relative">
                         <span class="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" style="color: #bbb;">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -71,22 +73,23 @@
                             </svg>
                         </span>
                         <input
-                            type="email"
-                            name="email"
-                            id="emailInput"
-                            value="{{ old('email') }}"
-                            placeholder="Masukan Email"
-                            class="w-full border rounded-full pl-11 pr-5 py-3 text-sm focus:outline-none transition {{ $errors->has('email') || $errors->any() ? 'input-error' : '' }}"
-                            style="background:#fff; border-color:{{ $errors->any() ? '#ef4444' : '#e0e0e0' }}; color:#333;"
+                            type="text"
+                            name="login"
+                            id="loginInput"
+                            value="{{ old('login') }}"
+                            placeholder="Email atau Username"
+                            class="w-full border rounded-full pl-11 pr-5 py-3 text-sm focus:outline-none transition {{ $errors->has('login') ? 'input-error' : '' }}"
+                            style="background:#fff; border-color:{{ $errors->has('login') ? '#ef4444' : '#e0e0e0' }}; color:#333;"
                             onfocus="this.style.borderColor='#1a2e6e'; this.style.boxShadow='0 0 0 3px rgba(26,46,110,0.1)'; this.classList.remove('input-error')"
                             onblur="this.style.boxShadow='none'"
                         >
                     </div>
-                    @error('email')
+                    @error('login')
                         <p class="text-xs mt-1.5 ml-4" style="color: #ef4444;">{{ $message }}</p>
                     @enderror
                 </div>
 
+                {{-- ── Field Password ── --}}
                 <div class="mb-8">
                     <label class="block text-sm mb-1.5" style="color: #999;">Password</label>
                     <div class="relative">
@@ -101,8 +104,8 @@
                             name="password"
                             id="passwordInput"
                             placeholder="Masukan Password"
-                            class="w-full border rounded-full pl-11 pr-10 py-3 text-sm focus:outline-none transition {{ $errors->any() ? 'input-error' : '' }}"
-                            style="background:#fff; border-color:{{ $errors->any() ? '#ef4444' : '#e0e0e0' }}; color:#333;"
+                            class="w-full border rounded-full pl-11 pr-10 py-3 text-sm focus:outline-none transition {{ $errors->has('password') ? 'input-error' : '' }}"
+                            style="background:#fff; border-color:{{ $errors->has('password') ? '#ef4444' : '#e0e0e0' }}; color:#333;"
                             onfocus="this.style.borderColor='#1a2e6e'; this.style.boxShadow='0 0 0 3px rgba(26,46,110,0.1)'; this.classList.remove('input-error')"
                             onblur="this.style.boxShadow='none'"
                         >
@@ -128,6 +131,7 @@
                         <p class="text-xs mt-1.5 ml-4" style="color: #ef4444;">{{ $message }}</p>
                     @enderror
                 </div>
+
                 <button
                     type="submit"
                     class="w-full text-white font-semibold text-sm rounded-full py-3 transition-all active:scale-[.98]"

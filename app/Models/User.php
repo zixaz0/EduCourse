@@ -32,21 +32,21 @@ class User extends Authenticatable
 
     public function logs()
     {
-        return $this->hasMany(Log::class, 'id_user');
+        return $this->hasMany(Log::class, 'user_id');
     }
 
     public function peserta()
     {
-        return $this->hasMany(Peserta::class, 'id_user');
+        return $this->hasMany(Peserta::class, 'user_id');
     }
 
     public function kelas()
     {
-        return $this->hasMany(Kelas::class, 'id_user');
+        return $this->hasMany(Kelas::class, 'user_id');
     }
 
     public function transaksi()
     {
-        return $this->hasMany(Transaksi::class, 'id_user');
+        return $this->hasMany(Transaksi::class, 'user_id');
     }
 }

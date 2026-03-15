@@ -15,6 +15,7 @@ return new class extends Migration
         $table->id();
         $table->string('nama');
         $table->string('no_hp');
+        $table->string('email')->unique();
         $table->enum('jenis_kelamin', ['laki-laki', 'perempuan'])->default('laki-laki');
         $table->string('kelas_akademik');
         $table->string('nama_ortu');
