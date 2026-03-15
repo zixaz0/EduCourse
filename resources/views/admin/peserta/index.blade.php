@@ -6,7 +6,7 @@
     <div class="mb-6 flex items-center justify-between">
         <div>
             <h1 class="text-xl font-bold text-gray-800">Data Peserta</h1>
-            <p class="text-sm text-gray-500 mt-0.5">Kelola semua data peserta kursus</p>
+            <p class="text-sm text-gray-500 mt-0.5">semua data peserta kursus</p>
         </div>
     </div>
 

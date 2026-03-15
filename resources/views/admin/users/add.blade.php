@@ -31,8 +31,8 @@
 
                 <div class="px-6 py-6 space-y-5">
 
-                    {{-- Username & Email --}}
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {{-- Username, Nama & Email --}}
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">
                                 Username <span class="text-red-500">*</span>
@@ -41,6 +41,17 @@
                                 placeholder="Masukkan username" oninput="updatePreview()"
                                 class="w-full text-sm border @error('username') border-red-400 @else border-gray-200 @enderror rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-300 transition">
                             @error('username')
+                                <p class="text-xs text-red-500 mt-1"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1.5">
+                                Nama Lengkap <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="nama" id="inp_nama" value="{{ old('nama') }}"
+                                placeholder="Masukkan nama lengkap" oninput="updatePreview()"
+                                class="w-full text-sm border @error('nama') border-red-400 @else border-gray-200 @enderror rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-300 transition">
+                            @error('nama')
                                 <p class="text-xs text-red-500 mt-1"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
                             @enderror
                         </div>
@@ -171,6 +182,7 @@
                         </div>
                         <div class="text-center">
                             <p id="prev_username" class="font-bold text-gray-800 text-base">—</p>
+                            <p id="prev_nama" class="text-sm text-gray-500 mt-0.5">—</p>
                             <p id="prev_email" class="text-xs text-gray-400 mt-0.5 break-all">—</p>
                         </div>
                         <div class="flex flex-col items-center gap-2">
@@ -226,11 +238,13 @@
 
         function updatePreview() {
             const username = document.getElementById('inp_username').value;
+            const nama     = document.getElementById('inp_nama').value;
             const email    = document.getElementById('inp_email').value;
             const role     = document.querySelector('[name="role"]:checked')?.value ?? '';
             const status   = document.querySelector('[name="status"]:checked')?.value ?? 'aktif';
 
             document.getElementById('prev_username').textContent = username || '—';
+            document.getElementById('prev_nama').textContent     = nama     || '—';
             document.getElementById('prev_email').textContent    = email    || '—';
             document.getElementById('prev_initial').textContent  = username ? username.charAt(0).toUpperCase() : '?';
 

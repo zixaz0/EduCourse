@@ -496,12 +496,12 @@ Route::prefix('admin')->middleware(['auth', RoleMiddleware::class . ':admin'])->
 
         // ---- DATA DUMMY ----
         $dummyUsers = collect([
-            (object)['id' => 1, 'username' => 'admin01',  'email' => 'admin01@educourse.id',  'role' => 'admin',  'status' => 'aktif',    'created_at' => now()->subDays(30)],
-            (object)['id' => 2, 'username' => 'kasir01',  'email' => 'kasir01@educourse.id',  'role' => 'kasir',  'status' => 'aktif',    'created_at' => now()->subDays(25)],
-            (object)['id' => 3, 'username' => 'kasir02',  'email' => 'kasir02@educourse.id',  'role' => 'kasir',  'status' => 'aktif',    'created_at' => now()->subDays(20)],
-            (object)['id' => 4, 'username' => 'kasir03',  'email' => 'kasir03@educourse.id',  'role' => 'kasir',  'status' => 'nonaktif', 'created_at' => now()->subDays(15)],
-            (object)['id' => 5, 'username' => 'kasir04',  'email' => 'kasir04@educourse.id',  'role' => 'kasir',  'status' => 'aktif',    'created_at' => now()->subDays(5)],
-            (object)['id' => 6, 'username' => 'admin02',  'email' => 'admin02@educourse.id',  'role' => 'admin',  'status' => 'aktif',    'created_at' => now()->subDays(2)],
+            (object)['id' => 1, 'username' => 'admin01', 'nama' => 'Admin 1', 'email' => 'admin01@educourse.id',  'role' => 'admin',  'status' => 'aktif',    'created_at' => now()->subDays(30)],
+            (object)['id' => 2, 'username' => 'kasir01', 'nama' => 'Kasir 1', 'email' => 'kasir01@educourse.id',  'role' => 'kasir',  'status' => 'aktif',    'created_at' => now()->subDays(25)],
+            (object)['id' => 3, 'username' => 'kasir02', 'nama' => 'Kasir 2', 'email' => 'kasir02@educourse.id',  'role' => 'kasir',  'status' => 'aktif',    'created_at' => now()->subDays(20)],
+            (object)['id' => 4, 'username' => 'kasir03', 'nama' => 'Kasir 3', 'email' => 'kasir03@educourse.id',  'role' => 'kasir',  'status' => 'nonaktif', 'created_at' => now()->subDays(15)],
+            (object)['id' => 5, 'username' => 'kasir04', 'nama' => 'Kasir 4', 'email' => 'kasir04@educourse.id',  'role' => 'kasir',  'status' => 'aktif',    'created_at' => now()->subDays(5)],
+            (object)['id' => 6, 'username' => 'admin02', 'nama' => 'Admin 2', 'email' => 'admin02@educourse.id',  'role' => 'admin',  'status' => 'aktif',    'created_at' => now()->subDays(2)],
         ]);
         // ---- END DATA DUMMY ----
 
@@ -519,6 +519,7 @@ Route::prefix('admin')->middleware(['auth', RoleMiddleware::class . ':admin'])->
         Route::post('/', function (\Illuminate\Http\Request $request) {
             $request->validate([
                 'username' => 'required|string|max:255|unique:users,username',
+                'nama'     => 'required|string|max:255',
                 'email'    => 'required|email|unique:users,email',
                 'password' => 'required|string|min:8|confirmed',
                 'role'     => 'required|in:admin,kasir',
@@ -527,6 +528,7 @@ Route::prefix('admin')->middleware(['auth', RoleMiddleware::class . ':admin'])->
 
             \App\Models\User::create([
                 'username' => $request->username,
+                'nama'     => $request->nama,
                 'email'    => $request->email,
                 'password' => bcrypt($request->password),
                 'role'     => $request->role,
@@ -548,6 +550,7 @@ Route::prefix('admin')->middleware(['auth', RoleMiddleware::class . ':admin'])->
         Route::put('/{id}', function (\Illuminate\Http\Request $request, $id) {
             $request->validate([
                 'username' => "required|string|max:255|unique:users,username,{$id}",
+                'nama'     => 'nullable|string|max:255',
                 'email'    => "required|email|unique:users,email,{$id}",
                 'password' => 'nullable|string|min:8|confirmed',
                 'role'     => 'required|in:admin,kasir',

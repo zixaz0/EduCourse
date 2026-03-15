@@ -18,7 +18,7 @@
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 mb-5 flex flex-col sm:flex-row gap-3">
         <div class="relative flex-1">
             <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-            <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Cari username atau email..."
+            <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Cari username, nama, atau email..."
                 class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent" />
         </div>
         <select id="filterRole" onchange="filterTable()"
@@ -43,6 +43,7 @@
                     <tr class="bg-primary-700 text-white text-left">
                         <th class="px-5 py-3.5 font-semibold">No</th>
                         <th class="px-5 py-3.5 font-semibold">User</th>
+                        <th class="px-5 py-3.5 font-semibold">Nama</th>
                         <th class="px-5 py-3.5 font-semibold">Email</th>
                         <th class="px-5 py-3.5 font-semibold">Role</th>
                         <th class="px-5 py-3.5 font-semibold">Status</th>
@@ -54,6 +55,7 @@
                     @forelse($users ?? [] as $index => $user)
                         <tr class="hover:bg-gray-50 transition user-row"
                             data-username="{{ strtolower($user->username) }}"
+                            data-nama="{{ strtolower($user->nama ?? '') }}"
                             data-email="{{ strtolower($user->email) }}"
                             data-role="{{ $user->role }}"
                             data-status="{{ $user->status }}">
@@ -76,6 +78,9 @@
                                     </div>
                                 </div>
                             </td>
+
+                            {{-- Nama --}}
+                            <td class="px-5 py-4 text-gray-700 font-medium">{{ $user->nama ?? '—' }}</td>
 
                             {{-- Email --}}
                             <td class="px-5 py-4 text-gray-600">{{ $user->email }}</td>
@@ -137,7 +142,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-5 py-16 text-center text-gray-400">
+                            <td colspan="8" class="px-5 py-16 text-center text-gray-400">
                                 <i class="fa-solid fa-users text-4xl mb-3 block text-gray-200"></i>
                                 <p class="font-medium">Belum ada data user</p>
                             </td>
@@ -160,7 +165,7 @@
             const role   = document.getElementById('filterRole').value;
             const status = document.getElementById('filterStatus').value;
             document.querySelectorAll('.user-row').forEach(row => {
-                const matchSearch = row.dataset.username.includes(search) || row.dataset.email.includes(search);
+                const matchSearch = row.dataset.username.includes(search) || row.dataset.email.includes(search) || (row.dataset.nama || '').includes(search);
                 const matchRole   = !role   || row.dataset.role === role;
                 const matchStatus = !status || row.dataset.status === status;
                 row.style.display = (matchSearch && matchRole && matchStatus) ? '' : 'none';
