@@ -41,7 +41,7 @@
     <!-- Kiri: Gambar — tepat 50% lebar layar -->
     <div class="hidden md:block" style="width: 50%; flex-shrink: 0; position: relative; overflow: hidden;">
         <img
-            src="images/panel_kiri.jpg"
+            src="images/panel_kiri.webp"
             alt="Background"
             style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center;"
         >
@@ -51,7 +51,7 @@
     <div style="width: 50%; flex-shrink: 0; background-color: #e2e2e2; overflow-y: auto;" class="flex items-center justify-center px-10 py-8">
         <div class="w-full max-w-md rounded-3xl flex flex-col items-center px-10 py-12" style="background-color: #ebebeb;">
             <div class="mb-4">
-                <img src="images/logo.png" alt="Logo EduCourse" style="width: 90px; height: auto; object-fit: contain;">
+                <img src="images/logo.webp" alt="Logo EduCourse" style="width: 90px; height: auto; object-fit: contain;">
             </div>
             <h1 class="text-[28px] font-extrabold mb-2 tracking-tight" style="color: #1a2e6e;">
                 EduCourse

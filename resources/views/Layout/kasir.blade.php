@@ -72,7 +72,7 @@
     <aside class="w-56 min-h-screen bg-primary-700 flex flex-col fixed top-0 left-0 z-30 shadow-xl">
         <div class="flex items-center gap-3 px-5 py-5 border-b border-primary-600">
             <div class="w-9 h-9 bg-white rounded-lg flex items-center justify-center shadow overflow-hidden">
-                <img src="{{ asset('images/logo.png') }}" alt="Logo EduCourse" class="w-7 h-7 object-contain">
+                <img src="{{ asset('images/logo.webp') }}" alt="Logo EduCourse" class="w-7 h-7 object-contain">
             </div>
             <span class="text-white font-bold text-lg tracking-wide">EduCourse</span>
         </div>
