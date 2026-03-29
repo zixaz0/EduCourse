@@ -3,21 +3,19 @@
 @section('content')
 
     {{-- Page Title --}}
-    <div class="mb-6 flex items-center justify-between">
-        <div>
-            <h1 class="text-xl font-bold text-gray-800">Transaksi</h1>
-            <p class="text-sm text-gray-500 mt-0.5">Kelola tagihan dan pembayaran peserta</p>
-        </div>
+    <div class="mb-6">
+        <h1 class="text-xl font-bold text-gray-800">Transaksi Tagihan</h1>
+        <p class="text-sm text-gray-500 mt-0.5">Kelola tagihan dan pembayaran peserta</p>
     </div>
 
     {{-- Search & Filter --}}
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 mb-5 flex flex-col sm:flex-row gap-3">
         <div class="relative flex-1">
             <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-            <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Cari nama peserta..."
+            <input type="text" id="searchInput" oninput="applyFilter()" placeholder="Cari nama atau no HP..."
                 class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent" />
         </div>
-        <select id="filterBulan" onchange="filterTable()"
+        <select id="filterBulan" onchange="applyFilter()"
             class="text-sm border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white text-gray-600">
             <option value="">Semua Bulan</option>
             <option value="januari">Januari</option>
@@ -33,17 +31,17 @@
             <option value="november">November</option>
             <option value="desember">Desember</option>
         </select>
-        <select id="filterKelas" onchange="filterTable()"
+        <select id="filterKelas" onchange="applyFilter()"
             class="text-sm border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white text-gray-600">
-            <option value="">Semua Kelas</option>
+            <option value="">Semua kelas</option>
             @foreach($kelasList ?? [] as $kelas)
                 <option value="{{ strtolower($kelas->nama_kelas) }}">{{ $kelas->nama_kelas }}</option>
             @endforeach
         </select>
-        <select id="filterStatus" onchange="filterTable()"
+        <select id="filterStatus" onchange="applyFilter()"
             class="text-sm border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white text-gray-600">
             <option value="">Semua Status</option>
-            <option value="belum lunas">Belum Lunas</option>
+            <option value="belum_lunas">Belum Lunas</option>
             <option value="lunas">Lunas</option>
         </select>
     </div>
@@ -55,359 +53,248 @@
                 <thead>
                     <tr class="bg-primary-700 text-white text-left">
                         <th class="px-5 py-3.5 font-semibold">No</th>
-                        <th class="px-5 py-3.5 font-semibold">Nama Peserta</th>
-                        <th class="px-5 py-3.5 font-semibold">Kursus</th>
-                        <th class="px-5 py-3.5 font-semibold">Bulan/Tahun</th>
-                        <th class="px-5 py-3.5 font-semibold">Total Tagihan</th>
+                        <th class="px-5 py-3.5 font-semibold">Nama</th>
+                        <th class="px-5 py-3.5 font-semibold">Kelas Kursus</th>
+                        <th class="px-5 py-3.5 font-semibold">Bulan / Tahun</th>
                         <th class="px-5 py-3.5 font-semibold">Status</th>
                         <th class="px-5 py-3.5 font-semibold text-center">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100">
-                    @forelse($tagihan ?? [] as $index => $t)
-                        <tr class="hover:bg-gray-50 transition tagihan-row"
-                            data-nama="{{ strtolower($t->peserta->nama ?? '') }}"
-                            data-bulan="{{ strtolower(explode('/', $t->bulan_tahun)[0] ?? '') }}"
-                            data-kelas="{{ strtolower($t->peserta->kelas->pluck('nama_kelas')->implode(', ') ?? '') }}"
-                            data-status="{{ strtolower($t->status) }}">
-
-                            <td class="px-5 py-3.5 text-gray-500 font-medium">{{ $index + 1 }}</td>
-
-                            {{-- Nama Peserta --}}
-                            <td class="px-5 py-3.5">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
-                                        <span class="text-primary-700 font-bold text-xs">
-                                            {{ strtoupper(substr($t->peserta->nama ?? 'P', 0, 1)) }}
-                                        </span>
-                                    </div>
-                                    <p class="font-semibold text-gray-800">{{ $t->peserta->nama ?? '-' }}</p>
-                                </div>
-                            </td>
-
-                            {{-- Kursus --}}
-                            <td class="px-5 py-3.5">
-                                <div class="flex flex-wrap gap-1">
-                                    @foreach($t->peserta->kelas ?? [] as $k)
-                                        <span class="bg-primary-50 text-primary-700 text-xs font-medium px-2.5 py-1 rounded-full border border-primary-100">
-                                            {{ $k->nama_kelas }}
-                                        </span>
-                                    @endforeach
-                                </div>
-                            </td>
-
-                            {{-- Bulan/Tahun --}}
-                            <td class="px-5 py-3.5 text-gray-600 font-medium">{{ $t->bulan_tahun }}</td>
-
-                            {{-- Total Tagihan --}}
-                            <td class="px-5 py-3.5 font-semibold text-gray-800">
-                                Rp {{ number_format($t->total_tagihan, 0, ',', '.') }}
-                            </td>
-
-                            {{-- Status --}}
-                            <td class="px-5 py-3.5">
-                                @if(strtolower($t->status) === 'lunas')
-                                    <span class="inline-flex items-center gap-1.5 bg-green-50 text-green-700 text-xs font-semibold px-3 py-1 rounded-full border border-green-100">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Lunas
-                                    </span>
-                                @else
-                                    <span class="inline-flex items-center gap-1.5 bg-red-50 text-red-600 text-xs font-semibold px-3 py-1 rounded-full border border-red-100">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-red-400"></span> Belum Lunas
-                                    </span>
-                                @endif
-                            </td>
-
-                            {{-- Aksi --}}
-                            <td class="px-5 py-3.5">
-                                <div class="flex items-center justify-center gap-1.5">
-                                    @if(strtolower($t->status) !== 'lunas')
-                                        {{-- Bayar --}}
-                                        <a href="{{ url('/kasir/transaksi/' . $t->id . '/bayar') }}"
-                                            title="Bayar"
-                                            class="w-8 h-8 flex items-center justify-center rounded-lg bg-green-50 hover:bg-green-100 text-green-600 transition">
-                                            <i class="fa-solid fa-money-bill-wave text-xs"></i>
-                                        </a>
-                                        {{-- Hapus --}}
-                                        <button onclick="confirmDelete('{{ $t->peserta->nama ?? '-' }}')"
-                                            title="Hapus"
-                                            class="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 hover:bg-red-100 text-red-500 transition">
-                                            <i class="fa-solid fa-trash text-xs"></i>
-                                        </button>
-                                    @else
-                                        <span class="text-xs text-gray-300 px-2">—</span>
-                                    @endif
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="px-5 py-16 text-center text-gray-400">
-                                <i class="fa-solid fa-receipt text-4xl mb-3 block text-gray-200"></i>
-                                <p class="font-medium">Belum ada data tagihan</p>
-                            </td>
-                        </tr>
-                    @endforelse
+                <tbody id="tableBody" class="divide-y divide-gray-100">
+                    {{-- diisi JS --}}
                 </tbody>
             </table>
         </div>
 
-        {{-- Pagination --}}
-        @if(isset($tagihan) && method_exists($tagihan, 'hasPages') && $tagihan->hasPages())
-            <div class="px-5 py-4 border-t border-gray-100 flex items-center justify-between text-sm text-gray-500">
-                <span>Menampilkan {{ $tagihan->firstItem() }}–{{ $tagihan->lastItem() }} dari {{ $tagihan->total() }} tagihan</span>
-                <div>{{ $tagihan->links() }}</div>
+        {{-- Pagination Bar --}}
+        <div class="px-5 py-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-3 text-sm text-gray-500">
+                <span id="paginationInfo" class="text-xs">—</span>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-gray-400">Tampilkan</span>
+                    <select id="perPage" onchange="changePerPage()"
+                        class="text-xs border border-gray-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white text-gray-700 font-semibold cursor-pointer">
+                        <option value="5" selected>5</option>
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="9999">Semua</option>
+                    </select>
+                    <span class="text-xs text-gray-400">data</span>
+                </div>
             </div>
-        @endif
+            <div id="paginationNav" class="flex items-center gap-1"></div>
+        </div>
     </div>
 
-
-    {{-- ==================== MODAL FORM BAYAR ==================== --}}
-    <div id="modalBayar" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
-
-            {{-- Header --}}
-            <div class="flex items-center justify-between px-6 py-4 bg-primary-700">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
-                        <i class="fa-solid fa-money-bill-wave text-white text-sm"></i>
-                    </div>
-                    <div>
-                        <p class="text-white font-bold text-sm">Form Pembayaran</p>
-                        <p class="text-blue-200 text-xs" id="modal_bulan_label">—</p>
-                    </div>
-                </div>
-                <button onclick="closeModal('modalBayar')" class="text-white/70 hover:text-white transition">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
+    {{-- Modal Konfirmasi Hapus --}}
+    <div id="modalHapus" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden">
+            <div class="px-6 py-4 bg-red-600 flex items-center gap-3">
+                <i class="fa-solid fa-trash text-white"></i>
+                <h2 class="text-white font-bold text-base">Hapus Tagihan</h2>
             </div>
-
-            {{-- Info Tagihan --}}
-            <div class="mx-6 mt-5 bg-primary-50 border border-primary-100 rounded-xl p-4 space-y-2.5">
-                <div class="flex items-center justify-between text-sm">
-                    <span class="text-gray-500 font-medium">Nama Peserta</span>
-                    <span id="modal_nama" class="font-semibold text-gray-800 text-right max-w-[55%]">—</span>
-                </div>
-                <div class="flex items-center justify-between text-sm">
-                    <span class="text-gray-500 font-medium">Kursus</span>
-                    <span id="modal_kursus" class="font-semibold text-gray-800 text-right max-w-[55%]">—</span>
-                </div>
-                <div class="flex items-center justify-between text-sm">
-                    <span class="text-gray-500 font-medium">Periode</span>
-                    <span id="modal_periode" class="font-semibold text-gray-800">—</span>
-                </div>
-                <hr class="border-primary-100">
-                <div class="flex items-center justify-between">
-                    <span class="text-sm text-gray-500 font-medium">Total Tagihan</span>
-                    <span id="modal_total" class="text-base font-bold text-primary-700">—</span>
-                </div>
-            </div>
-
-            {{-- Form --}}
-            <div class="px-6 py-5 space-y-4">
-
-                {{-- Nomor Unik --}}
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1.5">
-                        Nomor Unik <span class="text-gray-400 font-normal">(otomatis)</span>
-                    </label>
-                    <div class="relative">
-                        <input type="text" id="input_nomor_unik" readonly
-                            class="w-full text-sm border border-gray-200 rounded-xl px-4 py-2.5 bg-gray-50 text-gray-500 font-mono focus:outline-none cursor-not-allowed">
-                        <button onclick="regenNomorUnik()"
-                            class="absolute right-3 top-1/2 -translate-y-1/2 text-primary-600 hover:text-primary-800 transition text-xs font-medium">
-                            <i class="fa-solid fa-rotate-right"></i>
-                        </button>
-                    </div>
-                </div>
-
-                {{-- Uang Bayar --}}
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1.5">
-                        Uang Bayar <span class="text-red-500">*</span>
-                    </label>
-                    <div class="relative">
-                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-medium">Rp</span>
-                        <input type="number" id="input_uang_bayar" oninput="hitungKembali()"
-                            placeholder="0" min="0"
-                            class="w-full text-sm border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent transition">
-                    </div>
-                </div>
-
-                {{-- Uang Kembali --}}
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1.5">Uang Kembali</label>
-                    <div class="relative">
-                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-medium">Rp</span>
-                        <input type="text" id="input_uang_kembali" readonly
-                            value="0"
-                            class="w-full text-sm border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 bg-gray-50 text-gray-600 font-semibold focus:outline-none cursor-not-allowed">
-                    </div>
-                    <p id="kembali_warning" class="text-xs text-red-500 mt-1 hidden">
-                        <i class="fa-solid fa-triangle-exclamation mr-1"></i>Uang bayar kurang dari total tagihan!
-                    </p>
-                </div>
-
-                {{-- Action Buttons --}}
-                <div class="flex justify-end gap-3 pt-1">
-                    <button type="button" onclick="closeModal('modalBayar')"
-                        class="px-5 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition">
+            <div class="px-6 py-5">
+                <p class="text-sm text-gray-600">Tagihan <span id="hapus_nama" class="font-bold text-gray-800"></span> akan dihapus permanen. Lanjutkan?</p>
+                <div class="flex gap-3 mt-5">
+                    <button onclick="closeModal('modalHapus')"
+                        class="flex-1 px-4 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition">
                         Batal
                     </button>
-                    <button type="button" id="btn_bayar" onclick="submitBayar()"
-                        class="px-6 py-2.5 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-xl shadow transition flex items-center gap-2">
-                        <i class="fa-solid fa-check"></i> Konfirmasi Bayar
-                    </button>
+                    <form id="hapus_form" method="POST" class="flex-1">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit"
+                            class="w-full px-4 py-2.5 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-xl transition">
+                            Ya, Hapus
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
+    {{-- Data tagihan dari Blade ke JS --}}
+    @php
+        $tagihanJs = collect($tagihan ?? [])->map(function($t) {
+            // Format bulan_tahun: "02-2026" → "Februari / 2026"
+            $parts = explode('-', $t->bulan_tahun);
+            $bulanMap = [
+                '01'=>'Januari','02'=>'Februari','03'=>'Maret','04'=>'April',
+                '05'=>'Mei','06'=>'Juni','07'=>'Juli','08'=>'Agustus',
+                '09'=>'September','10'=>'Oktober','11'=>'November','12'=>'Desember',
+            ];
+            $bulanLabel = ($bulanMap[$parts[0]] ?? $parts[0]) . ' / ' . ($parts[1] ?? '');
+            $bulanRaw   = strtolower($bulanMap[$parts[0]] ?? $parts[0]);
+
+            return [
+                'id'         => $t->id,
+                'nama'       => $t->peserta->nama ?? '-',
+                'no_hp'      => $t->peserta->no_hp ?? '',
+                'kelas'      => $t->peserta->kelas->pluck('nama_kelas')->toArray(),
+                'bulan_raw'  => $bulanRaw,
+                'bulan_label'=> $bulanLabel,
+                'status'     => strtolower($t->status),
+                'bayar_url'  => url('/kasir/transaksi/' . $t->id . '/bayar'),
+                'hapus_url'  => url('/kasir/transaksi/' . $t->id),
+            ];
+        })->values()->toArray();
+    @endphp
 
     <script>
-        // ===== State modal =====
-        let currentTagihanId = null;
-        let currentTotal     = 0;
+        const allData = @json($tagihanJs);
 
-        // ===== Modal Helpers =====
-        function openModal(id) {
-            const el = document.getElementById(id);
-            el.classList.remove('hidden');
-            el.classList.add('flex');
-        }
-        function closeModal(id) {
-            const el = document.getElementById(id);
-            el.classList.add('hidden');
-            el.classList.remove('flex');
-        }
-        document.getElementById('modalBayar').addEventListener('click', function(e) {
-            if (e.target === this) closeModal('modalBayar');
-        });
+        let filteredData = [...allData];
+        let currentPage  = 1;
+        let perPage      = 5;
 
-        // ===== Generate Nomor Unik =====
-        function generateNomorUnik() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let result = 'TRX-';
-            for (let i = 0; i < 8; i++) {
-                result += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return result;
-        }
-        function regenNomorUnik() {
-            document.getElementById('input_nomor_unik').value = generateNomorUnik();
-        }
-
-        // ===== Buka Modal Bayar =====
-        function openBayar(id, nama, bulanTahun, total, kursus) {
-            currentTagihanId = id;
-            currentTotal     = total;
-
-            document.getElementById('modal_nama').textContent    = nama;
-            document.getElementById('modal_kursus').textContent  = kursus;
-            document.getElementById('modal_periode').textContent = bulanTahun;
-            document.getElementById('modal_bulan_label').textContent = 'Tagihan ' + bulanTahun;
-            document.getElementById('modal_total').textContent   = 'Rp ' + total.toLocaleString('id-ID');
-            document.getElementById('input_nomor_unik').value    = generateNomorUnik();
-            document.getElementById('input_uang_bayar').value    = '';
-            document.getElementById('input_uang_kembali').value  = '0';
-            document.getElementById('kembali_warning').classList.add('hidden');
-
-            openModal('modalBayar');
-            setTimeout(() => document.getElementById('input_uang_bayar').focus(), 100);
-        }
-
-        // ===== Hitung Uang Kembali =====
-        function hitungKembali() {
-            const bayar   = parseInt(document.getElementById('input_uang_bayar').value) || 0;
-            const kembali = bayar - currentTotal;
-            const warning = document.getElementById('kembali_warning');
-            const btnBayar = document.getElementById('btn_bayar');
-
-            if (bayar > 0 && kembali < 0) {
-                document.getElementById('input_uang_kembali').value = '0';
-                warning.classList.remove('hidden');
-                btnBayar.disabled = true;
-                btnBayar.classList.add('opacity-50', 'cursor-not-allowed');
-            } else {
-                document.getElementById('input_uang_kembali').value = kembali.toLocaleString('id-ID');
-                warning.classList.add('hidden');
-                btnBayar.disabled = false;
-                btnBayar.classList.remove('opacity-50', 'cursor-not-allowed');
-            }
-        }
-
-        // ===== Submit Bayar =====
-        function submitBayar() {
-            const bayar = parseInt(document.getElementById('input_uang_bayar').value) || 0;
-            if (bayar <= 0) {
-                Swal.fire({ icon: 'warning', title: 'Isi Uang Bayar', text: 'Masukkan jumlah uang bayar terlebih dahulu.', confirmButtonColor: '#1e5399' });
-                return;
-            }
-            if (bayar < currentTotal) return;
-
-            const nomorUnik = document.getElementById('input_nomor_unik').value;
-            const kembali   = bayar - currentTotal;
-
-            Swal.fire({
-                title: 'Konfirmasi Pembayaran?',
-                html: `
-                    <div class="text-left space-y-2 text-sm">
-                        <div class="flex justify-between"><span class="text-gray-500">Nomor Unik</span><span class="font-mono font-semibold">${nomorUnik}</span></div>
-                        <div class="flex justify-between"><span class="text-gray-500">Uang Bayar</span><span class="font-semibold">Rp ${bayar.toLocaleString('id-ID')}</span></div>
-                        <div class="flex justify-between"><span class="text-gray-500">Uang Kembali</span><span class="font-semibold text-green-600">Rp ${kembali.toLocaleString('id-ID')}</span></div>
-                    </div>
-                `,
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#16a34a',
-                cancelButtonColor: '#6b7280',
-                confirmButtonText: '<i class="fa-solid fa-check mr-1"></i> Ya, Bayar',
-                cancelButtonText: 'Batal',
-            }).then(result => {
-                if (result.isConfirmed) {
-                    // Sambungkan ke controller di sini
-                    Swal.fire({ icon: 'success', title: 'Pembayaran Berhasil!', text: `Kembalian: Rp ${kembali.toLocaleString('id-ID')}`, confirmButtonColor: '#1e5399' })
-                        .then(() => closeModal('modalBayar'));
-                }
-            });
-        }
-
-        // ===== Search & Filter =====
-        function filterTable() {
+        // ===== Filter =====
+        function applyFilter() {
             const search = document.getElementById('searchInput').value.toLowerCase();
             const bulan  = document.getElementById('filterBulan').value.toLowerCase();
             const kelas  = document.getElementById('filterKelas').value.toLowerCase();
             const status = document.getElementById('filterStatus').value.toLowerCase();
 
-            document.querySelectorAll('.tagihan-row').forEach(row => {
-                const matchSearch = row.dataset.nama.includes(search);
-                const matchBulan  = !bulan  || row.dataset.bulan === bulan;
-                const matchKelas  = !kelas  || row.dataset.kelas.includes(kelas);
-                const matchStatus = !status || row.dataset.status === status;
-                row.style.display = (matchSearch && matchBulan && matchKelas && matchStatus) ? '' : 'none';
+            filteredData = allData.filter(t => {
+                const matchSearch = t.nama.toLowerCase().includes(search) || t.no_hp.includes(search);
+                const matchBulan  = !bulan  || t.bulan_raw === bulan;
+                const matchKelas  = !kelas  || t.kelas.some(k => k.toLowerCase().includes(kelas));
+                const matchStatus = !status || t.status === status;
+                return matchSearch && matchBulan && matchKelas && matchStatus;
             });
+
+            currentPage = 1;
+            render();
         }
 
-        // ===== Hapus =====
-        function confirmDelete(nama) {
-            Swal.fire({
-                title: 'Hapus Tagihan?',
-                html: `Tagihan <b>${nama}</b> akan dihapus permanen.`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#dc2626',
-                cancelButtonColor: '#6b7280',
-                confirmButtonText: 'Ya, Hapus',
-                cancelButtonText: 'Batal',
-            });
+        function changePerPage() {
+            perPage     = parseInt(document.getElementById('perPage').value);
+            currentPage = 1;
+            render();
         }
 
-        // ===== Flash messages =====
+        // ===== Render =====
+        function render() {
+            const isAll      = perPage === 9999;
+            const start      = isAll ? 0 : (currentPage - 1) * perPage;
+            const end        = isAll ? filteredData.length : start + perPage;
+            const pageData   = filteredData.slice(start, end);
+            const total      = filteredData.length;
+            const totalPages = isAll ? 1 : Math.ceil(total / perPage);
+
+            const tbody = document.getElementById('tableBody');
+            if (!pageData.length) {
+                tbody.innerHTML = `<tr><td colspan="6" class="px-5 py-16 text-center text-gray-400">
+                    <i class="fa-solid fa-file-invoice text-4xl mb-3 block text-gray-200"></i>
+                    <p class="font-medium">Tidak ada data tagihan</p>
+                </td></tr>`;
+            } else {
+                tbody.innerHTML = pageData.map((t, i) => {
+                    const no = start + i + 1;
+                    const kelasBadges = t.kelas.length
+                        ? t.kelas.map(k => `<span class="bg-primary-50 text-primary-700 text-xs font-medium px-2.5 py-1 rounded-full border border-primary-100">${k}</span>`).join('')
+                        : '<span class="text-gray-400 text-xs">—</span>';
+
+                    const statusBadge = t.status === 'lunas'
+                        ? `<span class="inline-flex items-center gap-1.5 bg-green-50 text-green-700 text-xs font-semibold px-3 py-1 rounded-full border border-green-100"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Lunas</span>`
+                        : `<span class="inline-flex items-center gap-1.5 bg-red-50 text-red-600 text-xs font-semibold px-3 py-1 rounded-full border border-red-100"><span class="w-1.5 h-1.5 rounded-full bg-red-400"></span> Belum Lunas</span>`;
+
+                    const aksi = t.status !== 'lunas'
+                        ? `<div class="flex items-center justify-center gap-1.5">
+                                <a href="${t.bayar_url}" title="Bayar"
+                                    class="w-8 h-8 flex items-center justify-center rounded-lg bg-green-50 hover:bg-green-100 text-green-600 transition">
+                                    <i class="fa-solid fa-money-bill-wave text-xs"></i>
+                                </a>
+                                <button onclick="openHapus(${t.id}, '${t.nama}', '${t.hapus_url}')" title="Hapus"
+                                    class="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 hover:bg-red-100 text-red-500 transition">
+                                    <i class="fa-solid fa-trash text-xs"></i>
+                                </button>
+                           </div>`
+                        : `<div class="text-center text-xs text-gray-300">—</div>`;
+
+                    return `
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-5 py-3.5 text-gray-400 font-medium text-xs">${no}</td>
+                            <td class="px-5 py-3.5 font-semibold text-gray-800">${t.nama}</td>
+                            <td class="px-5 py-3.5"><div class="flex flex-wrap gap-1">${kelasBadges}</div></td>
+                            <td class="px-5 py-3.5 text-gray-600 font-medium">${t.bulan_label}</td>
+                            <td class="px-5 py-3.5">${statusBadge}</td>
+                            <td class="px-5 py-3.5">${aksi}</td>
+                        </tr>`;
+                }).join('');
+            }
+
+            const from = total === 0 ? 0 : start + 1;
+            const to   = Math.min(end, total);
+            document.getElementById('paginationInfo').textContent =
+                `Menampilkan ${from}–${to} dari ${total} transaksi`;
+
+            renderPagination(totalPages);
+        }
+
+        // ===== Pagination =====
+        function renderPagination(totalPages) {
+            const nav = document.getElementById('paginationNav');
+            if (totalPages <= 1) { nav.innerHTML = ''; return; }
+
+            const base     = 'w-8 h-8 flex items-center justify-center rounded-lg text-xs font-semibold transition cursor-pointer select-none';
+            const active   = 'bg-primary-700 text-white shadow-sm';
+            const normal   = 'bg-white border border-gray-200 text-gray-600 hover:bg-primary-50 hover:border-primary-300 hover:text-primary-700';
+            const disabled = 'bg-gray-50 border border-gray-100 text-gray-300 cursor-not-allowed';
+
+            let html = '';
+            html += `<button onclick="goPage(1)" ${currentPage===1?'disabled':''} class="${base} ${currentPage===1?disabled:normal}"><i class="fa-solid fa-angles-left" style="font-size:9px;"></i></button>`;
+            html += `<button onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''} class="${base} ${currentPage===1?disabled:normal}"><i class="fa-solid fa-chevron-left" style="font-size:10px;"></i></button>`;
+
+            getPageRange(currentPage, totalPages).forEach(p => {
+                if (p === '...') {
+                    html += `<span class="${base} border border-transparent text-gray-400 cursor-default">…</span>`;
+                } else {
+                    html += `<button onclick="goPage(${p})" class="${base} ${p===currentPage?active:normal}">${p}</button>`;
+                }
+            });
+
+            html += `<button onclick="goPage(${currentPage+1})" ${currentPage===totalPages?'disabled':''} class="${base} ${currentPage===totalPages?disabled:normal}"><i class="fa-solid fa-chevron-right" style="font-size:10px;"></i></button>`;
+            html += `<button onclick="goPage(${totalPages})" ${currentPage===totalPages?'disabled':''} class="${base} ${currentPage===totalPages?disabled:normal}"><i class="fa-solid fa-angles-right" style="font-size:9px;"></i></button>`;
+
+            nav.innerHTML = html;
+        }
+
+        function getPageRange(cur, total) {
+            if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+            if (cur <= 4)  return [1, 2, 3, 4, 5, '...', total];
+            if (cur >= total - 3) return [1, '...', total-4, total-3, total-2, total-1, total];
+            return [1, '...', cur-1, cur, cur+1, '...', total];
+        }
+
+        function goPage(page) {
+            const totalPages = perPage === 9999 ? 1 : Math.ceil(filteredData.length / perPage);
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            render();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ===== Modal Hapus =====
+        function openHapus(id, nama, url) {
+            document.getElementById('hapus_nama').textContent = nama;
+            document.getElementById('hapus_form').action = url;
+            openModal('modalHapus');
+        }
+
+        function openModal(id) { const el = document.getElementById(id); el.classList.remove('hidden'); el.classList.add('flex'); }
+        function closeModal(id) { const el = document.getElementById(id); el.classList.add('hidden'); el.classList.remove('flex'); }
+        document.getElementById('modalHapus').addEventListener('click', function(e) { if (e.target === this) closeModal('modalHapus'); });
+
+        // ===== Flash =====
         @if(session('success'))
             Swal.fire({ icon: 'success', title: 'Berhasil!', text: '{{ session("success") }}', confirmButtonColor: '#1e5399' });
         @endif
         @if(session('error'))
             Swal.fire({ icon: 'error', title: 'Gagal!', text: '{{ session("error") }}', confirmButtonColor: '#1e5399' });
         @endif
+
+        render();
     </script>
 
 @endsection

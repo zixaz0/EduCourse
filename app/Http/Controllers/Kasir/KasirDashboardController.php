@@ -2,13 +2,52 @@
 
 namespace App\Http\Controllers\Kasir;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Kelas;
+use App\Models\Peserta;
+use App\Models\Tagihan;
+use App\Models\Transaksi;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class KasirDashboardController extends Controller
 {
     public function index()
     {
-        return view('kasir.dashboard');
+        $bulanIni = Carbon::now()->format('m-Y');
+
+        $totalKelas          = Kelas::count();
+        $pesertaAktif        = Peserta::where('status', 'aktif')->count();
+        $tagihanBelumDibayar = Tagihan::where('status', 'belum_lunas')->count();
+
+        // 5 tagihan belum lunas terbaru
+        $recentTagihan = Tagihan::with('peserta')
+                            ->where('status', 'belum_lunas')
+                            ->latest()
+                            ->take(5)
+                            ->get();
+
+        // 5 transaksi terbaru oleh kasir yang login
+        $recentTransaksi = Transaksi::with('tagihan.peserta')
+                            ->where('user_id', Auth::id())
+                            ->latest()
+                            ->take(5)
+                            ->get();
+
+        // Pemasukan bulan ini dari transaksi kasir yang login
+        $pemasukanBulanIni = Transaksi::join('tagihan', 'transaksi.tagihan_id', '=', 'tagihan.id')
+                                ->where('transaksi.user_id', Auth::id())
+                                ->where('tagihan.bulan_tahun', $bulanIni)
+                                ->where('tagihan.status', 'lunas')
+                                ->sum('transaksi.uang_bayar');
+
+        return view('kasir.dashboard', compact(
+            'totalKelas',
+            'pesertaAktif',
+            'tagihanBelumDibayar',
+            'recentTagihan',
+            'recentTransaksi',
+            'pemasukanBulanIni',
+        ));
     }
 }

@@ -9,17 +9,10 @@ class Kelas extends Model
     protected $table = 'kelas';
 
     protected $fillable = [
-        'user_id',
         'nama_kelas',
         'harga_kelas',
         'hari_kelas',
     ];
-
-    // Relasi ke User (admin pembuat)
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
 
     // Relasi Many-to-Many ke Peserta
 

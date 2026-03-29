@@ -2,7 +2,6 @@
 
 @section('content')
 
-    {{-- Page Title --}}
     <div class="mb-6 flex items-center justify-between">
         <div>
             <h1 class="text-xl font-bold text-gray-800">Data Kelas</h1>
@@ -14,7 +13,7 @@
         </a>
     </div>
 
-    {{-- Search --}}
+    {{-- Search & Filter --}}
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 mb-5 flex flex-col sm:flex-row gap-3">
         <div class="relative flex-1">
             <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
@@ -50,14 +49,13 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
-                    @forelse($kelas ?? [] as $index => $k)
+                    @forelse($kelas as $index => $k)
                         <tr class="hover:bg-gray-50 transition kelas-row"
                             data-nama="{{ strtolower($k->nama_kelas) }}"
                             data-hari="{{ strtolower($k->hari_kelas) }}">
 
-                            <td class="px-5 py-4 text-gray-400 font-medium text-xs">{{ $index + 1 }}</td>
+                            <td class="px-5 py-4 text-gray-400 font-medium text-xs">{{ $kelas->firstItem() + $index }}</td>
 
-                            {{-- Nama Kelas --}}
                             <td class="px-5 py-4">
                                 <div class="flex items-center gap-3">
                                     <div class="w-9 h-9 rounded-xl bg-primary-50 flex items-center justify-center flex-shrink-0 border border-primary-100">
@@ -67,7 +65,6 @@
                                 </div>
                             </td>
 
-                            {{-- Hari --}}
                             <td class="px-5 py-4">
                                 @php
                                     $hariList = collect(explode(',', $k->hari_kelas))->map(fn($h) => trim($h));
@@ -90,15 +87,11 @@
                                 </div>
                             </td>
 
-                            {{-- Harga --}}
                             <td class="px-5 py-4">
-                                <span class="font-semibold text-gray-800">
-                                    Rp {{ number_format($k->harga_kelas, 0, ',', '.') }}
-                                </span>
+                                <span class="font-semibold text-gray-800">Rp {{ number_format($k->harga_kelas, 0, ',', '.') }}</span>
                                 <span class="text-xs text-gray-400">/bulan</span>
                             </td>
 
-                            {{-- Jumlah Peserta --}}
                             <td class="px-5 py-4">
                                 <div class="flex items-center gap-2">
                                     <span class="font-semibold text-gray-800">{{ $k->jumlah_peserta ?? 0 }}</span>
@@ -106,19 +99,17 @@
                                 </div>
                             </td>
 
-                            {{-- Dibuat --}}
                             <td class="px-5 py-4 text-gray-400 text-xs">
                                 {{ \Carbon\Carbon::parse($k->created_at)->format('d M Y') }}
                             </td>
 
-                            {{-- Aksi --}}
                             <td class="px-5 py-4">
                                 <div class="flex items-center justify-center gap-1.5">
                                     <a href="{{ url('/admin/kelas/' . $k->id . '/edit') }}" title="Edit"
                                         class="w-8 h-8 flex items-center justify-center rounded-lg bg-yellow-50 hover:bg-yellow-100 text-yellow-600 transition">
                                         <i class="fa-solid fa-pen text-xs"></i>
                                     </a>
-                                    <button onclick="confirmDelete({{ $k->id }}, '{{ $k->nama_kelas }}')" title="Hapus"
+                                    <button onclick="confirmDelete({{ $k->id }}, '{{ addslashes($k->nama_kelas) }}')" title="Hapus"
                                         class="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 hover:bg-red-100 text-red-500 transition">
                                         <i class="fa-solid fa-trash text-xs"></i>
                                     </button>
@@ -138,18 +129,80 @@
             </table>
         </div>
 
-        @if(isset($kelas) && method_exists($kelas, 'hasPages') && $kelas->hasPages())
-            <div class="px-5 py-4 border-t border-gray-100 flex items-center justify-between text-sm text-gray-500">
-                <span>Menampilkan {{ $kelas->firstItem() }}–{{ $kelas->lastItem() }} dari {{ $kelas->total() }} kelas</span>
-                <div>{{ $kelas->links() }}</div>
+        {{-- ===== PAGINATION ===== --}}
+        @if($kelas->total() > 0)
+        <div class="px-5 py-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-500">
+
+            {{-- Kiri: info + per page --}}
+            <div class="flex items-center gap-2">
+                <span>Menampilkan {{ $kelas->firstItem() }}–{{ $kelas->lastItem() }} dari {{ $kelas->total() }} kelas. Tampilkan</span>
+                <select onchange="changePerPage(this.value)"
+                    class="border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white">
+                    @foreach([5, 10, 25, 50] as $opt)
+                        <option value="{{ $opt }}" {{ $perPage == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                    @endforeach
+                </select>
+                <span>data</span>
             </div>
+
+            {{-- Kanan: navigasi halaman --}}
+            <div class="flex items-center gap-1">
+                @if($kelas->onFirstPage())
+                    <span class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 cursor-not-allowed text-xs">«</span>
+                    <span class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 cursor-not-allowed text-xs">‹</span>
+                @else
+                    <a href="{{ $kelas->url(1) }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500 transition text-xs">«</a>
+                    <a href="{{ $kelas->previousPageUrl() }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500 transition text-xs">‹</a>
+                @endif
+
+                @php
+                    $current = $kelas->currentPage();
+                    $last    = $kelas->lastPage();
+                    $start   = max(1, $current - 1);
+                    $end     = min($last, $current + 1);
+                @endphp
+
+                @if($start > 1)
+                    <a href="{{ $kelas->url(1) }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition text-xs">1</a>
+                    @if($start > 2)<span class="w-8 h-8 flex items-center justify-center text-gray-400 text-xs">…</span>@endif
+                @endif
+
+                @for($page = $start; $page <= $end; $page++)
+                    @if($page == $current)
+                        <span class="w-8 h-8 flex items-center justify-center rounded-lg bg-primary-700 text-white font-semibold text-xs">{{ $page }}</span>
+                    @else
+                        <a href="{{ $kelas->url($page) }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition text-xs">{{ $page }}</a>
+                    @endif
+                @endfor
+
+                @if($end < $last)
+                    @if($end < $last - 1)<span class="w-8 h-8 flex items-center justify-center text-gray-400 text-xs">…</span>@endif
+                    <a href="{{ $kelas->url($last) }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition text-xs">{{ $last }}</a>
+                @endif
+
+                @if($kelas->hasMorePages())
+                    <a href="{{ $kelas->nextPageUrl() }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500 transition text-xs">›</a>
+                    <a href="{{ $kelas->url($kelas->lastPage()) }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500 transition text-xs">»</a>
+                @else
+                    <span class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 cursor-not-allowed text-xs">›</span>
+                    <span class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 cursor-not-allowed text-xs">»</span>
+                @endif
+            </div>
+
+        </div>
         @endif
     </div>
 
-    {{-- Hidden form delete --}}
     <form id="formDelete" method="POST" class="hidden">@csrf @method('DELETE')</form>
 
     <script>
+        function changePerPage(val) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('per_page', val);
+            url.searchParams.set('page', 1);
+            window.location.href = url.toString();
+        }
+
         function filterTable() {
             const search = document.getElementById('searchInput').value.toLowerCase();
             const hari   = document.getElementById('filterHari').value.toLowerCase();

@@ -65,16 +65,16 @@
                 <tbody class="divide-y divide-gray-100">
                     @forelse($logs ?? [] as $index => $log)
                         @php
-                            $aktifitas = strtolower($log->aktifitas ?? '');
-                            $isLogin   = str_contains($aktifitas, 'login');
-                            $isLogout  = str_contains($aktifitas, 'logout');
-                            $isBayar   = str_contains($aktifitas, 'bayar') || str_contains($aktifitas, 'transaksi');
-                            $isTambah  = str_contains($aktifitas, 'tambah') || str_contains($aktifitas, 'buat') || str_contains($aktifitas, 'create');
-                            $isEdit    = str_contains($aktifitas, 'edit') || str_contains($aktifitas, 'update') || str_contains($aktifitas, 'ubah');
-                            $isHapus   = str_contains($aktifitas, 'hapus') || str_contains($aktifitas, 'delete');
+                            $aktivitas = strtolower($log->aktivitas ?? '');
+                            $isLogin   = str_contains($aktivitas, 'login');
+                            $isLogout  = str_contains($aktivitas, 'logout');
+                            $isBayar   = str_contains($aktivitas, 'bayar') || str_contains($aktivitas, 'transaksi');
+                            $isTambah  = str_contains($aktivitas, 'tambah') || str_contains($aktivitas, 'buat') || str_contains($aktivitas, 'create');
+                            $isEdit    = str_contains($aktivitas, 'edit') || str_contains($aktivitas, 'update') || str_contains($aktivitas, 'ubah');
+                            $isHapus   = str_contains($aktivitas, 'hapus') || str_contains($aktivitas, 'delete');
                         @endphp
                         <tr class="hover:bg-gray-50 transition log-row"
-                            data-aktifitas="{{ strtolower($log->aktifitas ?? '') }}"
+                            data-aktivitas="{{ strtolower($log->aktivitas ?? '') }}"
                             data-tanggal="{{ \Carbon\Carbon::parse($log->created_at)->format('Y-m-d') }}">
 
                             <td class="px-5 py-4 text-gray-400 font-medium text-xs">{{ $index + 1 }}</td>
@@ -87,7 +87,7 @@
                                             <i class="fa-solid fa-right-to-bracket text-green-600 text-xs"></i>
                                         </div>
                                         <div>
-                                            <p class="font-medium text-gray-800">{{ $log->aktifitas }}</p>
+                                            <p class="font-medium text-gray-800">{{ $log->aktivitas }}</p>
                                             <span class="text-xs text-green-600 font-semibold bg-green-50 px-2 py-0.5 rounded-full border border-green-100">Login</span>
                                         </div>
                                     @elseif($isLogout)
@@ -95,7 +95,7 @@
                                             <i class="fa-solid fa-right-from-bracket text-gray-500 text-xs"></i>
                                         </div>
                                         <div>
-                                            <p class="font-medium text-gray-800">{{ $log->aktifitas }}</p>
+                                            <p class="font-medium text-gray-800">{{ $log->aktivitas }}</p>
                                             <span class="text-xs text-gray-500 font-semibold bg-gray-100 px-2 py-0.5 rounded-full border border-gray-200">Logout</span>
                                         </div>
                                     @elseif($isBayar)
@@ -103,7 +103,7 @@
                                             <i class="fa-solid fa-money-bill-wave text-blue-600 text-xs"></i>
                                         </div>
                                         <div>
-                                            <p class="font-medium text-gray-800">{{ $log->aktifitas }}</p>
+                                            <p class="font-medium text-gray-800">{{ $log->aktivitas }}</p>
                                             <span class="text-xs text-blue-600 font-semibold bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100">Pembayaran</span>
                                         </div>
                                     @elseif($isTambah)
@@ -111,7 +111,7 @@
                                             <i class="fa-solid fa-plus text-primary-600 text-xs"></i>
                                         </div>
                                         <div>
-                                            <p class="font-medium text-gray-800">{{ $log->aktifitas }}</p>
+                                            <p class="font-medium text-gray-800">{{ $log->aktivitas }}</p>
                                             <span class="text-xs text-primary-600 font-semibold bg-primary-50 px-2 py-0.5 rounded-full border border-primary-100">Tambah Data</span>
                                         </div>
                                     @elseif($isEdit)
@@ -119,7 +119,7 @@
                                             <i class="fa-solid fa-pen text-yellow-600 text-xs"></i>
                                         </div>
                                         <div>
-                                            <p class="font-medium text-gray-800">{{ $log->aktifitas }}</p>
+                                            <p class="font-medium text-gray-800">{{ $log->aktivitas }}</p>
                                             <span class="text-xs text-yellow-600 font-semibold bg-yellow-50 px-2 py-0.5 rounded-full border border-yellow-100">Edit Data</span>
                                         </div>
                                     @elseif($isHapus)
@@ -127,7 +127,7 @@
                                             <i class="fa-solid fa-trash text-red-500 text-xs"></i>
                                         </div>
                                         <div>
-                                            <p class="font-medium text-gray-800">{{ $log->aktifitas }}</p>
+                                            <p class="font-medium text-gray-800">{{ $log->aktivitas }}</p>
                                             <span class="text-xs text-red-500 font-semibold bg-red-50 px-2 py-0.5 rounded-full border border-red-100">Hapus Data</span>
                                         </div>
                                     @else
@@ -135,7 +135,7 @@
                                             <i class="fa-solid fa-circle-info text-gray-400 text-xs"></i>
                                         </div>
                                         <div>
-                                            <p class="font-medium text-gray-800">{{ $log->aktifitas }}</p>
+                                            <p class="font-medium text-gray-800">{{ $log->aktivitas }}</p>
                                             <span class="text-xs text-gray-400 font-semibold bg-gray-50 px-2 py-0.5 rounded-full border border-gray-200">Aktivitas</span>
                                         </div>
                                     @endif
@@ -183,7 +183,7 @@
             const tanggal = document.getElementById('filterTanggal').value;
 
             document.querySelectorAll('.log-row').forEach(row => {
-                const matchSearch = row.dataset.aktifitas.includes(search);
+                const matchSearch = row.dataset.aktivitas.includes(search);
                 let matchTanggal  = true;
                 if (tanggal === 'hari ini')   matchTanggal = row.dataset.tanggal === today;
                 if (tanggal === 'kemarin')    matchTanggal = row.dataset.tanggal === yesterday;

@@ -16,7 +16,8 @@ return new class extends Migration
         $table->foreignId('tagihan_id')->constrained('tagihan')->onDelete('cascade');
         $table->string('nomor_unik')->unique();
         $table->decimal('uang_bayar', 10, 2);
-        $table->decimal('uang_kembalian', 10, 2)->default(0);
+        $table->decimal('uang_kembalian', 10, 2)->default(0); 
+        $table->string('user_id')->nullable();
         $table->timestamps();
         });
     }

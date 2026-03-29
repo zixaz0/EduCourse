@@ -33,7 +33,7 @@
         ::-webkit-scrollbar-thumb { background: #3373be; border-radius: 10px; }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex">
+<body class="bg-gray-100 min-h-screen flex overflow-x-hidden">
 
     <aside class="w-56 min-h-screen bg-primary-700 flex flex-col fixed top-0 left-0 z-30 shadow-xl">
         <div class="flex items-center gap-3 px-5 py-5 border-b border-primary-600">
@@ -85,7 +85,7 @@
         </div>
     </aside>
 
-    <div class="ml-56 flex-1 flex flex-col min-h-screen">
+    <div class="ml-56 flex-1 flex flex-col min-h-screen min-w-0 w-0">
         <header class="bg-primary-600 text-white px-6 py-3 flex items-center justify-between shadow-md sticky top-0 z-20">
             <div class="flex items-center gap-4 text-sm font-medium">
                 <div class="flex items-center gap-2">
@@ -111,7 +111,7 @@
             </div>
         </header>
 
-        <main class="flex-1 p-6 bg-gray-50">
+        <main class="flex-1 p-6 bg-gray-50 min-w-0">
             @yield('content')
         </main>
     </div>

@@ -9,14 +9,15 @@ class Peserta extends Model
     protected $table = 'peserta';
 
     protected $fillable = [
-        'nama',
-        'email',
-        'kelas',
-        'no_hp',
-        'nama_orangtua',
-        'no_orangtua',
-        'status',
-    ];
+    'nama',
+    'no_hp', 
+    'email', 
+    'jenis_kelamin',
+    'kelas_akademik', 
+    'nama_ortu', 
+    'no_ortu', 
+    'status',
+];
 
     protected $casts = [
         'status' => 'string',

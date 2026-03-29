@@ -103,7 +103,7 @@
             <a href="{{ url('/kasir/log') }}"
                 class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium">
                 <i class="fa-solid fa-clock w-5 text-center"></i>
-                <span>Log Aktifitas</span>
+                <span>Log Aktivitas</span>
             </a>
 
         </nav>
@@ -111,7 +111,7 @@
             <form id="logoutForm" method="POST" action="{{ route('logout') }}">
                 @csrf
             </form>
-            <button onclick="confirmLogout(event)"
+            <button type="button" onclick="confirmLogout(event)"
                 class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium">
                 <i class="fa-solid fa-right-from-bracket w-5 text-center"></i>
                 <span>Logout</span>

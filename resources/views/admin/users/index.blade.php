@@ -2,7 +2,6 @@
 
 @section('content')
 
-    {{-- Page Title --}}
     <div class="mb-6 flex items-center justify-between">
         <div>
             <h1 class="text-xl font-bold text-gray-800">Manajemen User</h1>
@@ -52,7 +51,7 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
-                    @forelse($users ?? [] as $index => $user)
+                    @forelse($users as $index => $user)
                         <tr class="hover:bg-gray-50 transition user-row"
                             data-username="{{ strtolower($user->username) }}"
                             data-nama="{{ strtolower($user->nama ?? '') }}"
@@ -60,9 +59,8 @@
                             data-role="{{ $user->role }}"
                             data-status="{{ $user->status }}">
 
-                            <td class="px-5 py-4 text-gray-400 font-medium text-xs">{{ $index + 1 }}</td>
+                            <td class="px-5 py-4 text-gray-400 font-medium text-xs">{{ $users->firstItem() + $index }}</td>
 
-                            {{-- User --}}
                             <td class="px-5 py-4">
                                 <div class="flex items-center gap-3">
                                     <div class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0
@@ -79,13 +77,9 @@
                                 </div>
                             </td>
 
-                            {{-- Nama --}}
                             <td class="px-5 py-4 text-gray-700 font-medium">{{ $user->nama ?? '—' }}</td>
-
-                            {{-- Email --}}
                             <td class="px-5 py-4 text-gray-600">{{ $user->email }}</td>
 
-                            {{-- Role --}}
                             <td class="px-5 py-4">
                                 @if($user->role === 'admin')
                                     <span class="inline-flex items-center gap-1.5 bg-purple-50 text-purple-700 text-xs font-semibold px-3 py-1 rounded-full border border-purple-100">
@@ -98,7 +92,6 @@
                                 @endif
                             </td>
 
-                            {{-- Status --}}
                             <td class="px-5 py-4">
                                 @if($user->status === 'aktif')
                                     <span class="inline-flex items-center gap-1.5 bg-green-50 text-green-700 text-xs font-semibold px-3 py-1 rounded-full border border-green-100">
@@ -111,16 +104,13 @@
                                 @endif
                             </td>
 
-                            {{-- Dibuat --}}
                             <td class="px-5 py-4 text-gray-400 text-xs">
                                 {{ \Carbon\Carbon::parse($user->created_at)->format('d M Y') }}
                             </td>
 
-                            {{-- Aksi --}}
                             <td class="px-5 py-4">
                                 <div class="flex items-center justify-center gap-1.5">
-                                    <a href="{{ url('/admin/user/' . $user->id . '/edit') }}"
-                                        title="Edit"
+                                    <a href="{{ url('/admin/user/' . $user->id . '/edit') }}" title="Edit"
                                         class="w-8 h-8 flex items-center justify-center rounded-lg bg-yellow-50 hover:bg-yellow-100 text-yellow-600 transition">
                                         <i class="fa-solid fa-pen text-xs"></i>
                                     </a>
@@ -151,15 +141,77 @@
                 </tbody>
             </table>
         </div>
-        @if(isset($users) && method_exists($users, 'hasPages') && $users->hasPages())
-            <div class="px-5 py-4 border-t border-gray-100 flex items-center justify-between text-sm text-gray-500">
-                <span>Menampilkan {{ $users->firstItem() }}–{{ $users->lastItem() }} dari {{ $users->total() }} user</span>
-                <div>{{ $users->links() }}</div>
+
+        {{-- ===== PAGINATION ===== --}}
+        @if($users->total() > 0)
+        <div class="px-5 py-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-500">
+
+            <div class="flex items-center gap-2">
+                <span>Menampilkan {{ $users->firstItem() }}–{{ $users->lastItem() }} dari {{ $users->total() }} user. Tampilkan</span>
+                <select onchange="changePerPage(this.value)"
+                    class="border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white">
+                    @foreach([5, 10, 25, 50] as $opt)
+                        <option value="{{ $opt }}" {{ $perPage == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                    @endforeach
+                </select>
+                <span>data</span>
             </div>
+
+            <div class="flex items-center gap-1">
+                @if($users->onFirstPage())
+                    <span class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 cursor-not-allowed text-xs">«</span>
+                    <span class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 cursor-not-allowed text-xs">‹</span>
+                @else
+                    <a href="{{ $users->url(1) }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500 transition text-xs">«</a>
+                    <a href="{{ $users->previousPageUrl() }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500 transition text-xs">‹</a>
+                @endif
+
+                @php
+                    $current = $users->currentPage();
+                    $last    = $users->lastPage();
+                    $start   = max(1, $current - 1);
+                    $end     = min($last, $current + 1);
+                @endphp
+
+                @if($start > 1)
+                    <a href="{{ $users->url(1) }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition text-xs">1</a>
+                    @if($start > 2)<span class="w-8 h-8 flex items-center justify-center text-gray-400 text-xs">…</span>@endif
+                @endif
+
+                @for($page = $start; $page <= $end; $page++)
+                    @if($page == $current)
+                        <span class="w-8 h-8 flex items-center justify-center rounded-lg bg-primary-700 text-white font-semibold text-xs">{{ $page }}</span>
+                    @else
+                        <a href="{{ $users->url($page) }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition text-xs">{{ $page }}</a>
+                    @endif
+                @endfor
+
+                @if($end < $last)
+                    @if($end < $last - 1)<span class="w-8 h-8 flex items-center justify-center text-gray-400 text-xs">…</span>@endif
+                    <a href="{{ $users->url($last) }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition text-xs">{{ $last }}</a>
+                @endif
+
+                @if($users->hasMorePages())
+                    <a href="{{ $users->nextPageUrl() }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500 transition text-xs">›</a>
+                    <a href="{{ $users->url($users->lastPage()) }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500 transition text-xs">»</a>
+                @else
+                    <span class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 cursor-not-allowed text-xs">›</span>
+                    <span class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 cursor-not-allowed text-xs">»</span>
+                @endif
+            </div>
+
+        </div>
         @endif
     </div>
 
     <script>
+        function changePerPage(val) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('per_page', val);
+            url.searchParams.set('page', 1);
+            window.location.href = url.toString();
+        }
+
         function filterTable() {
             const search = document.getElementById('searchInput').value.toLowerCase();
             const role   = document.getElementById('filterRole').value;

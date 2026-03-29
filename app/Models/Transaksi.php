@@ -13,7 +13,7 @@ class Transaksi extends Model
         'peserta_id',
         'nomor_unik',
         'uang_bayar',
-        'uang_kembali',
+        'uang_kembalian',
         'user_id',
     ];
 
