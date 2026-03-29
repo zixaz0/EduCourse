@@ -18,7 +18,8 @@ use App\Http\Controllers\Kasir\KasirRiwayatController;
 use App\Http\Controllers\Kasir\KasirLogController;      
 
 // Auth
-Route::get('/', fn() => redirect()->route('login'));
+Route::get('/', function () {return 'HIDUP BRO';});
+// Route::get('/', fn() => redirect()->route('login'));
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
