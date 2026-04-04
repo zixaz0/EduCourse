@@ -3,7 +3,7 @@
 @section('content')
 
     <div class="mb-6">
-        <a href="{{ url('/admin/kelas') }}"
+        <a href="{{ route('admin.kelas.index') }}"
             class="inline-flex items-center gap-2 text-sm text-primary-700 hover:text-primary-900 font-medium transition">
             <i class="fa-solid fa-arrow-left text-xs"></i> Kembali ke Data Kelas
         </a>
@@ -11,12 +11,11 @@
         <p class="text-sm text-gray-500 mt-0.5">Buat kelas kursus baru</p>
     </div>
 
-    <form method="POST" action="{{ url('/admin/kelas') }}">
+    <form method="POST" action="{{ route('admin.kelas.store') }}">
         @csrf
-
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-            {{-- ===== KIRI: Form Input ===== --}}
+            {{-- KIRI: Form --}}
             <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
                 <div class="px-6 py-4 bg-primary-700 flex items-center gap-3">
                     <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
@@ -32,32 +31,64 @@
 
                     {{-- Nama Kelas --}}
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1.5">
-                            Nama Kelas <span class="text-red-500">*</span>
-                        </label>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1.5">Nama Kelas <span class="text-red-500">*</span></label>
                         <input type="text" name="nama_kelas" value="{{ old('nama_kelas') }}"
-                            placeholder="contoh: Python Dasar"
+                            placeholder="contoh: Piano Dasar" id="inp_nama"
                             class="w-full text-sm border @error('nama_kelas') border-red-400 @else border-gray-200 @enderror rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-300 transition">
                         @error('nama_kelas')
                             <p class="text-xs text-red-500 mt-1"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
                         @enderror
                     </div>
 
-                    {{-- Harga Kelas --}}
+                    {{-- Guru --}}
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1.5">
-                            Harga Kelas <span class="text-red-500">*</span>
-                            <span class="text-gray-400 font-normal">(per bulan)</span>
-                        </label>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1.5">Guru Pengajar <span class="text-red-500">*</span></label>
+                        <select name="guru_id" id="inp_guru"
+                            class="w-full text-sm border @error('guru_id') border-red-400 @else border-gray-200 @enderror rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white transition">
+                            <option value="">-- Pilih Guru --</option>
+                            @foreach($guruList as $guru)
+                                <option value="{{ $guru->id }}" {{ old('guru_id') == $guru->id ? 'selected' : '' }}>
+                                    {{ $guru->nama }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('guru_id')
+                            <p class="text-xs text-red-500 mt-1"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Harga --}}
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1.5">Harga Kelas <span class="text-red-500">*</span> <span class="text-gray-400 font-normal">(per bulan)</span></label>
                         <div class="relative">
                             <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-medium">Rp</span>
                             <input type="number" name="harga_kelas" value="{{ old('harga_kelas') }}"
-                                placeholder="0" min="0" step="1000"
+                                placeholder="0" min="0" step="1000" id="inp_harga"
                                 class="w-full text-sm border @error('harga_kelas') border-red-400 @else border-gray-200 @enderror rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-300 transition">
                         </div>
                         @error('harga_kelas')
                             <p class="text-xs text-red-500 mt-1"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
                         @enderror
+                    </div>
+
+                    {{-- Jam --}}
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1.5">Jam Mulai <span class="text-red-500">*</span></label>
+                            <input type="time" name="jam_mulai" value="{{ old('jam_mulai') }}" id="inp_jam_mulai"
+                                class="w-full text-sm border @error('jam_mulai') border-red-400 @else border-gray-200 @enderror rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-300 transition">
+                            @error('jam_mulai')
+                                <p class="text-xs text-red-500 mt-1"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1.5">Jam Selesai <span class="text-red-500">*</span></label>
+                            <input type="time" name="jam_selesai" value="{{ old('jam_selesai') }}" id="inp_jam_selesai"
+                                class="w-full text-sm border @error('jam_selesai') border-red-400 @else border-gray-200 @enderror rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-300 transition">
+                            @error('jam_selesai')
+                                <p class="text-xs text-red-500 mt-1"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
+                            @enderror
+                        </div>
                     </div>
 
                     {{-- Hari Kelas --}}
@@ -83,7 +114,7 @@
                             @foreach($hariOptions as $hari)
                                 <label class="cursor-pointer">
                                     <input type="checkbox" name="hari_kelas[]" value="{{ $hari }}"
-                                        class="peer hidden"
+                                        class="peer hidden hari-cb"
                                         {{ in_array($hari, $oldHari) ? 'checked' : '' }}>
                                     <span class="inline-block text-xs font-semibold px-5 py-2.5 rounded-xl border-2 border-gray-200 text-gray-500 bg-white
                                         transition-all peer-checked:text-white {{ $hariColor[$hari] }}">
@@ -97,10 +128,17 @@
                         @enderror
                     </div>
 
+                    {{-- Deskripsi --}}
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1.5">Deskripsi <span class="text-gray-400 font-normal">(opsional)</span></label>
+                        <textarea name="deskripsi" rows="3" placeholder="Deskripsi singkat tentang kelas ini..."
+                            class="w-full text-sm border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-300 transition resize-none">{{ old('deskripsi') }}</textarea>
+                    </div>
+
                 </div>
             </div>
 
-            {{-- ===== KANAN: Preview + Aksi ===== --}}
+            {{-- KANAN: Preview + Aksi --}}
             <div class="space-y-4">
 
                 {{-- Preview Card --}}
@@ -117,7 +155,11 @@
                         </div>
                         <div class="text-center">
                             <p id="prev_nama" class="font-bold text-gray-800 text-base">—</p>
+                            <p id="prev_guru" class="text-xs text-gray-400 mt-0.5">—</p>
                             <p id="prev_harga" class="text-sm text-primary-700 font-semibold mt-1">Rp 0 / bulan</p>
+                        </div>
+                        <div class="flex justify-center gap-2 text-xs text-gray-500">
+                            <span><i class="fa-solid fa-clock mr-1 text-gray-400"></i><span id="prev_jam">—</span></span>
                         </div>
                         <div>
                             <p class="text-xs text-gray-400 font-medium mb-2 text-center">Hari Kelas</p>
@@ -128,13 +170,13 @@
                     </div>
                 </div>
 
-                {{-- Tombol Aksi --}}
+                {{-- Tombol --}}
                 <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 space-y-3">
                     <button type="submit"
                         class="w-full px-5 py-2.5 text-sm font-medium text-white bg-primary-700 hover:bg-primary-800 rounded-xl shadow transition flex items-center justify-center gap-2">
                         <i class="fa-solid fa-save"></i> Simpan Kelas
                     </button>
-                    <a href="{{ url('/admin/kelas') }}"
+                    <a href="{{ route('admin.kelas.index') }}"
                         class="w-full px-5 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition flex items-center justify-center gap-2">
                         <i class="fa-solid fa-xmark"></i> Batal
                     </a>
@@ -146,8 +188,7 @@
                         <i class="fa-solid fa-circle-info text-blue-500 mt-0.5 flex-shrink-0"></i>
                         <div class="text-xs text-blue-700 space-y-1">
                             <p class="font-semibold">Catatan:</p>
-                            <p>Harga kelas akan digunakan sebagai dasar perhitungan tagihan peserta tiap bulan.</p>
-                            <p class="mt-1">Hari kelas bisa dipilih lebih dari satu sesuai jadwal.</p>
+                            <p>Jadwal kelas tidak boleh bentrok di hari yang sama. Hari berbeda boleh jam sama.</p>
                         </div>
                     </div>
                 </div>
@@ -157,20 +198,6 @@
     </form>
 
     <script>
-        // Live Preview
-        document.querySelector('[name="nama_kelas"]').addEventListener('input', function () {
-            document.getElementById('prev_nama').textContent = this.value || '—';
-        });
-
-        document.querySelector('[name="harga_kelas"]').addEventListener('input', function () {
-            const val = parseInt(this.value) || 0;
-            document.getElementById('prev_harga').textContent = 'Rp ' + val.toLocaleString('id-ID') + ' / bulan';
-        });
-
-        document.querySelectorAll('[name="hari_kelas[]"]').forEach(cb => {
-            cb.addEventListener('change', updateHariPreview);
-        });
-
         const hariColors = {
             'Senin': 'bg-blue-100 text-blue-700', 'Selasa': 'bg-purple-100 text-purple-700',
             'Rabu': 'bg-green-100 text-green-700', 'Kamis': 'bg-yellow-100 text-yellow-700',
@@ -178,13 +205,38 @@
             'Minggu': 'bg-red-100 text-red-700',
         };
 
-        function updateHariPreview() {
-            const checked = [...document.querySelectorAll('[name="hari_kelas[]"]:checked')].map(c => c.value);
-            const el = document.getElementById('prev_hari');
-            el.innerHTML = checked.length
-                ? checked.map(h => `<span class="text-xs font-semibold px-2.5 py-1 rounded-full ${hariColors[h] || 'bg-gray-100 text-gray-600'}">${h}</span>`).join('')
-                : '<span class="text-xs text-gray-300">Belum dipilih</span>';
+        document.getElementById('inp_nama').addEventListener('input', function () {
+            document.getElementById('prev_nama').textContent = this.value || '—';
+        });
+
+        document.getElementById('inp_harga').addEventListener('input', function () {
+            const val = parseInt(this.value) || 0;
+            document.getElementById('prev_harga').textContent = 'Rp ' + val.toLocaleString('id-ID') + ' / bulan';
+        });
+
+        document.getElementById('inp_guru').addEventListener('change', function () {
+            const text = this.options[this.selectedIndex].text;
+            document.getElementById('prev_guru').textContent = this.value ? text : '—';
+        });
+
+        function updateJamPreview() {
+            const mulai   = document.getElementById('inp_jam_mulai').value;
+            const selesai = document.getElementById('inp_jam_selesai').value;
+            document.getElementById('prev_jam').textContent = (mulai && selesai) ? mulai + ' – ' + selesai : '—';
         }
+
+        document.getElementById('inp_jam_mulai').addEventListener('change', updateJamPreview);
+        document.getElementById('inp_jam_selesai').addEventListener('change', updateJamPreview);
+
+        document.querySelectorAll('.hari-cb').forEach(cb => {
+            cb.addEventListener('change', function () {
+                const checked = [...document.querySelectorAll('.hari-cb:checked')].map(c => c.value);
+                const el = document.getElementById('prev_hari');
+                el.innerHTML = checked.length
+                    ? checked.map(h => `<span class="text-xs font-semibold px-2.5 py-1 rounded-full ${hariColors[h] || 'bg-gray-100 text-gray-600'}">${h}</span>`).join('')
+                    : '<span class="text-xs text-gray-300">Belum dipilih</span>';
+            });
+        });
     </script>
 
 @endsection

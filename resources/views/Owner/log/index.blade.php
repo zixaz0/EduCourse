@@ -1,7 +1,6 @@
 @extends('Layout.owner')
 
 @section('content')
-
     <div class="mb-6">
         <h1 class="text-xl font-bold text-gray-800">Riwayat Aktivitas User</h1>
         <p class="text-sm text-gray-500 mt-0.5">Log aktivitas semua user — admin & kasir</p>
@@ -36,7 +35,7 @@
             <div>
                 <p class="text-xs text-gray-400 font-medium">User Aktif Hari Ini</p>
                 <p class="text-2xl font-bold text-gray-800">
-                    {{ collect($logs ?? [])->filter(fn($l) => \Carbon\Carbon::parse($l->created_at)->isToday())->pluck('id_user')->unique()->count() }}
+                    {{ collect($logs ?? [])->filter(fn($l) => \Carbon\Carbon::parse($l->created_at)->isToday())->pluck('user_id')->unique()->count() }}
                 </p>
             </div>
         </div>
@@ -64,14 +63,9 @@
             <option value="admin">Admin</option>
             <option value="kasir">Kasir</option>
         </select>
-        {{-- Filter Waktu --}}
-        <select id="filterWaktu" onchange="filterTable()"
-            class="text-sm border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white text-gray-600">
-            <option value="">Semua Waktu</option>
-            <option value="today">Hari Ini</option>
-            <option value="yesterday">Kemarin</option>
-            <option value="week">Minggu Ini</option>
-        </select>
+        {{-- Filter Tanggal --}}
+        <input type="date" id="filterWaktu" onchange="filterTable()"
+            class="text-sm border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white text-gray-600" />
     </div>
 
     {{-- Table --}}
@@ -90,18 +84,52 @@
                 <tbody class="divide-y divide-gray-100">
                     @forelse($logs ?? [] as $index => $log)
                         @php
-                            $act = strtolower($log->aktifitas);
-                            if (str_contains($act, 'login'))       { $icon = 'fa-right-to-bracket'; $color = 'bg-green-100 text-green-600';  $badge = 'bg-green-50 text-green-700 border-green-100';  $label = 'Login'; }
-                            elseif (str_contains($act, 'logout'))  { $icon = 'fa-right-from-bracket'; $color = 'bg-gray-100 text-gray-500';  $badge = 'bg-gray-50 text-gray-500 border-gray-200';    $label = 'Logout'; }
-                            elseif (str_contains($act, 'bayar') || str_contains($act, 'transaksi')) { $icon = 'fa-money-bill'; $color = 'bg-blue-100 text-blue-600'; $badge = 'bg-blue-50 text-blue-700 border-blue-100'; $label = 'Transaksi'; }
-                            elseif (str_contains($act, 'tambah') || str_contains($act, 'baru'))     { $icon = 'fa-plus'; $color = 'bg-primary-100 text-primary-600'; $badge = 'bg-primary-50 text-primary-700 border-primary-100'; $label = 'Tambah'; }
-                            elseif (str_contains($act, 'edit') || str_contains($act, 'ubah'))       { $icon = 'fa-pen'; $color = 'bg-yellow-100 text-yellow-600'; $badge = 'bg-yellow-50 text-yellow-700 border-yellow-100'; $label = 'Edit'; }
-                            elseif (str_contains($act, 'hapus'))   { $icon = 'fa-trash'; $color = 'bg-red-100 text-red-500'; $badge = 'bg-red-50 text-red-600 border-red-100'; $label = 'Hapus'; }
-                            elseif (str_contains($act, 'nonaktif') || str_contains($act, 'aktif'))  { $icon = 'fa-toggle-on'; $color = 'bg-orange-100 text-orange-500'; $badge = 'bg-orange-50 text-orange-600 border-orange-100'; $label = 'Toggle'; }
-                            else { $icon = 'fa-circle-info'; $color = 'bg-gray-100 text-gray-500'; $badge = 'bg-gray-50 text-gray-500 border-gray-200'; $label = 'Lainnya'; }
+                            $act = strtolower($log->aktivitas);
+                            if (str_contains($act, 'login')) {
+                                $icon = 'fa-right-to-bracket';
+                                $color = 'bg-green-100 text-green-600';
+                                $badge = 'bg-green-50 text-green-700 border-green-100';
+                                $label = 'Login';
+                            } elseif (str_contains($act, 'logout')) {
+                                $icon = 'fa-right-from-bracket';
+                                $color = 'bg-gray-100 text-gray-500';
+                                $badge = 'bg-gray-50 text-gray-500 border-gray-200';
+                                $label = 'Logout';
+                            } elseif (str_contains($act, 'bayar') || str_contains($act, 'transaksi')) {
+                                $icon = 'fa-money-bill';
+                                $color = 'bg-blue-100 text-blue-600';
+                                $badge = 'bg-blue-50 text-blue-700 border-blue-100';
+                                $label = 'Transaksi';
+                            } elseif (str_contains($act, 'tambah') || str_contains($act, 'baru')) {
+                                $icon = 'fa-plus';
+                                $color = 'bg-primary-100 text-primary-600';
+                                $badge = 'bg-primary-50 text-primary-700 border-primary-100';
+                                $label = 'Tambah';
+                            } elseif (str_contains($act, 'edit') || str_contains($act, 'ubah')) {
+                                $icon = 'fa-pen';
+                                $color = 'bg-yellow-100 text-yellow-600';
+                                $badge = 'bg-yellow-50 text-yellow-700 border-yellow-100';
+                                $label = 'Edit';
+                            } elseif (str_contains($act, 'hapus')) {
+                                $icon = 'fa-trash';
+                                $color = 'bg-red-100 text-red-500';
+                                $badge = 'bg-red-50 text-red-600 border-red-100';
+                                $label = 'Hapus';
+                            } elseif (str_contains($act, 'nonaktif') || str_contains($act, 'aktif')) {
+                                $icon = 'fa-toggle-on';
+                                $color = 'bg-orange-100 text-orange-500';
+                                $badge = 'bg-orange-50 text-orange-600 border-orange-100';
+                                $label = 'Toggle';
+                            } else {
+                                $icon = 'fa-circle-info';
+                                $color = 'bg-gray-100 text-gray-500';
+                                $badge = 'bg-gray-50 text-gray-500 border-gray-200';
+                                $label = 'Lainnya';
+                            }
                         @endphp
+                        {{-- data-aktivitas (bukan aktifitas) -- harus konsisten dengan JS --}}
                         <tr class="hover:bg-gray-50 transition log-row"
-                            data-aktifitas="{{ strtolower($log->aktifitas) }}"
+                            data-aktivitas="{{ strtolower($log->aktivitas) }}"
                             data-user="{{ strtolower($log->user->username ?? '') }}"
                             data-role="{{ strtolower($log->user->role ?? '') }}"
                             data-tanggal="{{ \Carbon\Carbon::parse($log->created_at)->toDateString() }}">
@@ -143,7 +171,7 @@
                                         <i class="fa-solid {{ $icon }}" style="font-size:10px;"></i>
                                     </div>
                                     <div>
-                                        <p class="text-sm text-gray-700 font-medium">{{ $log->aktifitas }}</p>
+                                        <p class="text-sm text-gray-700 font-medium">{{ $log->aktivitas }}</p>
                                         <span class="text-xs font-semibold px-2 py-0.5 rounded-full border {{ $badge }}">{{ $label }}</span>
                                     </div>
                                 </div>
@@ -173,23 +201,14 @@
             const search = document.getElementById('searchInput').value.toLowerCase();
             const user   = document.getElementById('filterUser').value.toLowerCase();
             const role   = document.getElementById('filterRole').value.toLowerCase();
-            const waktu  = document.getElementById('filterWaktu').value;
-
-            const today     = new Date().toISOString().slice(0, 10);
-            const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-            const weekStart = new Date(Date.now() - 7 * 86400000).toISOString().slice(0, 10);
+            const waktu  = document.getElementById('filterWaktu').value; // format: "2026-03-29" atau ""
 
             document.querySelectorAll('.log-row').forEach(row => {
-                const tgl = row.dataset.tanggal;
-                let matchWaktu = true;
-                if (waktu === 'today')     matchWaktu = tgl === today;
-                if (waktu === 'yesterday') matchWaktu = tgl === yesterday;
-                if (waktu === 'week')      matchWaktu = tgl >= weekStart;
-
-                const ok = (row.dataset.aktifitas.includes(search) || row.dataset.user.includes(search))
-                        && (!user || row.dataset.user.includes(user))
-                        && (!role || row.dataset.role === role)
-                        && matchWaktu;
+                // Pakai dataset.aktivitas (bukan aktifitas) — sesuai data-aktivitas di HTML
+                const ok = (row.dataset.aktivitas.includes(search) || row.dataset.user.includes(search))
+                        && (!user  || row.dataset.user.includes(user))
+                        && (!role  || row.dataset.role === role)
+                        && (!waktu || row.dataset.tanggal === waktu);
                 row.style.display = ok ? '' : 'none';
             });
         }

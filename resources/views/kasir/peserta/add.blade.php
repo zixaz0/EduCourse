@@ -99,13 +99,21 @@
                             </div>
                         </div>
 
-                        {{-- Kelas Akademik --}}
-                        <div class="sm:col-span-2">
-                            <label class="block text-xs font-semibold text-gray-600 mb-1.5">
-                                Kelas <span class="text-red-500">*</span>
+                        {{-- Level --}}
+                        <div class="sm:col-span-2 cursor-pointer">
+                            <label class="block text-xs font-semibold text-gray-600 mb-1.5 cursor-pointer">
+                                Level <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="kelas_akademik" value="{{ old('kelas_akademik') }}" placeholder="Masukan Kelas Akademi"
-                                class="w-full text-sm border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent transition @error('kelas_akademik') border-red-400 @enderror">
+                            <select name="level"
+                                class="cursor-pointer w-full text-sm border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent transition bg-white @error('level') border-red-400 @enderror">
+                                <option value="">-- Pilih Level --</option>
+                                <option value="cukup"  {{ old('level') === 'cukup'  ? 'selected' : '' }}>Cukup</option>
+                                <option value="baik"   {{ old('level') === 'baik'   ? 'selected' : '' }}>Baik</option>
+                                <option value="mahir"  {{ old('level') === 'mahir'  ? 'selected' : '' }}>Mahir</option>
+                            </select>
+                            @error('level')
+                                <p class="text-xs text-red-500 mt-1"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
+                            @enderror
                         </div>
 
                     </div>
@@ -150,7 +158,7 @@
                         <div class="w-1 h-5 bg-primary-700 rounded-full"></div>
                         <h2 class="text-sm font-bold text-gray-700">Kelas Kursus <span class="text-red-500">*</span></h2>
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 cursor-pointer">
                         @forelse($kelasList ?? [] as $kelas)
                             <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:border-primary-300 hover:bg-primary-50 transition group">
                                 <input type="checkbox" name="kelas[]" value="{{ $kelas->id }}"

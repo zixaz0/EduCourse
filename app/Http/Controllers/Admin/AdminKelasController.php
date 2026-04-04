@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Guru;
 use App\Models\Kelas;
 use App\Models\Log;
 use Illuminate\Http\Request;
@@ -14,7 +15,8 @@ class AdminKelasController extends Controller
     {
         $perPage = in_array($request->get('per_page'), [5, 10, 25, 50]) ? (int) $request->get('per_page') : 10;
 
-        $kelas = Kelas::withCount(['peserta' => fn($q) => $q->where('status', 'aktif')])
+        $kelas = Kelas::with('guru')
+                      ->withCount(['peserta' => fn($q) => $q->where('status', 'aktif')])
                       ->latest()
                       ->paginate($perPage)
                       ->withQueryString();
@@ -29,7 +31,8 @@ class AdminKelasController extends Controller
 
     public function add()
     {
-        return view('admin.kelas.add');
+        $guruList = Guru::orderBy('nama')->get();
+        return view('admin.kelas.add', compact('guruList'));
     }
 
     public function store(Request $request)
@@ -39,18 +42,47 @@ class AdminKelasController extends Controller
             'harga_kelas' => 'required|numeric|min:0',
             'hari_kelas'  => 'required|array|min:1',
             'hari_kelas.*'=> 'in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu,Minggu',
+            'jam_mulai'   => 'required|string',
+            'jam_selesai' => 'required|string',
+            'guru_id'     => 'required|exists:guru,id',
+            'deskripsi'   => 'nullable|string',
         ], [
             'nama_kelas.required'  => 'Nama kelas wajib diisi.',
             'nama_kelas.unique'    => 'Nama kelas sudah ada.',
             'harga_kelas.required' => 'Harga kelas wajib diisi.',
             'hari_kelas.required'  => 'Pilih minimal satu hari.',
-            'hari_kelas.min'       => 'Pilih minimal satu hari.',
+            'jam_mulai.required'   => 'Jam mulai wajib diisi.',
+            'jam_selesai.required' => 'Jam selesai wajib diisi.',
+            'guru_id.required'     => 'Guru wajib dipilih.',
         ]);
+
+        // Cek konflik jadwal: hari sama + jam bentrok
+        $hariDipilih  = $validated['hari_kelas'];
+        $jamMulai     = $validated['jam_mulai'];
+        $jamSelesai   = $validated['jam_selesai'];
+
+        $konflik = Kelas::all()->filter(function ($k) use ($hariDipilih, $jamMulai, $jamSelesai) {
+            $hariKelas = collect(explode(',', $k->hari_kelas))->map(fn($h) => trim($h))->toArray();
+            $hariSama  = count(array_intersect($hariDipilih, $hariKelas)) > 0;
+            if (!$hariSama) return false;
+            // jam bentrok kalau overlap
+            return $jamMulai < $k->jam_selesai && $jamSelesai > $k->jam_mulai;
+        });
+
+        if ($konflik->isNotEmpty()) {
+            return back()->withInput()->withErrors([
+                'jam_mulai' => 'Jadwal bentrok dengan kelas "' . $konflik->first()->nama_kelas . '" di hari yang sama.',
+            ]);
+        }
 
         $kelas = Kelas::create([
             'nama_kelas'  => $validated['nama_kelas'],
             'harga_kelas' => $validated['harga_kelas'],
             'hari_kelas'  => implode(', ', $validated['hari_kelas']),
+            'jam_mulai'   => $validated['jam_mulai'],
+            'jam_selesai' => $validated['jam_selesai'],
+            'guru_id'     => $validated['guru_id'],
+            'deskripsi'   => $validated['deskripsi'] ?? null,
         ]);
 
         Log::create([
@@ -66,8 +98,9 @@ class AdminKelasController extends Controller
     {
         $kelas = Kelas::withCount(['peserta' => fn($q) => $q->where('status', 'aktif')])->findOrFail($id);
         $kelas->jumlah_peserta = $kelas->peserta_count;
+        $guruList = Guru::orderBy('nama')->get();
 
-        return view('admin.kelas.edit', compact('kelas'));
+        return view('admin.kelas.edit', compact('kelas', 'guruList'));
     }
 
     public function update(Request $request, $id)
@@ -79,18 +112,38 @@ class AdminKelasController extends Controller
             'harga_kelas' => 'required|numeric|min:0',
             'hari_kelas'  => 'required|array|min:1',
             'hari_kelas.*'=> 'in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu,Minggu',
-        ], [
-            'nama_kelas.required'  => 'Nama kelas wajib diisi.',
-            'nama_kelas.unique'    => 'Nama kelas sudah dipakai.',
-            'harga_kelas.required' => 'Harga kelas wajib diisi.',
-            'hari_kelas.required'  => 'Pilih minimal satu hari.',
-            'hari_kelas.min'       => 'Pilih minimal satu hari.',
+            'jam_mulai'   => 'required|string',
+            'jam_selesai' => 'required|string',
+            'guru_id'     => 'required|exists:guru,id',
+            'deskripsi'   => 'nullable|string',
         ]);
+
+        // Cek konflik jadwal kecuali diri sendiri
+        $hariDipilih = $validated['hari_kelas'];
+        $jamMulai    = $validated['jam_mulai'];
+        $jamSelesai  = $validated['jam_selesai'];
+
+        $konflik = Kelas::where('id', '!=', $id)->get()->filter(function ($k) use ($hariDipilih, $jamMulai, $jamSelesai) {
+            $hariKelas = collect(explode(',', $k->hari_kelas))->map(fn($h) => trim($h))->toArray();
+            $hariSama  = count(array_intersect($hariDipilih, $hariKelas)) > 0;
+            if (!$hariSama) return false;
+            return $jamMulai < $k->jam_selesai && $jamSelesai > $k->jam_mulai;
+        });
+
+        if ($konflik->isNotEmpty()) {
+            return back()->withInput()->withErrors([
+                'jam_mulai' => 'Jadwal bentrok dengan kelas "' . $konflik->first()->nama_kelas . '" di hari yang sama.',
+            ]);
+        }
 
         $kelas->update([
             'nama_kelas'  => $validated['nama_kelas'],
             'harga_kelas' => $validated['harga_kelas'],
             'hari_kelas'  => implode(', ', $validated['hari_kelas']),
+            'jam_mulai'   => $validated['jam_mulai'],
+            'jam_selesai' => $validated['jam_selesai'],
+            'guru_id'     => $validated['guru_id'],
+            'deskripsi'   => $validated['deskripsi'] ?? null,
         ]);
 
         Log::create([

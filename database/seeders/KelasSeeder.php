@@ -3,45 +3,43 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\Kelas;
 
 class KelasSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('kelas')->insert([
+        Kelas::insert([
             [
-                'nama_kelas'  => 'Matematika Dasar',
-                'harga_kelas' => 150000.00,
+                'nama_kelas'  => 'Piano Dasar',
+                'harga_kelas' => 250000,
+                'jam_mulai'   => '08:00',
+                'jam_selesai' => '09:00',
                 'hari_kelas'  => 'Senin',
+                'guru_id'     => 1,
+                'deskripsi'   => 'Kelas piano untuk pemula',
                 'created_at'  => now(),
                 'updated_at'  => now(),
             ],
             [
-                'nama_kelas'  => 'Bahasa Inggris',
-                'harga_kelas' => 175000.00,
-                'hari_kelas'  => 'Selasa',
-                'created_at'  => now(),
-                'updated_at'  => now(),
-            ],
-            [
-                'nama_kelas'  => 'IPA Terpadu',
-                'harga_kelas' => 200000.00,
+                'nama_kelas'  => 'Gitar Intermediate',
+                'harga_kelas' => 300000,
+                'jam_mulai'   => '10:00',
+                'jam_selesai' => '11:30',
                 'hari_kelas'  => 'Rabu',
+                'guru_id'     => 2,
+                'deskripsi'   => 'Kelas gitar tingkat menengah',
                 'created_at'  => now(),
                 'updated_at'  => now(),
             ],
             [
-                'nama_kelas'  => 'Bahasa Indonesia',
-                'harga_kelas' => 150000.00,
-                'hari_kelas'  => 'Kamis',
-                'created_at'  => now(),
-                'updated_at'  => now(),
-            ],
-            [
-                'nama_kelas'  => 'Matematika Lanjut',
-                'harga_kelas' => 225000.00,
+                'nama_kelas'  => 'Vokal Lanjutan',
+                'harga_kelas' => 350000,
+                'jam_mulai'   => '13:00',
+                'jam_selesai' => '14:30',
                 'hari_kelas'  => 'Jumat',
+                'guru_id'     => 3,
+                'deskripsi'   => 'Kelas vokal tingkat lanjut',
                 'created_at'  => now(),
                 'updated_at'  => now(),
             ],

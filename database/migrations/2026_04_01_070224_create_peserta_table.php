@@ -17,7 +17,7 @@ return new class extends Migration
         $table->string('no_hp');
         $table->string('email')->unique();
         $table->enum('jenis_kelamin', ['laki-laki', 'perempuan'])->default('laki-laki');
-        $table->string('kelas_akademik');
+        $table->enum('level', ['cukup', 'baik', 'mahir'])->default('cukup');
         $table->string('nama_ortu');
         $table->string('no_ortu');
         $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');

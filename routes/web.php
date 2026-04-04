@@ -9,13 +9,19 @@ use App\Http\Controllers\Owner\OwnerDashboardController;
 use App\Http\Controllers\Kasir\KasirDashboardController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminPesertaController;
+use App\Http\Controllers\Admin\AdminGuruController;
 use App\Http\Controllers\Admin\AdminKelasController;
 use App\Http\Controllers\Admin\AdminRiwayatController;
 use App\Http\Controllers\Admin\AdminLogController;
 use App\Http\Controllers\Kasir\KasirPesertaController;
+use App\Http\Controllers\Kasir\KasirKelasController;
 use App\Http\Controllers\Kasir\KasirTransaksiController;
-use App\Http\Controllers\Kasir\KasirRiwayatController; 
-use App\Http\Controllers\Kasir\KasirLogController;      
+use App\Http\Controllers\Kasir\KasirRiwayatController;
+use App\Http\Controllers\Kasir\KasirLogController;
+use App\Http\Controllers\Owner\OwnerKelasController;
+use App\Http\Controllers\Owner\OwnerUserController;
+use App\Http\Controllers\Owner\OwnerLaporanController;
+use App\Http\Controllers\Owner\OwnerLogController;
 
 // Auth
 Route::get('/', fn() => redirect()->route('login'));
@@ -39,17 +45,22 @@ Route::prefix('kasir')->middleware(['auth', RoleMiddleware::class . ':kasir'])->
         Route::put('/{id}',      [KasirPesertaController::class, 'update'])->name('kasir.peserta.update');
     });
 
+    // KELAS
+    Route::prefix('kelas')->group(function () {
+        Route::get('/',          [KasirKelasController::class, 'index'])->name('kasir.kelas.index');
+    });
+
     // TRANSAKSI
     Route::prefix('transaksi')->group(function () {
-        Route::get('/',            [KasirTransaksiController::class, 'index'])->name('kasir.transaksi.index');
-        Route::get('/{id}/bayar',  [KasirTransaksiController::class, 'bayar'])->name('kasir.transaksi.bayar');
-        Route::post('/{id}/proses',[KasirTransaksiController::class, 'proses'])->name('kasir.transaksi.proses');
-        Route::delete('/{id}',     [KasirTransaksiController::class, 'destroy'])->name('kasir.transaksi.destroy');
+        Route::get('/',             [KasirTransaksiController::class, 'index'])->name('kasir.transaksi.index');
+        Route::get('/{id}/bayar',   [KasirTransaksiController::class, 'bayar'])->name('kasir.transaksi.bayar');
+        Route::post('/{id}/proses', [KasirTransaksiController::class, 'proses'])->name('kasir.transaksi.proses');
+        Route::delete('/{id}',      [KasirTransaksiController::class, 'destroy'])->name('kasir.transaksi.destroy');
     });
 
     // RIWAYAT
     Route::prefix('riwayat')->group(function () {
-        Route::get('/',          [KasirRiwayatController::class, 'index'])->name('kasir.riwayat.index');
+        Route::get('/', [KasirRiwayatController::class, 'index'])->name('kasir.riwayat.index');
     });
 
     // LOG
@@ -57,8 +68,7 @@ Route::prefix('kasir')->middleware(['auth', RoleMiddleware::class . ':kasir'])->
         Route::get('/', [KasirLogController::class, 'index'])->name('kasir.log.index');
     });
 
-}); // ← tutup prefix('kasir')
-
+});
 
 // ================================
 // ADMIN ROUTES
@@ -69,28 +79,38 @@ Route::prefix('admin')->middleware(['auth', RoleMiddleware::class . ':admin'])->
 
     // USER MANAGEMENT
     Route::prefix('user')->group(function () {
-        Route::get('/',          [AdminUserController::class, 'index'])->name('admin.users.index');
-        Route::get('/add',       [AdminUserController::class, 'add'])->name('admin.users.add');
-        Route::post('/',         [AdminUserController::class, 'store'])->name('admin.users.store');
-        Route::get('/{id}/edit', [AdminUserController::class, 'edit'])->name('admin.users.edit');
-        Route::put('/{id}',      [AdminUserController::class, 'update'])->name('admin.users.update');
-        Route::get('/{id}/toggle',[AdminUserController::class, 'toggle'])->name('admin.users.toggle');
+        Route::get('/',            [AdminUserController::class, 'index'])->name('admin.users.index');
+        Route::get('/add',         [AdminUserController::class, 'add'])->name('admin.users.add');
+        Route::post('/',           [AdminUserController::class, 'store'])->name('admin.users.store');
+        Route::get('/{id}/edit',   [AdminUserController::class, 'edit'])->name('admin.users.edit');
+        Route::put('/{id}',        [AdminUserController::class, 'update'])->name('admin.users.update');
+        Route::get('/{id}/toggle', [AdminUserController::class, 'toggle'])->name('admin.users.toggle');
     });
 
     // PESERTA
     Route::prefix('peserta')->group(function () {
-        Route::get('/',     [AdminPesertaController::class, 'index'])->name('admin.peserta.index');
+        Route::get('/',        [AdminPesertaController::class, 'index'])->name('admin.peserta.index');
         Route::delete('/{id}', [AdminPesertaController::class, 'destroy'])->name('admin.peserta.delete');
     });
 
-    // KELAS
+    // GURU
+    Route::prefix('guru')->group(function () {
+        Route::get('/',          [AdminGuruController::class, 'index'])->name('admin.guru.index');
+        Route::get('/add',       [AdminGuruController::class, 'add'])->name('admin.guru.add');
+        Route::post('/',         [AdminGuruController::class, 'store'])->name('admin.guru.store');
+        Route::get('/{id}/edit', [AdminGuruController::class, 'edit'])->name('admin.guru.edit');
+        Route::put('/{id}',      [AdminGuruController::class, 'update'])->name('admin.guru.update');
+        Route::delete('/{id}',   [AdminGuruController::class, 'destroy'])->name('admin.guru.delete');
+    });
+
+    // KELAS ← semua nama route ditambah prefix "admin."
     Route::prefix('kelas')->group(function () {
-        Route::get('/',          [AdminKelasController::class, 'index'])->name('admin.kelas.index');
-        Route::get('/add',       [AdminKelasController::class, 'add'])->name('admin.kelas.add');
-        Route::post('/',         [AdminKelasController::class, 'store'])->name('admin.kelas.store');
-        Route::get('/{id}/edit', [AdminKelasController::class, 'edit'])->name('admin.kelas.edit');
-        Route::put('/{id}',      [AdminKelasController::class, 'update'])->name('admin.kelas.update');
-        Route::delete('/{id}',   [AdminKelasController::class, 'destroy'])->name('admin.kelas.delete');
+        Route::get('/',              [AdminKelasController::class, 'index'])->name('admin.kelas.index');
+        Route::get('/add',           [AdminKelasController::class, 'add'])->name('admin.kelas.add');
+        Route::post('/store',        [AdminKelasController::class, 'store'])->name('admin.kelas.store');
+        Route::get('/edit/{id}',     [AdminKelasController::class, 'edit'])->name('admin.kelas.edit');
+        Route::put('/update/{id}',   [AdminKelasController::class, 'update'])->name('admin.kelas.update');
+        Route::delete('/destroy/{id}',[AdminKelasController::class, 'destroy'])->name('admin.kelas.destroy');
     });
 
     // LOG
@@ -100,13 +120,8 @@ Route::prefix('admin')->middleware(['auth', RoleMiddleware::class . ':admin'])->
 
     // RIWAYAT TRANSAKSI
     Route::get('riwayat', [AdminRiwayatController::class, 'index'])->name('admin.riwayat');
-    Route::get('riwayat/{id}/struk', function ($id) {
-        $riwayat = \App\Models\Transaksi::with(['tagihan.peserta.kelas', 'user'])->findOrFail($id);
-        return view('Admin.Riwayat.struk', compact('riwayat'));
-    })->name('admin.riwayat.struk');
 
-}); // ← tutup prefix('admin')
-
+});
 
 // ================================
 // OWNER ROUTES

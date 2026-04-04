@@ -28,9 +28,9 @@
             <option value="laki-laki">Laki-laki</option>
             <option value="perempuan">Perempuan</option>
         </select>
-        <select id="filterKelasAkademik" onchange="applyFilter()"
+        <select id="filterLevel" onchange="applyFilter()"
             class="text-sm border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent bg-white text-gray-600">
-            <option value="">Semua Kelas</option>
+            <option value="">Semua Level</option>
             {{-- diisi dinamis dari JS --}}
         </select>
         <select id="filterKelas" onchange="applyFilter()"
@@ -52,7 +52,7 @@
                         <th class="px-5 py-3.5 font-semibold">Nama</th>
                         <th class="px-5 py-3.5 font-semibold">No. HP</th>
                         <th class="px-5 py-3.5 font-semibold">Jenis Kelamin</th>
-                        <th class="px-5 py-3.5 font-semibold">Kelas</th>
+                        <th class="px-5 py-3.5 font-semibold">Level</th>
                         <th class="px-5 py-3.5 font-semibold">Kelas Kursus</th>
                         <th class="px-5 py-3.5 font-semibold text-center">Aksi</th>
                     </tr>
@@ -156,7 +156,7 @@
                 'email'          => $p->email,
                 'no_hp'          => $p->no_hp,
                 'jenis_kelamin'  => $p->jenis_kelamin,
-                'kelas_akademik' => $p->kelas_akademik ?? '-',
+                'level' => $p->level ?? '-',
                 'status'         => strtolower($p->status),
                 'nama_orangtua'  => $p->nama_ortu ?? '-',
                 'no_orangtua'    => $p->no_ortu  ?? '-',
@@ -170,9 +170,9 @@
         const allData = @json($pesertaJs);
 
         // Isi dropdown kelas akademik secara dinamis
-        const kelasAkademikSet = [...new Set(allData.map(p => p.kelas_akademik).filter(k => k && k !== '-'))].sort();
-        const selectKelasAkademik = document.getElementById('filterKelasAkademik');
-        kelasAkademikSet.forEach(k => {
+        const levelSet = [...new Set(allData.map(p => p.level).filter(k => k && k !== '-'))].sort();
+        const selectKelasAkademik = document.getElementById('filterLevel');
+        levelSet.forEach(k => {
             const opt = document.createElement('option');
             opt.value = k.toLowerCase();
             opt.textContent = k;
@@ -188,15 +188,15 @@
         function applyFilter() {
             const search       = document.getElementById('searchInput').value.toLowerCase();
             const jk           = document.getElementById('filterJK').value;
-            const kelasAkademik = document.getElementById('filterKelasAkademik').value.toLowerCase();
+            const level = document.getElementById('filterLevel').value.toLowerCase();
             const kelas        = document.getElementById('filterKelas').value.toLowerCase();
 
             filteredData = allData.filter(p => {
                 const matchSearch       = p.nama.toLowerCase().includes(search) || p.no_hp.includes(search);
                 const matchJK           = !jk || p.jenis_kelamin === jk;
-                const matchKelasAkademik = !kelasAkademik || (p.kelas_akademik ?? '').toLowerCase().includes(kelasAkademik);
+                const matchLevel = !level || (p.level ?? '').toLowerCase().includes(level);
                 const matchKelas        = !kelas || p.kelas.some(k => k.toLowerCase().includes(kelas));
-                return matchSearch && matchJK && matchKelasAkademik && matchKelas;
+                return matchSearch && matchJK && matchLevel && matchKelas;
             });
 
             currentPage = 1;
@@ -231,6 +231,8 @@
                         ? p.kelas.map(k => `<span class="bg-primary-50 text-primary-700 text-xs font-medium px-2.5 py-1 rounded-full border border-primary-100">${k}</span>`).join('')
                         : '<span class="text-gray-400 text-xs">—</span>';
                     const jkLabel = p.jenis_kelamin === 'laki-laki' ? 'Laki-laki' : 'Perempuan';
+                    const levelColor = { cukup: 'bg-yellow-50 text-yellow-700 border-yellow-100', baik: 'bg-blue-50 text-blue-700 border-blue-100', mahir: 'bg-green-50 text-green-700 border-green-100' };
+                    const levelBadge = p.level && p.level !== '-' ? `<span class="text-xs font-semibold px-2.5 py-1 rounded-full border ${levelColor[p.level] || 'bg-gray-50 text-gray-500 border-gray-200'}">${p.level.charAt(0).toUpperCase() + p.level.slice(1)}</span>` : '<span class="text-gray-400 text-xs">—</span>';
 
                     return `
                         <tr class="hover:bg-gray-50 transition">
@@ -248,7 +250,7 @@
                             </td>
                             <td class="px-5 py-3.5 text-gray-600">${p.no_hp}</td>
                             <td class="px-5 py-3.5 text-gray-600">${jkLabel}</td>
-                            <td class="px-5 py-3.5 text-gray-600">${p.kelas_akademik}</td>
+                            <td class="px-5 py-3.5">${levelBadge}</td>
                             <td class="px-5 py-3.5"><div class="flex flex-wrap gap-1">${kelasBadges}</div></td>
                             <td class="px-5 py-3.5">
                                 <div class="flex items-center justify-center gap-1.5">

@@ -23,13 +23,13 @@ class AdminPesertaController extends Controller
 
         $kelasList = Kelas::orderBy('nama_kelas')->get();
 
-        $kelasAkademikList = Peserta::where('status', 'aktif')
-                                    ->whereNotNull('kelas_akademik')
-                                    ->distinct()
-                                    ->orderBy('kelas_akademik')
-                                    ->pluck('kelas_akademik');
+        $levelList = Peserta::where('status', 'aktif')
+                            ->whereNotNull('level')
+                            ->distinct()
+                            ->orderBy('level')
+                            ->pluck('level');
 
-        return view('admin.peserta.index', compact('peserta', 'kelasList', 'kelasAkademikList', 'perPage'));
+        return view('admin.peserta.index', compact('peserta', 'kelasList', 'levelList', 'perPage'));
     }
 
     public function destroy($id)

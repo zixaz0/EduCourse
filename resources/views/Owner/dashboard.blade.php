@@ -89,7 +89,7 @@
             <div class="divide-y divide-gray-50">
                 @foreach($recentLog ?? [] as $log)
                     @php
-                        $act = strtolower($log->aktifitas);
+                        $act = strtolower($log->aktivitas);
                         if (str_contains($act, 'login'))       { $icon = 'fa-right-to-bracket'; $color = 'bg-green-100 text-green-600'; }
                         elseif (str_contains($act, 'logout'))  { $icon = 'fa-right-from-bracket'; $color = 'bg-gray-100 text-gray-500'; }
                         elseif (str_contains($act, 'bayar') || str_contains($act, 'transaksi')) { $icon = 'fa-money-bill'; $color = 'bg-blue-100 text-blue-600'; }
@@ -103,7 +103,7 @@
                             <i class="fa-solid {{ $icon }} text-xs"></i>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="text-xs font-semibold text-gray-700 truncate">{{ $log->aktifitas }}</p>
+                            <p class="text-xs font-semibold text-gray-700 truncate">{{ $log->aktivitas }}</p>
                             <p class="text-xs text-gray-400">{{ $log->user->username ?? '-' }}</p>
                         </div>
                         <span class="text-xs text-gray-400 whitespace-nowrap">

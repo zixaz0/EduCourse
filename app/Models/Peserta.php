@@ -13,7 +13,7 @@ class Peserta extends Model
     'no_hp', 
     'email', 
     'jenis_kelamin',
-    'kelas_akademik', 
+    'level', 
     'nama_ortu', 
     'no_ortu', 
     'status',

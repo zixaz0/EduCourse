@@ -31,9 +31,78 @@
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #3373be; border-radius: 10px; }
+
+    /* ===== PAGE LOADING SCREEN ===== */
+    #pageLoader {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: #1e5399;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+    #pageLoader.hide {
+        opacity: 0;
+        visibility: hidden;
+    }
+    .loader-logo {
+        width: 56px;
+        height: 56px;
+        background: white;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        animation: logoPulse 1.2s ease-in-out infinite;
+    }
+    .loader-logo img { width: 40px; height: 40px; object-fit: contain; }
+    .loader-bar-wrap {
+        width: 180px;
+        height: 4px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 99px;
+        overflow: hidden;
+    }
+    .loader-bar {
+        height: 100%;
+        width: 0%;
+        background: white;
+        border-radius: 99px;
+        animation: loadBar 0.6s ease forwards;
+    }
+    .loader-text {
+        color: rgba(255,255,255,0.7);
+        font-size: 12px;
+        font-family: 'Poppins', sans-serif;
+        letter-spacing: 0.05em;
+    }
+    @keyframes logoPulse {
+        0%, 100% { transform: scale(1); box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+        50% { transform: scale(1.07); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+    }
+    @keyframes loadBar {
+        to { width: 100%; }
+    }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex overflow-x-hidden">
+
+    <!-- PAGE LOADER -->
+    <div id="pageLoader">
+        <div class="loader-logo">
+            <img src="{{ asset('images/logo.webp') }}" alt="Logo">
+        </div>
+        <div class="loader-bar-wrap">
+            <div class="loader-bar"></div>
+        </div>
+        <p class="loader-text">Memuat halaman...</p>
+    </div>
+
 
     <aside class="w-56 min-h-screen bg-primary-700 flex flex-col fixed top-0 left-0 z-30 shadow-xl">
         <div class="flex items-center gap-3 px-5 py-5 border-b border-primary-600">
@@ -59,6 +128,9 @@
             </a>
             <a href="{{ url('/admin/peserta') }}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium">
                 <i class="fa-solid fa-users w-5 text-center"></i><span>Data Peserta</span>
+            </a>
+            <a href="{{ url('/admin/guru') }}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium">
+                <i class="fa-solid fa-users w-5 text-center"></i><span>Data Guru</span>
             </a>
             <a href="{{ url('/admin/kelas') }}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium">
                 <i class="fa-solid fa-chalkboard-user w-5 text-center"></i><span>Data Kelas</span>
@@ -146,6 +218,37 @@
                 link.classList.remove('active', 'text-white');
                 link.classList.add('text-blue-100');
             }
+        });
+
+        // ===== PAGE LOADER =====
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('pageLoader');
+            setTimeout(() => loader.classList.add('hide'), 300);
+        });
+
+        document.querySelectorAll('a[href]').forEach(link => {
+            const href = link.getAttribute('href');
+            if (!href || href.startsWith('#') || href.startsWith('javascript') || link.getAttribute('target') === '_blank') return;
+            link.addEventListener('click', function(e) {
+                const loader = document.getElementById('pageLoader');
+                loader.querySelector('.loader-bar').style.animation = 'none';
+                loader.querySelector('.loader-bar').style.width = '0%';
+                loader.classList.remove('hide');
+                void loader.querySelector('.loader-bar').offsetWidth; // reflow
+                loader.querySelector('.loader-bar').style.animation = 'loadBar 0.5s ease forwards';
+            });
+        });
+
+        // Form submit juga tampilkan loader
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function() {
+                const loader = document.getElementById('pageLoader');
+                loader.querySelector('.loader-bar').style.animation = 'none';
+                loader.querySelector('.loader-bar').style.width = '0%';
+                loader.classList.remove('hide');
+                void loader.querySelector('.loader-bar').offsetWidth;
+                loader.querySelector('.loader-bar').style.animation = 'loadBar 0.5s ease forwards';
+            });
         });
     </script>
 </body>

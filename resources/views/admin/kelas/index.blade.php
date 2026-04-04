@@ -7,7 +7,7 @@
             <h1 class="text-xl font-bold text-gray-800">Data Kelas</h1>
             <p class="text-sm text-gray-500 mt-0.5">Kelola semua kelas kursus yang tersedia</p>
         </div>
-        <a href="{{ url('/admin/kelas/add') }}"
+        <a href="{{ route('admin.kelas.add') }}"
             class="flex items-center gap-2 bg-primary-700 hover:bg-primary-800 text-white text-sm font-medium px-4 py-2.5 rounded-xl shadow transition">
             <i class="fa-solid fa-plus"></i> Tambah Kelas
         </a>
@@ -17,7 +17,7 @@
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 mb-5 flex flex-col sm:flex-row gap-3">
         <div class="relative flex-1">
             <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-            <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Cari nama kelas atau hari..."
+            <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Cari nama kelas, guru, atau hari..."
                 class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent" />
         </div>
         <select id="filterHari" onchange="filterTable()"
@@ -41,43 +41,65 @@
                     <tr class="bg-primary-700 text-white text-left">
                         <th class="px-5 py-3.5 font-semibold">No</th>
                         <th class="px-5 py-3.5 font-semibold">Nama Kelas</th>
+                        <th class="px-5 py-3.5 font-semibold">Guru</th>
                         <th class="px-5 py-3.5 font-semibold">Hari</th>
+                        <th class="px-5 py-3.5 font-semibold">Jam</th>
                         <th class="px-5 py-3.5 font-semibold">Harga</th>
-                        <th class="px-5 py-3.5 font-semibold">Jumlah Peserta</th>
-                        <th class="px-5 py-3.5 font-semibold">Dibuat</th>
+                        <th class="px-5 py-3.5 font-semibold">Peserta Aktif</th>
                         <th class="px-5 py-3.5 font-semibold text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
                     @forelse($kelas as $index => $k)
+                        @php
+                            $hariColor = [
+                                'senin'  => 'bg-blue-50 text-blue-700 border-blue-100',
+                                'selasa' => 'bg-purple-50 text-purple-700 border-purple-100',
+                                'rabu'   => 'bg-green-50 text-green-700 border-green-100',
+                                'kamis'  => 'bg-yellow-50 text-yellow-700 border-yellow-100',
+                                'jumat'  => 'bg-orange-50 text-orange-700 border-orange-100',
+                                'sabtu'  => 'bg-pink-50 text-pink-700 border-pink-100',
+                                'minggu' => 'bg-red-50 text-red-700 border-red-100',
+                            ];
+                            $hariList = collect(explode(',', $k->hari_kelas))->map(fn($h) => trim($h));
+                        @endphp
                         <tr class="hover:bg-gray-50 transition kelas-row"
                             data-nama="{{ strtolower($k->nama_kelas) }}"
+                            data-guru="{{ strtolower($k->guru->nama ?? '') }}"
                             data-hari="{{ strtolower($k->hari_kelas) }}">
 
-                            <td class="px-5 py-4 text-gray-400 font-medium text-xs">{{ $kelas->firstItem() + $index }}</td>
+                            {{-- No --}}
+                            <td class="px-5 py-4 text-gray-400 font-medium text-xs">
+                                {{ $kelas->firstItem() + $index }}
+                            </td>
 
+                            {{-- Nama Kelas --}}
                             <td class="px-5 py-4">
                                 <div class="flex items-center gap-3">
                                     <div class="w-9 h-9 rounded-xl bg-primary-50 flex items-center justify-center flex-shrink-0 border border-primary-100">
                                         <i class="fa-solid fa-chalkboard-user text-primary-600 text-sm"></i>
                                     </div>
-                                    <p class="font-semibold text-gray-800">{{ $k->nama_kelas }}</p>
+                                    <div>
+                                        <p class="font-semibold text-gray-800">{{ $k->nama_kelas }}</p>
+                                        @if($k->deskripsi)
+                                            <p class="text-xs text-gray-400 mt-0.5">{{ Str::limit($k->deskripsi, 45) }}</p>
+                                        @endif
+                                    </div>
                                 </div>
                             </td>
 
+                            {{-- Guru --}}
                             <td class="px-5 py-4">
-                                @php
-                                    $hariList = collect(explode(',', $k->hari_kelas))->map(fn($h) => trim($h));
-                                    $hariColor = [
-                                        'senin'  => 'bg-blue-50 text-blue-700 border-blue-100',
-                                        'selasa' => 'bg-purple-50 text-purple-700 border-purple-100',
-                                        'rabu'   => 'bg-green-50 text-green-700 border-green-100',
-                                        'kamis'  => 'bg-yellow-50 text-yellow-700 border-yellow-100',
-                                        'jumat'  => 'bg-orange-50 text-orange-700 border-orange-100',
-                                        'sabtu'  => 'bg-pink-50 text-pink-700 border-pink-100',
-                                        'minggu' => 'bg-red-50 text-red-700 border-red-100',
-                                    ];
-                                @endphp
+                                <div class="flex items-center gap-2">
+                                    <div class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+                                        <i class="fa-solid fa-user text-gray-400 text-xs"></i>
+                                    </div>
+                                    <span class="text-gray-700 font-medium">{{ $k->guru->nama ?? '-' }}</span>
+                                </div>
+                            </td>
+
+                            {{-- Hari --}}
+                            <td class="px-5 py-4">
                                 <div class="flex flex-wrap gap-1">
                                     @foreach($hariList as $hari)
                                         <span class="text-xs font-semibold px-2.5 py-1 rounded-full border {{ $hariColor[strtolower($hari)] ?? 'bg-gray-50 text-gray-600 border-gray-200' }}">
@@ -87,30 +109,40 @@
                                 </div>
                             </td>
 
+                            {{-- Jam --}}
                             <td class="px-5 py-4">
-                                <span class="font-semibold text-gray-800">Rp {{ number_format($k->harga_kelas, 0, ',', '.') }}</span>
-                                <span class="text-xs text-gray-400">/bulan</span>
-                            </td>
-
-                            <td class="px-5 py-4">
-                                <div class="flex items-center gap-2">
-                                    <span class="font-semibold text-gray-800">{{ $k->jumlah_peserta ?? 0 }}</span>
-                                    <span class="text-xs text-gray-400">peserta</span>
+                                <div class="flex items-center gap-1.5 text-gray-700">
+                                    <i class="fa-solid fa-clock text-gray-300 text-xs"></i>
+                                    <span class="font-medium">{{ $k->jam_mulai }}</span>
+                                    <span class="text-gray-300">–</span>
+                                    <span class="font-medium">{{ $k->jam_selesai }}</span>
                                 </div>
                             </td>
 
-                            <td class="px-5 py-4 text-gray-400 text-xs">
-                                {{ \Carbon\Carbon::parse($k->created_at)->format('d M Y') }}
+                            {{-- Harga --}}
+                            <td class="px-5 py-4">
+                                <span class="font-semibold text-gray-800">Rp {{ number_format($k->harga_kelas, 0, ',', '.') }}</span>
+                                <span class="text-xs text-gray-400">/bln</span>
                             </td>
 
+                            {{-- Peserta Aktif --}}
+                            <td class="px-5 py-4">
+                                <span class="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full border
+                                    {{ ($k->jumlah_peserta ?? 0) > 0 ? 'bg-green-50 text-green-700 border-green-100' : 'bg-gray-50 text-gray-400 border-gray-200' }}">
+                                    <i class="fa-solid fa-users text-[10px]"></i>
+                                    {{ $k->jumlah_peserta ?? 0 }} peserta
+                                </span>
+                            </td>
+
+                            {{-- Aksi --}}
                             <td class="px-5 py-4">
                                 <div class="flex items-center justify-center gap-1.5">
-                                    <a href="{{ url('/admin/kelas/' . $k->id . '/edit') }}" title="Edit"
-                                        class="w-8 h-8 flex items-center justify-center rounded-lg bg-yellow-50 hover:bg-yellow-100 text-yellow-600 transition">
+                                    <a href="{{ route('admin.kelas.edit', $k->id) }}" title="Edit"
+                                        class="w-8 h-8 flex items-center justify-center rounded-lg bg-yellow-50 hover:bg-yellow-100 text-yellow-600 border border-yellow-100 transition">
                                         <i class="fa-solid fa-pen text-xs"></i>
                                     </a>
                                     <button onclick="confirmDelete({{ $k->id }}, '{{ addslashes($k->nama_kelas) }}')" title="Hapus"
-                                        class="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 hover:bg-red-100 text-red-500 transition">
+                                        class="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 hover:bg-red-100 text-red-500 border border-red-100 transition">
                                         <i class="fa-solid fa-trash text-xs"></i>
                                     </button>
                                 </div>
@@ -118,7 +150,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-5 py-16 text-center text-gray-400">
+                            <td colspan="8" class="px-5 py-16 text-center text-gray-400">
                                 <i class="fa-solid fa-chalkboard-user text-4xl mb-3 block text-gray-200"></i>
                                 <p class="font-medium">Belum ada data kelas</p>
                                 <p class="text-xs mt-1">Klik "Tambah Kelas" untuk menambahkan kelas baru</p>
@@ -129,7 +161,7 @@
             </table>
         </div>
 
-        {{-- ===== PAGINATION ===== --}}
+        {{-- Pagination --}}
         @if($kelas->total() > 0)
         <div class="px-5 py-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-500">
 
@@ -193,7 +225,10 @@
         @endif
     </div>
 
-    <form id="formDelete" method="POST" class="hidden">@csrf @method('DELETE')</form>
+    <form id="formDelete" method="POST" class="hidden">
+        @csrf
+        @method('DELETE')
+    </form>
 
     <script>
         function changePerPage(val) {
@@ -207,7 +242,9 @@
             const search = document.getElementById('searchInput').value.toLowerCase();
             const hari   = document.getElementById('filterHari').value.toLowerCase();
             document.querySelectorAll('.kelas-row').forEach(row => {
-                const matchSearch = row.dataset.nama.includes(search) || row.dataset.hari.includes(search);
+                const matchSearch = row.dataset.nama.includes(search)
+                                 || row.dataset.guru.includes(search)
+                                 || row.dataset.hari.includes(search);
                 const matchHari   = !hari || row.dataset.hari.includes(hari);
                 row.style.display = (matchSearch && matchHari) ? '' : 'none';
             });

@@ -77,7 +77,8 @@
                 <thead>
                     <tr class="bg-primary-700 text-white text-left">
                         <th class="px-5 py-3.5 font-semibold">No</th>
-                        <th class="px-5 py-3.5 font-semibold">User</th>
+                        <th class="px-5 py-3.5 font-semibold">Username</th>
+                        <th class="px-5 py-3.5 font-semibold">Nama</th>
                         <th class="px-5 py-3.5 font-semibold">Email</th>
                         <th class="px-5 py-3.5 font-semibold">Role</th>
                         <th class="px-5 py-3.5 font-semibold">Status</th>
@@ -110,6 +111,9 @@
                                     </div>
                                 </div>
                             </td>
+
+                            {{-- Nama --}}
+                            <td class="px-5 py-4 text-gray-600 text-sm">{{ $user->nama }}</td>
 
                             {{-- Email --}}
                             <td class="px-5 py-4 text-gray-600 text-sm">{{ $user->email }}</td>

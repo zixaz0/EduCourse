@@ -15,7 +15,11 @@ return new class extends Migration
         $table->id();
         $table->string('nama_kelas');
         $table->decimal('harga_kelas', 10, 2);
+        $table->string('jam_mulai');
+        $table->string('jam_selesai');
         $table->string('hari_kelas');
+        $table->foreignId('guru_id')->constrained('guru')->onDelete('cascade');
+        $table->string('deskripsi');
         $table->timestamps();
         });
     }

@@ -24,8 +24,8 @@
         </select>
         <select id="filterKelasAkademik" onchange="filterTable()"
             class="text-sm border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white text-gray-600">
-            <option value="">Semua Kelas</option>
-            @foreach($kelasAkademikList ?? [] as $ka)
+            <option value="">Semua Level</option>
+            @foreach($levelList ?? [] as $ka)
                 <option value="{{ strtolower($ka) }}">{{ $ka }}</option>
             @endforeach
         </select>
@@ -48,7 +48,7 @@
                         <th class="px-5 py-3.5 font-semibold">Nama</th>
                         <th class="px-5 py-3.5 font-semibold">No. HP</th>
                         <th class="px-5 py-3.5 font-semibold">Jenis Kelamin</th>
-                        <th class="px-5 py-3.5 font-semibold">Kelas</th>
+                        <th class="px-5 py-3.5 font-semibold">Level</th>
                         <th class="px-5 py-3.5 font-semibold">Kelas Kursus</th>
                         <th class="px-5 py-3.5 font-semibold text-center">Aksi</th>
                     </tr>
@@ -59,7 +59,7 @@
                             data-nama="{{ strtolower($p->nama) }}"
                             data-nohp="{{ $p->no_hp }}"
                             data-jk="{{ strtolower($p->jenis_kelamin ?? '') }}"
-                            data-kelas-akademik="{{ strtolower($p->kelas_akademik ?? '') }}"
+                            data-kelas-akademik="{{ strtolower($p->level ?? '') }}"
                             data-kelas="{{ strtolower($p->kelas->pluck('nama_kelas')->implode(', ')) }}">
 
                             <td class="px-5 py-3.5 text-gray-400 font-medium text-xs">{{ $peserta->firstItem() + $index }}</td>
@@ -97,9 +97,9 @@
                             </td>
 
                             <td class="px-5 py-3.5">
-                                @if($p->kelas_akademik)
+                                @if($p->level)
                                     <span class="inline-flex items-center bg-gray-100 text-gray-700 text-xs font-semibold px-3 py-1 rounded-full">
-                                        {{ $p->kelas_akademik }}
+                                        {{ $p->level }}
                                     </span>
                                 @else
                                     <span class="text-gray-300 text-xs">—</span>
@@ -240,7 +240,7 @@
                     <div><p class="text-xs text-gray-400 font-medium">Email</p><p id="detail_email" class="font-semibold text-gray-800 mt-0.5 break-all">—</p></div>
                     <div><p class="text-xs text-gray-400 font-medium">No. HP</p><p id="detail_nohp" class="font-semibold text-gray-800 mt-0.5">—</p></div>
                     <div><p class="text-xs text-gray-400 font-medium">Jenis Kelamin</p><div id="detail_jk" class="mt-0.5">—</div></div>
-                    <div><p class="text-xs text-gray-400 font-medium">Kelas</p><p id="detail_kelas_akademik" class="font-semibold text-gray-800 mt-0.5">—</p></div>
+                    <div><p class="text-xs text-gray-400 font-medium">Level</p><p id="detail_level" class="font-semibold text-gray-800 mt-0.5">—</p></div>
                     <div><p class="text-xs text-gray-400 font-medium">Nama Orang Tua</p><p id="detail_orangtua" class="font-semibold text-gray-800 mt-0.5">—</p></div>
                     <div><p class="text-xs text-gray-400 font-medium">No. HP Orang Tua</p><p id="detail_noorangtua" class="font-semibold text-gray-800 mt-0.5">—</p></div>
                 </div>
@@ -266,7 +266,7 @@
                 email: @json($p->email),
                 no_hp: @json($p->no_hp),
                 jenis_kelamin: @json(strtolower($p->jenis_kelamin ?? '')),
-                kelas_akademik: @json($p->kelas_akademik ?? '—'),
+                level: @json($p->level ?? '—'),
                 nama_ortu: @json($p->nama_ortu ?? '-'),
                 no_ortu: @json($p->no_ortu ?? '-'),
                 kelas: [@foreach($p->kelas as $k) @json($k->nama_kelas), @endforeach],
@@ -294,12 +294,12 @@
                 : 'w-16 h-16 rounded-full bg-primary-100 flex items-center justify-center';
             init.className = p.jenis_kelamin === 'perempuan' ? 'text-pink-600 font-bold text-2xl' : 'text-primary-700 font-bold text-2xl';
             init.textContent = p.nama.charAt(0).toUpperCase();
-            document.getElementById('detail_nama').textContent           = p.nama;
-            document.getElementById('detail_email').textContent          = p.email;
-            document.getElementById('detail_nohp').textContent           = p.no_hp;
-            document.getElementById('detail_kelas_akademik').textContent = p.kelas_akademik;
-            document.getElementById('detail_orangtua').textContent       = p.nama_ortu;
-            document.getElementById('detail_noorangtua').textContent     = p.no_ortu;
+            document.getElementById('detail_nama').textContent      = p.nama;
+            document.getElementById('detail_email').textContent     = p.email;
+            document.getElementById('detail_nohp').textContent      = p.no_hp;
+            document.getElementById('detail_level').textContent     = p.level;
+            document.getElementById('detail_orangtua').textContent  = p.nama_ortu;
+            document.getElementById('detail_noorangtua').textContent = p.no_ortu;
             const jkMap = {
                 'laki-laki': `<span class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-600 text-xs font-semibold px-3 py-1 rounded-full border border-blue-100"><i class="fa-solid fa-mars text-xs"></i> Laki-laki</span>`,
                 'perempuan': `<span class="inline-flex items-center gap-1.5 bg-pink-50 text-pink-600 text-xs font-semibold px-3 py-1 rounded-full border border-pink-100"><i class="fa-solid fa-venus text-xs"></i> Perempuan</span>`,

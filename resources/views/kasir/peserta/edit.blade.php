@@ -109,15 +109,22 @@
                             </div>
                         </div>
 
-                        {{-- Kelas Akademik --}}
+                        {{-- Level --}}
                         <div class="sm:col-span-2">
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">
-                                Kelas <span class="text-red-500">*</span>
+                                Level <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="kelas_akademik"
-                                value="{{ old('kelas_akademik', $peserta->kelas_akademik) }}"
-                                placeholder="Contoh: XII IPA 1"
-                                class="w-full text-sm border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent transition @error('kelas_akademik') border-red-400 @enderror">
+                            @php $lvl = old('level', $peserta->level); @endphp
+                            <select name="level"
+                                class="cursor-pointer w-full text-sm border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent transition bg-white @error('level') border-red-400 @enderror">
+                                <option value="">-- Pilih Level --</option>
+                                <option value="cukup"  {{ $lvl === 'cukup'  ? 'selected' : '' }}>Cukup</option>
+                                <option value="baik"   {{ $lvl === 'baik'   ? 'selected' : '' }}>Baik</option>
+                                <option value="mahir"  {{ $lvl === 'mahir'  ? 'selected' : '' }}>Mahir</option>
+                            </select>
+                            @error('level')
+                                <p class="text-xs text-red-500 mt-1"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
+                            @enderror
                         </div>
 
                     </div>

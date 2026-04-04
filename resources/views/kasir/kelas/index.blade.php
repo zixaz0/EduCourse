@@ -1,4 +1,4 @@
-@extends('Layout.owner')
+@extends('Layout.kasir')
 
 @section('content')
 
