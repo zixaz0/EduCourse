@@ -156,7 +156,7 @@
                 'email'          => $p->email,
                 'no_hp'          => $p->no_hp,
                 'jenis_kelamin'  => $p->jenis_kelamin,
-                'level' => $p->level ?? '-',
+                'level'          => $p->level ?? '-',
                 'status'         => strtolower($p->status),
                 'nama_orangtua'  => $p->nama_ortu ?? '-',
                 'no_orangtua'    => $p->no_ortu  ?? '-',
@@ -169,14 +169,14 @@
     <script>
         const allData = @json($pesertaJs);
 
-        // Isi dropdown kelas akademik secara dinamis
+        // Isi dropdown level secara dinamis
         const levelSet = [...new Set(allData.map(p => p.level).filter(k => k && k !== '-'))].sort();
-        const selectKelasAkademik = document.getElementById('filterLevel');
+        const selectLevel = document.getElementById('filterLevel');
         levelSet.forEach(k => {
             const opt = document.createElement('option');
             opt.value = k.toLowerCase();
             opt.textContent = k;
-            selectKelasAkademik.appendChild(opt);
+            selectLevel.appendChild(opt);
         });
 
         // ===== State =====
@@ -186,16 +186,16 @@
 
         // ===== Filter =====
         function applyFilter() {
-            const search       = document.getElementById('searchInput').value.toLowerCase();
-            const jk           = document.getElementById('filterJK').value;
-            const level = document.getElementById('filterLevel').value.toLowerCase();
-            const kelas        = document.getElementById('filterKelas').value.toLowerCase();
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const jk     = document.getElementById('filterJK').value;
+            const level  = document.getElementById('filterLevel').value.toLowerCase();
+            const kelas  = document.getElementById('filterKelas').value.toLowerCase();
 
             filteredData = allData.filter(p => {
-                const matchSearch       = p.nama.toLowerCase().includes(search) || p.no_hp.includes(search);
-                const matchJK           = !jk || p.jenis_kelamin === jk;
-                const matchLevel = !level || (p.level ?? '').toLowerCase().includes(level);
-                const matchKelas        = !kelas || p.kelas.some(k => k.toLowerCase().includes(kelas));
+                const matchSearch = p.nama.toLowerCase().includes(search) || p.no_hp.includes(search);
+                const matchJK     = !jk || p.jenis_kelamin === jk;
+                const matchLevel  = !level || (p.level ?? '').toLowerCase().includes(level);
+                const matchKelas  = !kelas || p.kelas.some(k => k.toLowerCase().includes(kelas));
                 return matchSearch && matchJK && matchLevel && matchKelas;
             });
 
@@ -207,6 +207,23 @@
             perPage     = parseInt(document.getElementById('perPage').value);
             currentPage = 1;
             render();
+        }
+
+        // ===== Helper: render badge kelas (1 tampil + sisanya jadi +N) =====
+        function renderKelasBadges(kelasList) {
+            if (!kelasList.length) return '<span class="text-gray-400 text-xs">—</span>';
+
+            const first = kelasList[0];
+            const more  = kelasList.length - 1;
+            const tooltipText = more > 0 ? kelasList.slice(1).join(', ') : '';
+
+            return `
+                <span class="bg-primary-50 text-primary-700 text-xs font-medium px-2.5 py-1 rounded-full border border-primary-100">${first}</span>
+                ${more > 0
+                    ? `<span title="${tooltipText}" class="bg-gray-100 text-gray-500 text-xs font-semibold px-2 py-1 rounded-full cursor-default">+${more}</span>`
+                    : ''
+                }
+            `;
         }
 
         // ===== Render Tabel =====
@@ -227,12 +244,19 @@
             } else {
                 tbody.innerHTML = pageData.map((p, i) => {
                     const no = start + i + 1;
-                    const kelasBadges = p.kelas.length
-                        ? p.kelas.map(k => `<span class="bg-primary-50 text-primary-700 text-xs font-medium px-2.5 py-1 rounded-full border border-primary-100">${k}</span>`).join('')
-                        : '<span class="text-gray-400 text-xs">—</span>';
+
+                    const kelasBadges = renderKelasBadges(p.kelas);
+
                     const jkLabel = p.jenis_kelamin === 'laki-laki' ? 'Laki-laki' : 'Perempuan';
-                    const levelColor = { cukup: 'bg-yellow-50 text-yellow-700 border-yellow-100', baik: 'bg-blue-50 text-blue-700 border-blue-100', mahir: 'bg-green-50 text-green-700 border-green-100' };
-                    const levelBadge = p.level && p.level !== '-' ? `<span class="text-xs font-semibold px-2.5 py-1 rounded-full border ${levelColor[p.level] || 'bg-gray-50 text-gray-500 border-gray-200'}">${p.level.charAt(0).toUpperCase() + p.level.slice(1)}</span>` : '<span class="text-gray-400 text-xs">—</span>';
+
+                    const levelColor = {
+                        cukup : 'bg-yellow-50 text-yellow-700 border-yellow-100',
+                        baik  : 'bg-blue-50 text-blue-700 border-blue-100',
+                        mahir : 'bg-green-50 text-green-700 border-green-100'
+                    };
+                    const levelBadge = p.level && p.level !== '-'
+                        ? `<span class="text-xs font-semibold px-2.5 py-1 rounded-full border ${levelColor[p.level] || 'bg-gray-50 text-gray-500 border-gray-200'}">${p.level.charAt(0).toUpperCase() + p.level.slice(1)}</span>`
+                        : '<span class="text-gray-400 text-xs">—</span>';
 
                     return `
                         <tr class="hover:bg-gray-50 transition">
@@ -251,7 +275,9 @@
                             <td class="px-5 py-3.5 text-gray-600">${p.no_hp}</td>
                             <td class="px-5 py-3.5 text-gray-600">${jkLabel}</td>
                             <td class="px-5 py-3.5">${levelBadge}</td>
-                            <td class="px-5 py-3.5"><div class="flex flex-wrap gap-1">${kelasBadges}</div></td>
+                            <td class="px-5 py-3.5">
+                                <div class="flex flex-wrap gap-1 items-center">${kelasBadges}</div>
+                            </td>
                             <td class="px-5 py-3.5">
                                 <div class="flex items-center justify-center gap-1.5">
                                     <button onclick="openDetail(${p.id})" title="Detail"
@@ -318,7 +344,7 @@
 
         function getPageRange(cur, total) {
             if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
-            if (cur <= 4)  return [1, 2, 3, 4, 5, '...', total];
+            if (cur <= 4)        return [1, 2, 3, 4, 5, '...', total];
             if (cur >= total - 3) return [1, '...', total-4, total-3, total-2, total-1, total];
             return [1, '...', cur - 1, cur, cur + 1, '...', total];
         }
@@ -343,13 +369,16 @@
             document.getElementById('detail_orangtua').textContent   = p.nama_orangtua;
             document.getElementById('detail_noorangtua').textContent = p.no_orangtua;
             document.getElementById('detail_edit_link').href         = p.edit_url;
+
+            // Modal detail tetap tampil semua kelas
             document.getElementById('detail_kelas').innerHTML = p.kelas.length
                 ? p.kelas.map(k => `<span class="bg-primary-50 text-primary-700 text-xs font-medium px-2.5 py-1 rounded-full border border-primary-100">${k}</span>`).join('')
                 : '<span class="text-gray-400 text-sm">Belum ada kelas</span>';
+
             openModal('modalDetail');
         }
 
-        function openModal(id) { const el = document.getElementById(id); el.classList.remove('hidden'); el.classList.add('flex'); }
+        function openModal(id)  { const el = document.getElementById(id); el.classList.remove('hidden'); el.classList.add('flex'); }
         function closeModal(id) { const el = document.getElementById(id); el.classList.add('hidden'); el.classList.remove('flex'); }
         document.getElementById('modalDetail').addEventListener('click', function(e) { if (e.target === this) closeModal('modalDetail'); });
 

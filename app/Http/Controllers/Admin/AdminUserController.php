@@ -15,7 +15,8 @@ class AdminUserController extends Controller
     {
         $perPage = in_array($request->get('per_page'), [5, 10, 25, 50]) ? (int) $request->get('per_page') : 10;
 
-        $users = User::where('role', '!=', 'owner')
+        // Admin hanya bisa lihat & kelola kasir
+        $users = User::where('role', 'kasir')
                      ->latest()
                      ->paginate($perPage)
                      ->withQueryString();
@@ -35,7 +36,6 @@ class AdminUserController extends Controller
             'nama'     => 'required|string|max:255',
             'email'    => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
-            'role'     => 'required|in:admin,kasir',
             'status'   => 'required|in:aktif,nonaktif',
         ], [
             'username.required'  => 'Username wajib diisi.',
@@ -46,37 +46,40 @@ class AdminUserController extends Controller
             'password.required'  => 'Password wajib diisi.',
             'password.min'       => 'Password minimal 8 karakter.',
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
-            'role.required'      => 'Role wajib dipilih.',
         ]);
 
+        // Role dikunci kasir, abaikan input role dari request
+        $validated['role']     = 'kasir';
         $validated['password'] = Hash::make($validated['password']);
+
         $user = User::create($validated);
 
         Log::create([
             'user_id'   => Auth::id(),
-            'aktivitas' => 'Tambah user baru: ' . $user->username . ' (' . $user->role . ')',
+            'aktivitas' => 'Tambah kasir baru: ' . $user->username,
         ]);
 
         return redirect()->route('admin.users.index')
-                         ->with('success', 'User ' . $user->username . ' berhasil ditambahkan.');
+                         ->with('success', 'Akun kasir ' . $user->username . ' berhasil ditambahkan.');
     }
 
     public function edit($id)
     {
-        $user = User::findOrFail($id);
+        // Admin hanya boleh edit kasir
+        $user = User::where('role', 'kasir')->findOrFail($id);
         return view('admin.users.edit', compact('user'));
     }
 
     public function update(Request $request, $id)
     {
-        $user = User::findOrFail($id);
+        // Admin hanya boleh update kasir
+        $user = User::where('role', 'kasir')->findOrFail($id);
 
         $validated = $request->validate([
             'username' => 'required|string|max:100|unique:users,username,' . $id,
             'nama'     => 'required|string|max:255',
             'email'    => 'required|email|unique:users,email,' . $id,
             'password' => 'nullable|string|min:8|confirmed',
-            'role'     => 'required|in:admin,kasir',
             'status'   => 'required|in:aktif,nonaktif',
         ], [
             'username.required'  => 'Username wajib diisi.',
@@ -86,8 +89,10 @@ class AdminUserController extends Controller
             'email.unique'       => 'Email sudah terdaftar.',
             'password.min'       => 'Password minimal 8 karakter.',
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
-            'role.required'      => 'Role wajib dipilih.',
         ]);
+
+        // Role tetap kasir, tidak bisa diubah lewat admin
+        $validated['role'] = 'kasir';
 
         if (!empty($validated['password'])) {
             $validated['password'] = Hash::make($validated['password']);
@@ -99,11 +104,11 @@ class AdminUserController extends Controller
 
         Log::create([
             'user_id'   => Auth::id(),
-            'aktivitas' => 'Edit user: ' . $user->username,
+            'aktivitas' => 'Edit kasir: ' . $user->username,
         ]);
 
         return redirect()->route('admin.users.index')
-                         ->with('success', 'User ' . $user->username . ' berhasil diperbarui.');
+                         ->with('success', 'Akun kasir ' . $user->username . ' berhasil diperbarui.');
     }
 
     public function toggle($id)
@@ -113,18 +118,19 @@ class AdminUserController extends Controller
                              ->with('error', 'Tidak dapat mengubah status akun Anda sendiri.');
         }
 
-        $user       = User::findOrFail($id);
+        // Admin hanya boleh toggle kasir
+        $user       = User::where('role', 'kasir')->findOrFail($id);
         $statusBaru = $user->status === 'aktif' ? 'nonaktif' : 'aktif';
         $user->update(['status' => $statusBaru]);
 
         Log::create([
             'user_id'   => Auth::id(),
-            'aktivitas' => 'Ubah status user ' . $user->username . ' menjadi ' . $statusBaru,
+            'aktivitas' => 'Ubah status kasir ' . $user->username . ' menjadi ' . $statusBaru,
         ]);
 
         $pesan = $statusBaru === 'aktif'
-            ? 'User ' . $user->username . ' berhasil diaktifkan.'
-            : 'User ' . $user->username . ' berhasil dinonaktifkan.';
+            ? 'Kasir ' . $user->username . ' berhasil diaktifkan.'
+            : 'Kasir ' . $user->username . ' berhasil dinonaktifkan.';
 
         return redirect()->route('admin.users.index')->with('success', $pesan);
     }

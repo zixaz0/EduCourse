@@ -15,8 +15,8 @@ class AdminKelasController extends Controller
     {
         $perPage = in_array($request->get('per_page'), [5, 10, 25, 50]) ? (int) $request->get('per_page') : 10;
 
-        $kelas = Kelas::with('guru')
-                      ->withCount(['peserta' => fn($q) => $q->where('status', 'aktif')])
+        $kelas = Kelas::with(['guru', 'peserta' => fn($q) => $q->where('peserta.status', 'aktif')])
+                      ->withCount(['peserta' => fn($q) => $q->where('peserta.status', 'aktif')])
                       ->latest()
                       ->paginate($perPage)
                       ->withQueryString();
@@ -26,7 +26,31 @@ class AdminKelasController extends Controller
             return $k;
         });
 
-        return view('admin.kelas.index', compact('kelas', 'perPage'));
+        // Siapkan data JSON untuk modal detail (hindari arrow function di Blade @json)
+        $kelasJson = $kelas->getCollection()->map(function ($k) {
+            return [
+                'id'             => $k->id,
+                'nama_kelas'     => $k->nama_kelas,
+                'guru'           => $k->guru->nama ?? '-',
+                'harga_kelas'    => $k->harga_kelas,
+                'hari_kelas'     => $k->hari_kelas,
+                'jam_mulai'      => $k->jam_mulai,
+                'jam_selesai'    => $k->jam_selesai,
+                'deskripsi'      => $k->deskripsi ?? '',
+                'jumlah_peserta' => $k->jumlah_peserta ?? 0,
+                'peserta'        => $k->peserta->map(function ($p) {
+                    return [
+                        'nama'  => $p->nama,
+                        'no_hp' => $p->no_hp,
+                        'level' => $p->level,
+                    ];
+                })->values(),
+                'edit_url'       => route('admin.kelas.edit', $k->id),
+                'created_at'     => $k->created_at ? $k->created_at->format('d M Y') : '-',
+            ];
+        });
+
+        return view('admin.kelas.index', compact('kelas', 'perPage', 'kelasJson'));
     }
 
     public function add()
@@ -65,7 +89,6 @@ class AdminKelasController extends Controller
             $hariKelas = collect(explode(',', $k->hari_kelas))->map(fn($h) => trim($h))->toArray();
             $hariSama  = count(array_intersect($hariDipilih, $hariKelas)) > 0;
             if (!$hariSama) return false;
-            // jam bentrok kalau overlap
             return $jamMulai < $k->jam_selesai && $jamSelesai > $k->jam_mulai;
         });
 
@@ -96,7 +119,7 @@ class AdminKelasController extends Controller
 
     public function edit($id)
     {
-        $kelas = Kelas::withCount(['peserta' => fn($q) => $q->where('status', 'aktif')])->findOrFail($id);
+        $kelas = Kelas::withCount(['peserta' => fn($q) => $q->where('peserta.status', 'aktif')])->findOrFail($id);
         $kelas->jumlah_peserta = $kelas->peserta_count;
         $guruList = Guru::orderBy('nama')->get();
 
@@ -157,7 +180,7 @@ class AdminKelasController extends Controller
 
     public function destroy($id)
     {
-        $kelas = Kelas::withCount(['peserta' => fn($q) => $q->where('status', 'aktif')])->findOrFail($id);
+        $kelas = Kelas::withCount(['peserta' => fn($q) => $q->where('peserta.status', 'aktif')])->findOrFail($id);
 
         if ($kelas->peserta_count > 0) {
             return redirect()->route('admin.kelas.index')

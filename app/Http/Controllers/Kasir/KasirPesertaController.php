@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Kasir;
 use App\Http\Controllers\Controller;
 use App\Models\Peserta;
 use App\Models\Kelas;
+use App\Models\Tagihan;
 use App\Models\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class KasirPesertaController extends Controller
 {
@@ -33,7 +35,7 @@ class KasirPesertaController extends Controller
     }
 
     // ==========================================
-    // STORE — Simpan peserta baru
+    // STORE — Simpan peserta baru + auto buat tagihan bulan ini
     // ==========================================
     public function store(Request $request)
     {
@@ -54,21 +56,37 @@ class KasirPesertaController extends Controller
             'no_hp'         => $request->no_hp,
             'email'         => $request->email,
             'jenis_kelamin' => $request->jenis_kelamin,
-            'level'=> $request->level,
+            'level'         => $request->level,
             'nama_ortu'     => $request->nama_ortu,
             'no_ortu'       => $request->no_ortu,
-            'status'        => 'aktif', // default selalu aktif saat tambah
+            'status'        => 'aktif',
         ]);
 
         $peserta->kelas()->sync($request->kelas);
 
+        // ── Auto buat tagihan bulan ini untuk peserta baru ──────────────────
+        $kelasBaru    = Kelas::whereIn('id', $request->kelas)->get();
+        $totalTagihan = $kelasBaru->sum('harga_kelas');
+        $bulanIni     = Carbon::now()->format('Y-m');
+
+        Tagihan::create([
+            'peserta_id'          => $peserta->id,
+            'total_tagihan'       => $totalTagihan,
+            'bulan_tahun'         => $bulanIni,
+            'kelas_snapshot'      => $kelasBaru->pluck('nama_kelas')->toArray(),
+            'tanggal_tagihan'     => Carbon::now()->startOfMonth(),
+            'tanggal_jatuh_tempo' => Carbon::now()->endOfMonth(),
+            'status'              => 'belum_bayar',
+        ]);
+        // ────────────────────────────────────────────────────────────────────
+
         Log::create([
             'user_id'   => Auth::id(),
-            'aktivitas' => 'Tambah peserta baru: ' . $peserta->nama,
+            'aktivitas' => 'Tambah peserta baru: ' . $peserta->nama . ' (tagihan bulan ' . $bulanIni . ' otomatis dibuat)',
         ]);
 
         return redirect()->route('kasir.peserta.index')
-            ->with('success', "Peserta {$peserta->nama} berhasil ditambahkan.");
+            ->with('success', "Peserta {$peserta->nama} berhasil ditambahkan beserta tagihan bulan ini.");
     }
 
     // ==========================================
@@ -83,7 +101,7 @@ class KasirPesertaController extends Controller
     }
 
     // ==========================================
-    // UPDATE — Simpan perubahan peserta (status tidak ikut diubah)
+    // UPDATE — Simpan perubahan peserta + sinkronisasi tagihan bulan ini
     // ==========================================
     public function update(Request $request, $id)
     {
@@ -99,28 +117,105 @@ class KasirPesertaController extends Controller
             'kelas.*'       => 'exists:kelas,id',
         ]);
 
-        $peserta = Peserta::findOrFail($id);
+        $peserta = Peserta::with('kelas')->findOrFail($id);
+
+        // ── Catat kelas lama & baru sebelum sync ────────────────────────────
+        $kelasLamaIds  = $peserta->kelas->pluck('id')->toArray();
+        $kelasBaruIds  = array_map('intval', $request->kelas);
+        $kelasTambahan = array_diff($kelasBaruIds, $kelasLamaIds);
+        $adaPerubahan  = !empty(array_diff($kelasBaruIds, $kelasLamaIds))
+                      || !empty(array_diff($kelasLamaIds, $kelasBaruIds));
+        // ────────────────────────────────────────────────────────────────────
 
         $peserta->update([
             'nama'          => $request->nama,
             'no_hp'         => $request->no_hp,
             'email'         => $request->email,
             'jenis_kelamin' => $request->jenis_kelamin,
-            'level'=> $request->level,
+            'level'         => $request->level,
             'nama_ortu'     => $request->nama_ortu,
             'no_ortu'       => $request->no_ortu,
-            // status TIDAK diubah lewat form edit
         ]);
 
         $peserta->kelas()->sync($request->kelas);
 
+        $pesanTagihan = '';
+
+        // ── Sinkronisasi tagihan jika ada perubahan kelas ───────────────────
+        if ($adaPerubahan) {
+            $bulanIni = Carbon::now()->format('Y-m');
+
+            // Cari tagihan belum lunas bulan ini
+            $tagihanBelumLunas = Tagihan::where('peserta_id', $peserta->id)
+                ->where('bulan_tahun', $bulanIni)
+                ->where('status', '!=', 'lunas')
+                ->first();
+
+            if ($tagihanBelumLunas) {
+                // Recalculate total + update snapshot dari kelas aktif sekarang
+                $kelasAktif = Kelas::whereIn('id', $kelasBaruIds)->get();
+                $totalBaru  = $kelasAktif->sum('harga_kelas');
+
+                if ($totalBaru > 0) {
+                    $tagihanBelumLunas->update([
+                        'total_tagihan'  => $totalBaru,
+                        'kelas_snapshot' => $kelasAktif->pluck('nama_kelas')->toArray(),
+                    ]);
+                    $pesanTagihan = " Tagihan bulan ini diperbarui menjadi Rp " . number_format($totalBaru, 0, ',', '.') . ".";
+                } else {
+                    $tagihanBelumLunas->delete();
+                    $pesanTagihan = " Tagihan bulan ini dihapus karena tidak ada kelas aktif.";
+                }
+
+            } elseif (!empty($kelasTambahan)) {
+                // Tidak ada tagihan belum lunas, tapi ada kelas baru ditambahkan
+                $adaTagihanLunas = Tagihan::where('peserta_id', $peserta->id)
+                    ->where('bulan_tahun', $bulanIni)
+                    ->where('status', 'lunas')
+                    ->exists();
+
+                $kelasObjTambahan = Kelas::whereIn('id', $kelasTambahan)->get();
+                $hargaTambahan    = $kelasObjTambahan->sum('harga_kelas');
+                $namaKelasTambah  = $kelasObjTambahan->pluck('nama_kelas')->implode(', ');
+
+                if ($adaTagihanLunas) {
+                    // Sudah lunas → buat tagihan baru khusus kelas tambahan
+                    Tagihan::create([
+                        'peserta_id'          => $peserta->id,
+                        'total_tagihan'       => $hargaTambahan,
+                        'bulan_tahun'         => $bulanIni,
+                        'kelas_snapshot'      => $kelasObjTambahan->pluck('nama_kelas')->toArray(),
+                        'tanggal_tagihan'     => Carbon::now(),
+                        'tanggal_jatuh_tempo' => Carbon::now()->endOfMonth(),
+                        'status'              => 'belum_bayar',
+                    ]);
+                    $pesanTagihan = " Tagihan baru dibuat untuk kelas tambahan: {$namaKelasTambah} (Rp " . number_format($hargaTambahan, 0, ',', '.') . ").";
+                } else {
+                    // Belum ada tagihan bulan ini sama sekali → buat baru total semua kelas
+                    $kelasAktif      = Kelas::whereIn('id', $kelasBaruIds)->get();
+                    $totalSemuaKelas = $kelasAktif->sum('harga_kelas');
+                    Tagihan::create([
+                        'peserta_id'          => $peserta->id,
+                        'total_tagihan'       => $totalSemuaKelas,
+                        'bulan_tahun'         => $bulanIni,
+                        'kelas_snapshot'      => $kelasAktif->pluck('nama_kelas')->toArray(),
+                        'tanggal_tagihan'     => Carbon::now()->startOfMonth(),
+                        'tanggal_jatuh_tempo' => Carbon::now()->endOfMonth(),
+                        'status'              => 'belum_bayar',
+                    ]);
+                    $pesanTagihan = " Tagihan bulan ini otomatis dibuat.";
+                }
+            }
+        }
+        // ────────────────────────────────────────────────────────────────────
+
         Log::create([
             'user_id'   => Auth::id(),
-            'aktivitas' => 'Edit data peserta: ' . $peserta->nama,
+            'aktivitas' => 'Edit data peserta: ' . $peserta->nama . ($pesanTagihan ?: ''),
         ]);
 
         return redirect()->route('kasir.peserta.index')
-            ->with('success', "Data {$peserta->nama} berhasil diperbarui.");
+            ->with('success', "Data {$peserta->nama} berhasil diperbarui.{$pesanTagihan}");
     }
 
     // ==========================================

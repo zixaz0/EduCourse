@@ -10,32 +10,8 @@
         <p class="text-sm text-gray-500 mt-0.5">Berikut ringkasan data sistem EduCourse hari ini</p>
     </div>
 
-    {{-- ===== STAT CARDS ROW 1 ===== --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-
-        {{-- Total User --}}
-        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 flex items-center gap-4">
-            <div class="w-12 h-12 rounded-xl bg-primary-50 flex items-center justify-center flex-shrink-0">
-                <i class="fa-solid fa-user-gear text-primary-600 text-lg"></i>
-            </div>
-            <div>
-                <p class="text-xs text-gray-400 font-medium">Total User</p>
-                <p class="text-2xl font-bold text-primary-700">{{ $totalUser ?? 0 }}</p>
-                <p class="text-xs text-gray-400 mt-0.5">kasir terdaftar</p>
-            </div>
-        </div>
-
-        {{-- User Aktif --}}
-        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 flex items-center gap-4">
-            <div class="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center flex-shrink-0">
-                <i class="fa-solid fa-circle-check text-green-600 text-lg"></i>
-            </div>
-            <div>
-                <p class="text-xs text-gray-400 font-medium">User Aktif</p>
-                <p class="text-2xl font-bold text-green-600">{{ $userAktif ?? 0 }}</p>
-                <p class="text-xs text-gray-400 mt-0.5">login hari ini</p>
-            </div>
-        </div>
+    {{-- ===== STAT CARDS ===== --}}
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
 
         {{-- Total Peserta --}}
         <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 flex items-center gap-4">
@@ -49,23 +25,6 @@
             </div>
         </div>
 
-        {{-- Peserta Aktif --}}
-        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 flex items-center gap-4">
-            <div class="w-12 h-12 rounded-xl bg-teal-50 flex items-center justify-center flex-shrink-0">
-                <i class="fa-solid fa-user-check text-teal-600 text-lg"></i>
-            </div>
-            <div>
-                <p class="text-xs text-gray-400 font-medium">Peserta Aktif</p>
-                <p class="text-2xl font-bold text-teal-600">{{ $pesertaAktif ?? 0 }}</p>
-                <p class="text-xs text-gray-400 mt-0.5">sedang aktif kursus</p>
-            </div>
-        </div>
-
-    </div>
-
-    {{-- ===== STAT CARDS ROW 2 ===== --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-
         {{-- Total Kelas --}}
         <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 flex items-center gap-4">
             <div class="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center flex-shrink-0">
@@ -75,32 +34,6 @@
                 <p class="text-xs text-gray-400 font-medium">Total Kelas</p>
                 <p class="text-2xl font-bold text-purple-600">{{ $totalKelas ?? 0 }}</p>
                 <p class="text-xs text-gray-400 mt-0.5">kelas tersedia</p>
-            </div>
-        </div>
-
-        {{-- Total Tagihan --}}
-        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 flex items-center gap-4">
-            <div class="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center flex-shrink-0">
-                <i class="fa-solid fa-file-invoice-dollar text-orange-500 text-lg"></i>
-            </div>
-            <div>
-                <p class="text-xs text-gray-400 font-medium">Tagihan Belum Lunas</p>
-                <p class="text-2xl font-bold text-orange-500">{{ $tagihanBelumLunas ?? 0 }}</p>
-                <p class="text-xs text-gray-400 mt-0.5">perlu dibayar</p>
-            </div>
-        </div>
-
-        {{-- Pemasukan Bulan Ini --}}
-        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 flex items-center gap-4">
-            <div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center flex-shrink-0">
-                <i class="fa-solid fa-money-bill-trend-up text-emerald-600 text-lg"></i>
-            </div>
-            <div>
-                <p class="text-xs text-gray-400 font-medium">Pemasukan Bulan Ini</p>
-                <p class="text-xl font-bold text-emerald-600">
-                    Rp {{ number_format($pemasukanBulanIni ?? 0, 0, ',', '.') }}
-                </p>
-                <p class="text-xs text-gray-400 mt-0.5">dari transaksi lunas</p>
             </div>
         </div>
 

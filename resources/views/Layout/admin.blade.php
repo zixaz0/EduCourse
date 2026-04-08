@@ -130,7 +130,7 @@
                 <i class="fa-solid fa-users w-5 text-center"></i><span>Data Peserta</span>
             </a>
             <a href="{{ url('/admin/guru') }}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium">
-                <i class="fa-solid fa-users w-5 text-center"></i><span>Data Guru</span>
+                <i class="fa-solid fa-graduation-cap w-5 text-center"></i><span>Data Guru</span>
             </a>
             <a href="{{ url('/admin/kelas') }}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium">
                 <i class="fa-solid fa-chalkboard-user w-5 text-center"></i><span>Data Kelas</span>
@@ -201,7 +201,17 @@
             Swal.fire({ title: 'Logout?', text: 'Apakah Anda yakin ingin keluar?', icon: 'warning',
                 showCancelButton: true, confirmButtonColor: '#1e5399', cancelButtonColor: '#6b7280',
                 confirmButtonText: 'Ya, Logout', cancelButtonText: 'Batal',
-            }).then(result => { if (result.isConfirmed) document.getElementById('logoutForm').submit(); });
+            }).then(result => {
+                if (result.isConfirmed) {
+                    const loader = document.getElementById('pageLoader');
+                    loader.querySelector('.loader-bar').style.animation = 'none';
+                    loader.querySelector('.loader-bar').style.width = '0%';
+                    loader.classList.remove('hide');
+                    void loader.querySelector('.loader-bar').offsetWidth;
+                    loader.querySelector('.loader-bar').style.animation = 'loadBar 0.5s ease forwards';
+                    setTimeout(() => document.getElementById('logoutForm').submit(), 200);
+                }
+            });
         }
 
         const links = document.querySelectorAll('.sidebar-link');

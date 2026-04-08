@@ -4,28 +4,53 @@
 
     <div class="mb-6 flex items-center justify-between">
         <div>
-            <h1 class="text-xl font-bold text-gray-800">Manajemen User</h1>
-            <p class="text-sm text-gray-500 mt-0.5">Kelola akun kasir dan admin sistem</p>
+            <h1 class="text-xl font-bold text-gray-800">Data User Kasir</h1>
+            <p class="text-sm text-gray-500 mt-0.5">Kelola akun kasir yang terdaftar di sistem</p>
         </div>
-        <a href="{{ url('/admin/user/add') }}"
+        <a href="{{ route('admin.users.add') }}"
             class="flex items-center gap-2 bg-primary-700 hover:bg-primary-800 text-white text-sm font-medium px-4 py-2.5 rounded-xl shadow transition">
-            <i class="fa-solid fa-plus"></i> Tambah User
+            <i class="fa-solid fa-plus"></i> Tambah Kasir
         </a>
+    </div>
+
+    {{-- Stat Cards --}}
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-cash-register text-blue-600 text-sm"></i>
+            </div>
+            <div>
+                <p class="text-xs text-gray-400">Total Kasir</p>
+                <p class="text-xl font-bold text-gray-800">{{ $users->total() }}</p>
+            </div>
+        </div>
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-green-50 border border-green-100 flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-circle-check text-green-600 text-sm"></i>
+            </div>
+            <div>
+                <p class="text-xs text-gray-400">Aktif</p>
+                <p class="text-xl font-bold text-gray-800">{{ $users->getCollection()->where('status','aktif')->count() }}</p>
+            </div>
+        </div>
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-circle-xmark text-red-500 text-sm"></i>
+            </div>
+            <div>
+                <p class="text-xs text-gray-400">Non-Aktif</p>
+                <p class="text-xl font-bold text-gray-800">{{ $users->getCollection()->where('status','nonaktif')->count() }}</p>
+            </div>
+        </div>
     </div>
 
     {{-- Search & Filter --}}
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 mb-5 flex flex-col sm:flex-row gap-3">
         <div class="relative flex-1">
             <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-            <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Cari username, nama, atau email..."
+            <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Cari username atau email..."
                 class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent" />
         </div>
-        <select id="filterRole" onchange="filterTable()"
-            class="text-sm border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white text-gray-600">
-            <option value="">Semua Role</option>
-            <option value="admin">Admin</option>
-            <option value="kasir">Kasir</option>
-        </select>
         <select id="filterStatus" onchange="filterTable()"
             class="text-sm border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white text-gray-600">
             <option value="">Semua Status</option>
@@ -41,10 +66,9 @@
                 <thead>
                     <tr class="bg-primary-700 text-white text-left">
                         <th class="px-5 py-3.5 font-semibold">No</th>
-                        <th class="px-5 py-3.5 font-semibold">User</th>
+                        <th class="px-5 py-3.5 font-semibold">Username</th>
                         <th class="px-5 py-3.5 font-semibold">Nama</th>
                         <th class="px-5 py-3.5 font-semibold">Email</th>
-                        <th class="px-5 py-3.5 font-semibold">Role</th>
                         <th class="px-5 py-3.5 font-semibold">Status</th>
                         <th class="px-5 py-3.5 font-semibold">Dibuat</th>
                         <th class="px-5 py-3.5 font-semibold text-center">Aksi</th>
@@ -54,19 +78,16 @@
                     @forelse($users as $index => $user)
                         <tr class="hover:bg-gray-50 transition user-row"
                             data-username="{{ strtolower($user->username) }}"
-                            data-nama="{{ strtolower($user->nama ?? '') }}"
                             data-email="{{ strtolower($user->email) }}"
-                            data-role="{{ $user->role }}"
                             data-status="{{ $user->status }}">
 
                             <td class="px-5 py-4 text-gray-400 font-medium text-xs">{{ $users->firstItem() + $index }}</td>
 
+                            {{-- User --}}
                             <td class="px-5 py-4">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0
-                                        {{ $user->role === 'admin' ? 'bg-purple-100' : 'bg-primary-100' }}">
-                                        <span class="font-bold text-sm
-                                            {{ $user->role === 'admin' ? 'text-purple-700' : 'text-primary-700' }}">
+                                    <div class="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                        <span class="font-bold text-sm text-blue-700">
                                             {{ strtoupper(substr($user->username, 0, 1)) }}
                                         </span>
                                     </div>
@@ -77,21 +98,13 @@
                                 </div>
                             </td>
 
-                            <td class="px-5 py-4 text-gray-700 font-medium">{{ $user->nama ?? '—' }}</td>
-                            <td class="px-5 py-4 text-gray-600">{{ $user->email }}</td>
+                            {{-- Nama --}}
+                            <td class="px-5 py-4 text-gray-600 text-sm">{{ $user->nama }}</td>
 
-                            <td class="px-5 py-4">
-                                @if($user->role === 'admin')
-                                    <span class="inline-flex items-center gap-1.5 bg-purple-50 text-purple-700 text-xs font-semibold px-3 py-1 rounded-full border border-purple-100">
-                                        <i class="fa-solid fa-user-shield text-xs"></i> Admin
-                                    </span>
-                                @elseif($user->role === 'kasir')
-                                    <span class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full border border-blue-100">
-                                        <i class="fa-solid fa-cash-register text-xs"></i> Kasir
-                                    </span>
-                                @endif
-                            </td>
+                            {{-- Email --}}
+                            <td class="px-5 py-4 text-gray-600 text-sm">{{ $user->email }}</td>
 
+                            {{-- Status --}}
                             <td class="px-5 py-4">
                                 @if($user->status === 'aktif')
                                     <span class="inline-flex items-center gap-1.5 bg-green-50 text-green-700 text-xs font-semibold px-3 py-1 rounded-full border border-green-100">
@@ -104,37 +117,33 @@
                                 @endif
                             </td>
 
+                            {{-- Dibuat --}}
                             <td class="px-5 py-4 text-gray-400 text-xs">
                                 {{ \Carbon\Carbon::parse($user->created_at)->format('d M Y') }}
                             </td>
 
+                            {{-- Aksi --}}
                             <td class="px-5 py-4">
                                 <div class="flex items-center justify-center gap-1.5">
-                                    <a href="{{ url('/admin/user/' . $user->id . '/edit') }}" title="Edit"
-                                        class="w-8 h-8 flex items-center justify-center rounded-lg bg-yellow-50 hover:bg-yellow-100 text-yellow-600 transition">
+                                    <a href="{{ route('admin.users.edit', $user->id) }}" title="Edit"
+                                        class="w-8 h-8 flex items-center justify-center rounded-lg bg-yellow-50 hover:bg-yellow-100 text-yellow-500 border border-yellow-100 transition">
                                         <i class="fa-solid fa-pen text-xs"></i>
                                     </a>
-                                    @if($user->status === 'aktif')
-                                        <button onclick="confirmToggle({{ $user->id }}, '{{ $user->username }}', 'nonaktif')"
-                                            title="Nonaktifkan"
-                                            class="w-8 h-8 flex items-center justify-center rounded-lg bg-orange-50 hover:bg-orange-100 text-orange-500 transition">
-                                            <i class="fa-solid fa-toggle-on text-xs"></i>
-                                        </button>
-                                    @else
-                                        <button onclick="confirmToggle({{ $user->id }}, '{{ $user->username }}', 'aktif')"
-                                            title="Aktifkan"
-                                            class="w-8 h-8 flex items-center justify-center rounded-lg bg-green-50 hover:bg-green-100 text-green-600 transition">
-                                            <i class="fa-solid fa-toggle-off text-xs"></i>
-                                        </button>
-                                    @endif
+                                    <button onclick="confirmToggle({{ $user->id }}, '{{ addslashes($user->username) }}', '{{ $user->status }}', '{{ route('admin.users.toggle', $user->id) }}')"
+                                        title="{{ $user->status === 'aktif' ? 'Nonaktifkan' : 'Aktifkan' }}"
+                                        class="w-8 h-8 flex items-center justify-center rounded-lg border transition
+                                            {{ $user->status === 'aktif' ? 'bg-red-50 hover:bg-red-100 text-red-500 border-red-100' : 'bg-green-50 hover:bg-green-100 text-green-500 border-green-100' }}">
+                                        <i class="fa-solid {{ $user->status === 'aktif' ? 'fa-ban' : 'fa-circle-check' }} text-xs"></i>
+                                    </button>
                                 </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="px-5 py-16 text-center text-gray-400">
+                            <td colspan="7" class="px-5 py-16 text-center text-gray-400">
                                 <i class="fa-solid fa-users text-4xl mb-3 block text-gray-200"></i>
-                                <p class="font-medium">Belum ada data user</p>
+                                <p class="font-medium">Belum ada data kasir</p>
+                                <p class="text-xs mt-1">Klik "Tambah Kasir" untuk menambahkan akun kasir baru</p>
                             </td>
                         </tr>
                     @endforelse
@@ -142,12 +151,11 @@
             </table>
         </div>
 
-        {{-- ===== PAGINATION ===== --}}
+        {{-- Pagination --}}
         @if($users->total() > 0)
         <div class="px-5 py-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-500">
-
             <div class="flex items-center gap-2">
-                <span>Menampilkan {{ $users->firstItem() }}–{{ $users->lastItem() }} dari {{ $users->total() }} user. Tampilkan</span>
+                <span>Menampilkan {{ $users->firstItem() }}–{{ $users->lastItem() }} dari {{ $users->total() }} kasir. Tampilkan</span>
                 <select onchange="changePerPage(this.value)"
                     class="border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white">
                     @foreach([5, 10, 25, 50] as $opt)
@@ -156,7 +164,6 @@
                 </select>
                 <span>data</span>
             </div>
-
             <div class="flex items-center gap-1">
                 @if($users->onFirstPage())
                     <span class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 cursor-not-allowed text-xs">«</span>
@@ -165,19 +172,11 @@
                     <a href="{{ $users->url(1) }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500 transition text-xs">«</a>
                     <a href="{{ $users->previousPageUrl() }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500 transition text-xs">‹</a>
                 @endif
-
-                @php
-                    $current = $users->currentPage();
-                    $last    = $users->lastPage();
-                    $start   = max(1, $current - 1);
-                    $end     = min($last, $current + 1);
-                @endphp
-
+                @php $current = $users->currentPage(); $last = $users->lastPage(); $start = max(1,$current-1); $end = min($last,$current+1); @endphp
                 @if($start > 1)
                     <a href="{{ $users->url(1) }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition text-xs">1</a>
-                    @if($start > 2)<span class="w-8 h-8 flex items-center justify-center text-gray-400 text-xs">…</span>@endif
+                    @if($start > 2)<span class="text-gray-400 text-xs">…</span>@endif
                 @endif
-
                 @for($page = $start; $page <= $end; $page++)
                     @if($page == $current)
                         <span class="w-8 h-8 flex items-center justify-center rounded-lg bg-primary-700 text-white font-semibold text-xs">{{ $page }}</span>
@@ -185,12 +184,10 @@
                         <a href="{{ $users->url($page) }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition text-xs">{{ $page }}</a>
                     @endif
                 @endfor
-
                 @if($end < $last)
-                    @if($end < $last - 1)<span class="w-8 h-8 flex items-center justify-center text-gray-400 text-xs">…</span>@endif
+                    @if($end < $last - 1)<span class="text-gray-400 text-xs">…</span>@endif
                     <a href="{{ $users->url($last) }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition text-xs">{{ $last }}</a>
                 @endif
-
                 @if($users->hasMorePages())
                     <a href="{{ $users->nextPageUrl() }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500 transition text-xs">›</a>
                     <a href="{{ $users->url($users->lastPage()) }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500 transition text-xs">»</a>
@@ -199,10 +196,14 @@
                     <span class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 cursor-not-allowed text-xs">»</span>
                 @endif
             </div>
-
         </div>
         @endif
     </div>
+
+    <form id="formToggle" method="POST" class="hidden">
+        @csrf
+        @method('PATCH')
+    </form>
 
     <script>
         function changePerPage(val) {
@@ -214,30 +215,30 @@
 
         function filterTable() {
             const search = document.getElementById('searchInput').value.toLowerCase();
-            const role   = document.getElementById('filterRole').value;
             const status = document.getElementById('filterStatus').value;
             document.querySelectorAll('.user-row').forEach(row => {
-                const matchSearch = row.dataset.username.includes(search) || row.dataset.email.includes(search) || (row.dataset.nama || '').includes(search);
-                const matchRole   = !role   || row.dataset.role === role;
-                const matchStatus = !status || row.dataset.status === status;
-                row.style.display = (matchSearch && matchRole && matchStatus) ? '' : 'none';
+                const ok = (row.dataset.username.includes(search) || row.dataset.email.includes(search))
+                        && (!status || row.dataset.status === status);
+                row.style.display = ok ? '' : 'none';
             });
         }
 
-        function confirmToggle(id, username, newStatus) {
-            const isAktif = newStatus === 'aktif';
+        function confirmToggle(id, username, status, url) {
+            const isAktif = status === 'aktif';
             Swal.fire({
-                title: isAktif ? 'Aktifkan User?' : 'Nonaktifkan User?',
-                html: `User <b>${username}</b> akan di${isAktif ? 'aktifkan' : 'nonaktifkan'}.`,
+                title: isAktif ? 'Nonaktifkan User?' : 'Aktifkan User?',
+                html: `User <b>${username}</b> akan di${isAktif ? 'nonaktif' : 'aktif'}kan.`,
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: isAktif ? '#16a34a' : '#f97316',
+                confirmButtonColor: isAktif ? '#dc2626' : '#16a34a',
                 cancelButtonColor: '#6b7280',
-                confirmButtonText: isAktif ? 'Ya, Aktifkan' : 'Ya, Nonaktifkan',
+                confirmButtonText: isAktif ? 'Ya, Nonaktifkan!' : 'Ya, Aktifkan!',
                 cancelButtonText: 'Batal',
             }).then(result => {
                 if (result.isConfirmed) {
-                    window.location.href = `/admin/user/${id}/toggle`;
+                    const form = document.getElementById('formToggle');
+                    form.action = url;
+                    form.submit();
                 }
             });
         }

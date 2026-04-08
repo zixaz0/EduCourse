@@ -250,7 +250,15 @@
                 confirmButtonText: 'Ya, Logout',
                 cancelButtonText: 'Batal',
             }).then(result => {
-                if (result.isConfirmed) document.getElementById('logoutForm').submit();
+                if (result.isConfirmed) {
+                    const loader = document.getElementById('pageLoader');
+                    loader.querySelector('.loader-bar').style.animation = 'none';
+                    loader.querySelector('.loader-bar').style.width = '0%';
+                    loader.classList.remove('hide');
+                    void loader.querySelector('.loader-bar').offsetWidth;
+                    loader.querySelector('.loader-bar').style.animation = 'loadBar 0.5s ease forwards';
+                    setTimeout(() => document.getElementById('logoutForm').submit(), 200);
+                }
             });
         }
 

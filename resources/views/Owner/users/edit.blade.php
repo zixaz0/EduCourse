@@ -1,21 +1,19 @@
-@extends('Layout.admin')
+@extends('Layout.owner')
 
 @section('content')
 
     <div class="mb-6">
-        <a href="{{ route('admin.users.index') }}"
+        <a href="{{ route('owner.users.index') }}"
             class="inline-flex items-center gap-2 text-sm text-primary-700 hover:text-primary-900 font-medium transition">
             <i class="fa-solid fa-arrow-left text-xs"></i> Kembali ke Data User
         </a>
-        <h1 class="text-xl font-bold text-gray-800 mt-2">Edit Akun Kasir</h1>
+        <h1 class="text-xl font-bold text-gray-800 mt-2">Edit User</h1>
         <p class="text-sm text-gray-500 mt-0.5">Mengubah data akun <span class="font-semibold text-primary-700">{{ $user->username }}</span></p>
     </div>
 
-    <form method="POST" action="{{ route('admin.users.update', $user->id) }}">
+    <form method="POST" action="{{ route('owner.users.update', $user->id) }}">
         @csrf
         @method('PUT')
-        {{-- Role dikunci kasir --}}
-        <input type="hidden" name="role" value="kasir">
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
@@ -23,11 +21,11 @@
             <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
                 <div class="px-6 py-4 bg-primary-700 flex items-center gap-3">
                     <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
-                        <i class="fa-solid fa-cash-register text-white text-sm"></i>
+                        <i class="fa-solid fa-user-pen text-white text-sm"></i>
                     </div>
                     <div>
                         <p class="text-white font-bold text-sm">{{ $user->username }}</p>
-                        <p class="text-blue-200 text-xs">Edit data akun kasir</p>
+                        <p class="text-blue-200 text-xs">Edit data akun</p>
                     </div>
                 </div>
 
@@ -92,6 +90,44 @@
                         </div>
                     </div>
 
+                    {{-- Role --}}
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-2">Role <span class="text-red-500">*</span></label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="role" value="admin" id="role_admin" class="peer hidden"
+                                    {{ old('role', $user->role) === 'admin' ? 'checked' : '' }}>
+                                <div class="border-2 border-gray-200 rounded-xl p-4 flex items-center gap-3 transition
+                                    peer-checked:border-purple-500 peer-checked:bg-purple-50">
+                                    <div class="w-9 h-9 rounded-xl bg-purple-100 flex items-center justify-center flex-shrink-0">
+                                        <i class="fa-solid fa-user-shield text-purple-600 text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-bold text-gray-800">Admin</p>
+                                        <p class="text-xs text-gray-400">Akses penuh sistem</p>
+                                    </div>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="role" value="kasir" id="role_kasir" class="peer hidden"
+                                    {{ old('role', $user->role) === 'kasir' ? 'checked' : '' }}>
+                                <div class="border-2 border-gray-200 rounded-xl p-4 flex items-center gap-3 transition
+                                    peer-checked:border-blue-500 peer-checked:bg-blue-50">
+                                    <div class="w-9 h-9 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                        <i class="fa-solid fa-cash-register text-blue-600 text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-bold text-gray-800">Kasir</p>
+                                        <p class="text-xs text-gray-400">Akses transaksi</p>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                        @error('role')
+                            <p class="text-xs text-red-500 mt-1"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
+                        @enderror
+                    </div>
+
                     {{-- Status --}}
                     <div>
                         <label class="block text-xs font-semibold text-gray-600 mb-1.5">Status <span class="text-red-500">*</span></label>
@@ -108,10 +144,10 @@
                 </div>
             </div>
 
-            {{-- KANAN: Preview + Aksi --}}
+            {{-- KANAN: Info + Aksi --}}
             <div class="space-y-4">
 
-                {{-- Preview Card --}}
+                {{-- Info Akun --}}
                 <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
                     <div class="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
                         <div class="w-1 h-5 bg-primary-700 rounded-full"></div>
@@ -119,16 +155,25 @@
                     </div>
                     <div class="p-5 space-y-4">
                         <div class="flex justify-center">
-                            <div class="w-16 h-16 rounded-full bg-blue-100 border-2 border-blue-200 flex items-center justify-center">
-                                <span id="prev_initial" class="font-bold text-blue-700 text-2xl">{{ strtoupper(substr($user->username, 0, 1)) }}</span>
+                            @php $roleColor = $user->role === 'admin' ? 'bg-purple-100 border-purple-200' : 'bg-blue-100 border-blue-200'; $roleText = $user->role === 'admin' ? 'text-purple-700' : 'text-blue-700'; @endphp
+                            <div id="prev_avatar" class="w-16 h-16 rounded-full border-2 flex items-center justify-center {{ $roleColor }}">
+                                <span id="prev_initial" class="font-bold text-2xl {{ $roleText }}">{{ strtoupper(substr($user->username, 0, 1)) }}</span>
                             </div>
                         </div>
                         <div class="text-center">
                             <p id="prev_username" class="font-bold text-gray-800 text-base">{{ $user->username }}</p>
                             <p id="prev_nama" class="text-xs text-gray-500 mt-0.5">{{ $user->nama }}</p>
-                            <span class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full border border-blue-100 mt-2">
-                                <i class="fa-solid fa-cash-register text-xs"></i> Kasir
-                            </span>
+                            <div id="prev_role_badge" class="mt-2">
+                                @if($user->role === 'admin')
+                                    <span class="inline-flex items-center gap-1.5 bg-purple-50 text-purple-700 text-xs font-semibold px-3 py-1 rounded-full border border-purple-100">
+                                        <i class="fa-solid fa-user-shield text-xs"></i> Admin
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full border border-blue-100">
+                                        <i class="fa-solid fa-cash-register text-xs"></i> Kasir
+                                    </span>
+                                @endif
+                            </div>
                         </div>
                         <div class="space-y-2 pt-2 border-t border-gray-100">
                             <div class="flex justify-between text-xs">
@@ -149,7 +194,7 @@
                         class="w-full px-5 py-2.5 text-sm font-medium text-white bg-primary-700 hover:bg-primary-800 rounded-xl shadow transition flex items-center justify-center gap-2">
                         <i class="fa-solid fa-save"></i> Update Akun
                     </button>
-                    <a href="{{ route('admin.users.index') }}"
+                    <a href="{{ route('owner.users.index') }}"
                         class="w-full px-5 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition flex items-center justify-center gap-2">
                         <i class="fa-solid fa-xmark"></i> Batal
                     </a>
@@ -179,6 +224,29 @@
 
         document.getElementById('inp_nama').addEventListener('input', function () {
             document.getElementById('prev_nama').textContent = this.value || '—';
+        });
+
+        const roleBadges = {
+            admin: `<span class="inline-flex items-center gap-1.5 bg-purple-50 text-purple-700 text-xs font-semibold px-3 py-1 rounded-full border border-purple-100"><i class="fa-solid fa-user-shield text-xs"></i> Admin</span>`,
+            kasir: `<span class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full border border-blue-100"><i class="fa-solid fa-cash-register text-xs"></i> Kasir</span>`,
+        };
+
+        const avatarStyles = {
+            admin: { bg: 'bg-purple-100 border-purple-200', text: 'text-purple-700' },
+            kasir: { bg: 'bg-blue-100 border-blue-200',   text: 'text-blue-700'   },
+        };
+
+        document.querySelectorAll('input[name="role"]').forEach(function(radio) {
+            radio.addEventListener('change', function () {
+                const role    = this.value;
+                const style   = avatarStyles[role];
+                const avatar  = document.getElementById('prev_avatar');
+                const initial = document.getElementById('prev_initial');
+
+                avatar.className  = 'w-16 h-16 rounded-full border-2 flex items-center justify-center ' + style.bg;
+                initial.className = 'font-bold text-2xl ' + style.text;
+                document.getElementById('prev_role_badge').innerHTML = roleBadges[role];
+            });
         });
 
         @if(session('success'))

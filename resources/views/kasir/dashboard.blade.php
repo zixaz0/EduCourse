@@ -6,9 +6,6 @@
     <div class="mb-8">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-xs font-semibold tracking-widest text-primary-500 uppercase mb-1">
-                    {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}
-                </p>
                 <h1 class="text-2xl font-bold text-gray-800">
                     Selamat datang, <span class="text-primary-600">{{ Auth::user()->username ?? Auth::user()->name ?? 'Kasir' }}</span> 👋
                 </h1>

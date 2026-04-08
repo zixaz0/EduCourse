@@ -11,9 +11,9 @@ class PesertaSeeder extends Seeder
     {
         Peserta::insert([
             [
-                'nama'         => 'Rizky Maulana',
+                'nama'         => 'Ferdinan Hidayat',
                 'no_hp'        => '085678901234',
-                'email'        => 'rizky@gmail.com',
+                'email'        => 'ferdi@gmail.com',
                 'jenis_kelamin' => 'laki-laki',
                 'level'        => 'cukup',
                 'nama_ortu'    => 'Hendra Maulana',
@@ -23,9 +23,9 @@ class PesertaSeeder extends Seeder
                 'updated_at'   => now(),
             ],
             [
-                'nama'         => 'Putri Handayani',
+                'nama'         => 'Deny Firmansyah',
                 'no_hp'        => '086789012345',
-                'email'        => 'putri@gmail.com',
+                'email'        => 'deny@gmail.com',
                 'jenis_kelamin' => 'perempuan',
                 'level'        => 'baik',
                 'nama_ortu'    => 'Sari Handayani',
@@ -35,9 +35,9 @@ class PesertaSeeder extends Seeder
                 'updated_at'   => now(),
             ],
             [
-                'nama'         => 'Fajar Nugroho',
+                'nama'         => 'Enza Mulyono',
                 'no_hp'        => '087890123456',
-                'email'        => 'fajar@gmail.com',
+                'email'        => 'enza@gmail.com',
                 'jenis_kelamin' => 'laki-laki',
                 'level'        => 'mahir',
                 'nama_ortu'    => 'Bambang Nugroho',

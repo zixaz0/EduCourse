@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Guru;
+use App\Models\Kelas;
 use App\Models\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,9 +15,11 @@ class AdminGuruController extends Controller
     {
         $perPage = in_array($request->get('per_page'), [5, 10, 25, 50]) ? (int) $request->get('per_page') : 10;
 
-        $guru = Guru::latest()->paginate($perPage)->withQueryString();
+        $guru = Guru::with('kelas')->latest()->paginate($perPage)->withQueryString();
 
-        return view('admin.guru.index', compact('guru', 'perPage'));
+        $kelasList = Kelas::orderBy('nama_kelas')->get();
+
+        return view('admin.guru.index', compact('guru', 'perPage', 'kelasList'));
     }
 
     public function add()

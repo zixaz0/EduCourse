@@ -4,33 +4,19 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Models\Peserta;
 use App\Models\Kelas;
-use App\Models\Tagihan;
+use App\Models\Peserta;
 use App\Models\Transaksi;
+use App\Models\Tagihan;
 use App\Models\Log;
-use Carbon\Carbon;
 
 class AdminDashboardController extends Controller
 {
     public function index()
     {
-        $bulanIni = Carbon::now()->format('m-Y'); // format: 03-2026
-
-        // ===== ROW 1 =====
-        $totalUser   = User::count();
-        $userAktif   = User::whereDate('updated_at', today())->count(); // user yang ada aktivitas hari ini
-        $totalPeserta = Peserta::count();
-        $pesertaAktif = Peserta::where('status', 'aktif')->count();
-
-        // ===== ROW 2 =====
+        // ===== STAT CARDS =====
+        $totalPeserta       = Peserta::count();
         $totalKelas         = Kelas::count();
-        $tagihanBelumLunas  = Tagihan::where('status', 'belum_lunas')->count();
-        $pemasukanBulanIni  = Transaksi::join('tagihan', 'transaksi.tagihan_id', '=', 'tagihan.id')
-                                ->where('tagihan.bulan_tahun', $bulanIni)
-                                ->where('tagihan.status', 'lunas')
-                                ->sum('transaksi.uang_bayar');
         $totalTransaksi     = Transaksi::count();
 
         // ===== ROW 3: Transaksi Terbaru =====
@@ -70,13 +56,8 @@ class AdminDashboardController extends Controller
                                     ->get();
 
         return view('admin.dashboard', compact(
-            'totalUser',
-            'userAktif',
             'totalPeserta',
-            'pesertaAktif',
             'totalKelas',
-            'tagihanBelumLunas',
-            'pemasukanBulanIni',
             'totalTransaksi',
             'recentTransaksi',
             'kelasTerpopuler',

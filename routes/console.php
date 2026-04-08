@@ -2,6 +2,10 @@
 
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schedule;
+use App\Console\Commands\BuatTagihanBulanan;
+
+Schedule::command(BuatTagihanBulanan::class)->monthlyOn(1, '07:00');
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());

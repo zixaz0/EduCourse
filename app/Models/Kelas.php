@@ -30,4 +30,11 @@ class Kelas extends Model
     {
         return $this->belongsToMany(Peserta::class, 'peserta_kelas');
     }
+
+    // Relasi khusus peserta aktif saja
+    public function pesertaAktif()
+    {
+        return $this->belongsToMany(Peserta::class, 'peserta_kelas')
+                    ->where('peserta.status', 'aktif');
+    }
 }

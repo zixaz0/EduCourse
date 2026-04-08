@@ -11,25 +11,25 @@ class GuruSeeder extends Seeder
     {
         Guru::insert([
             [
-                'nama'         => 'Ahmad Fauzi',
+                'nama'         => 'Irsyad Fauzi',
                 'no_hp'        => '081234567890',
-                'email'        => 'ahmad.fauzi@gmail.com',
+                'email'        => 'irsyad@gmail.com',
                 'jenis_kelamin' => 'laki-laki',
                 'created_at'   => now(),
                 'updated_at'   => now(),
             ],
             [
-                'nama'         => 'Dewi Lestari',
+                'nama'         => 'Satria Maulana',
                 'no_hp'        => '082345678901',
-                'email'        => 'dewi.lestari@gmail.com',
+                'email'        => 'satria@gmail.com',
                 'jenis_kelamin' => 'perempuan',
                 'created_at'   => now(),
                 'updated_at'   => now(),
             ],
             [
-                'nama'         => 'Riko Prasetyo',
+                'nama'         => 'Alif Abdullah',
                 'no_hp'        => '083456789012',
-                'email'        => 'riko.prasetyo@gmail.com',
+                'email'        => 'alif@gmail.com',
                 'jenis_kelamin' => 'laki-laki',
                 'created_at'   => now(),
                 'updated_at'   => now(),

@@ -106,17 +106,31 @@
                                 @endif
                             </td>
 
+                            {{-- ===== KELAS KURSUS: tampil 1 + badge +N ===== --}}
                             <td class="px-5 py-3.5">
-                                <div class="flex flex-wrap gap-1">
-                                    @forelse($p->kelas as $k)
-                                        <span class="bg-primary-50 text-primary-700 text-xs font-medium px-2.5 py-1 rounded-full border border-primary-100">
-                                            {{ $k->nama_kelas }}
-                                        </span>
-                                    @empty
+                                @php
+                                    $kelasPeserta = $p->kelas;
+                                    $totalKelas   = $kelasPeserta->count();
+                                @endphp
+                                <div class="flex flex-wrap gap-1 items-center">
+                                    @if($totalKelas === 0)
                                         <span class="text-gray-300 text-xs">—</span>
-                                    @endforelse
+                                    @else
+                                        <span class="bg-primary-50 text-primary-700 text-xs font-medium px-2.5 py-1 rounded-full border border-primary-100">
+                                            {{ $kelasPeserta->first()->nama_kelas }}
+                                        </span>
+                                        @if($totalKelas > 1)
+                                            <span
+                                                class="bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-1 rounded-full cursor-pointer hover:bg-primary-100 hover:text-primary-700 transition"
+                                                title="{{ $kelasPeserta->skip(1)->pluck('nama_kelas')->implode(', ') }}"
+                                                onclick="openDetail({{ $p->id }})">
+                                                +{{ $totalKelas - 1 }}
+                                            </span>
+                                        @endif
+                                    @endif
                                 </div>
                             </td>
+                            {{-- ===== END KELAS KURSUS ===== --}}
 
                             <td class="px-5 py-3.5">
                                 <div class="flex items-center justify-center gap-1.5">

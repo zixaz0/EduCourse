@@ -41,7 +41,7 @@
         <select id="filterStatus" onchange="applyFilter()"
             class="text-sm border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white text-gray-600">
             <option value="">Semua Status</option>
-            <option value="belum_lunas">Belum Lunas</option>
+            <option value="belum_bayar">Belum Lunas</option>
             <option value="lunas">Lunas</option>
         </select>
     </div>
@@ -55,7 +55,8 @@
                         <th class="px-5 py-3.5 font-semibold">No</th>
                         <th class="px-5 py-3.5 font-semibold">Nama</th>
                         <th class="px-5 py-3.5 font-semibold">Kelas Kursus</th>
-                        <th class="px-5 py-3.5 font-semibold">Bulan / Tahun</th>
+                        <th class="px-5 py-3.5 font-semibold">Tgl Tagihan</th>
+                        <th class="px-5 py-3.5 font-semibold">Jatuh Tempo</th>
                         <th class="px-5 py-3.5 font-semibold">Status</th>
                         <th class="px-5 py-3.5 font-semibold text-center">Aksi</th>
                     </tr>
@@ -117,26 +118,45 @@
     {{-- Data tagihan dari Blade ke JS --}}
     @php
         $tagihanJs = collect($tagihan ?? [])->map(function($t) {
-            // Format bulan_tahun: "02-2026" → "Februari / 2026"
             $parts = explode('-', $t->bulan_tahun);
             $bulanMap = [
                 '01'=>'Januari','02'=>'Februari','03'=>'Maret','04'=>'April',
                 '05'=>'Mei','06'=>'Juni','07'=>'Juli','08'=>'Agustus',
                 '09'=>'September','10'=>'Oktober','11'=>'November','12'=>'Desember',
             ];
-            $bulanLabel = ($bulanMap[$parts[0]] ?? $parts[0]) . ' / ' . ($parts[1] ?? '');
+            $bulanLabel = $parts[1] ?? '';
             $bulanRaw   = strtolower($bulanMap[$parts[0]] ?? $parts[0]);
 
+            // ── Ambil kelas dari snapshot (frozen), fallback ke relasi peserta ──
+            $kelasArr = [];
+            if (!empty($t->kelas_snapshot)) {
+                $kelasArr = is_array($t->kelas_snapshot)
+                    ? $t->kelas_snapshot
+                    : json_decode($t->kelas_snapshot, true) ?? [];
+            } else {
+                // Fallback untuk tagihan lama yang belum punya snapshot
+                $kelasArr = $t->peserta->kelas->pluck('nama_kelas')->toArray();
+            }
+            // ───────────────────────────────────────────────────────────────────
+
             return [
-                'id'         => $t->id,
-                'nama'       => $t->peserta->nama ?? '-',
-                'no_hp'      => $t->peserta->no_hp ?? '',
-                'kelas'      => $t->peserta->kelas->pluck('nama_kelas')->toArray(),
-                'bulan_raw'  => $bulanRaw,
-                'bulan_label'=> $bulanLabel,
-                'status'     => strtolower($t->status),
-                'bayar_url'  => url('/kasir/transaksi/' . $t->id . '/bayar'),
-                'hapus_url'  => url('/kasir/transaksi/' . $t->id),
+                'id'                  => $t->id,
+                'nama'                => $t->peserta->nama ?? '-',
+                'no_hp'               => $t->peserta->no_hp ?? '',
+                'kelas'               => $kelasArr,
+                'bulan_raw'           => $bulanRaw,
+                'bulan_label'         => $bulanLabel,
+                'tanggal_tagihan'     => $t->tanggal_tagihan
+                                            ? \Carbon\Carbon::parse($t->tanggal_tagihan)->translatedFormat('d M Y')
+                                            : '-',
+                'tanggal_jatuh_tempo' => $t->tanggal_jatuh_tempo
+                                            ? \Carbon\Carbon::parse($t->tanggal_jatuh_tempo)->translatedFormat('d M Y')
+                                            : '-',
+                'jatuh_tempo_lewat'   => $t->tanggal_jatuh_tempo && $t->status !== 'lunas'
+                                            && \Carbon\Carbon::parse($t->tanggal_jatuh_tempo)->isPast(),
+                'status'              => strtolower($t->status),
+                'bayar_url'           => url('/kasir/transaksi/' . $t->id . '/bayar'),
+                'hapus_url'           => url('/kasir/transaksi/' . $t->id),
             ];
         })->values()->toArray();
     @endphp
@@ -184,7 +204,7 @@
 
             const tbody = document.getElementById('tableBody');
             if (!pageData.length) {
-                tbody.innerHTML = `<tr><td colspan="6" class="px-5 py-16 text-center text-gray-400">
+                tbody.innerHTML = `<tr><td colspan="7" class="px-5 py-16 text-center text-gray-400">
                     <i class="fa-solid fa-file-invoice text-4xl mb-3 block text-gray-200"></i>
                     <p class="font-medium">Tidak ada data tagihan</p>
                 </td></tr>`;
@@ -212,12 +232,17 @@
                            </div>`
                         : `<div class="text-center text-xs text-gray-300">—</div>`;
 
+                    const jatuhTempoBadge = t.jatuh_tempo_lewat
+                        ? `<span class="text-red-500 font-semibold text-xs">${t.tanggal_jatuh_tempo}</span>`
+                        : `<span class="text-gray-600 text-xs">${t.tanggal_jatuh_tempo}</span>`;
+
                     return `
                         <tr class="hover:bg-gray-50 transition">
                             <td class="px-5 py-3.5 text-gray-400 font-medium text-xs">${no}</td>
                             <td class="px-5 py-3.5 font-semibold text-gray-800">${t.nama}</td>
                             <td class="px-5 py-3.5"><div class="flex flex-wrap gap-1">${kelasBadges}</div></td>
-                            <td class="px-5 py-3.5 text-gray-600 font-medium">${t.bulan_label}</td>
+                            <td class="px-5 py-3.5 text-gray-600 text-xs">${t.tanggal_tagihan}</td>
+                            <td class="px-5 py-3.5">${jatuhTempoBadge}</td>
                             <td class="px-5 py-3.5">${statusBadge}</td>
                             <td class="px-5 py-3.5">${aksi}</td>
                         </tr>`;

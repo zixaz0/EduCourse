@@ -84,7 +84,7 @@ Route::prefix('admin')->middleware(['auth', RoleMiddleware::class . ':admin'])->
         Route::post('/',           [AdminUserController::class, 'store'])->name('admin.users.store');
         Route::get('/{id}/edit',   [AdminUserController::class, 'edit'])->name('admin.users.edit');
         Route::put('/{id}',        [AdminUserController::class, 'update'])->name('admin.users.update');
-        Route::get('/{id}/toggle', [AdminUserController::class, 'toggle'])->name('admin.users.toggle');
+        Route::patch('/{id}/toggle', [AdminUserController::class, 'toggle'])->name('admin.users.toggle');
     });
 
     // PESERTA
@@ -103,7 +103,7 @@ Route::prefix('admin')->middleware(['auth', RoleMiddleware::class . ':admin'])->
         Route::delete('/{id}',   [AdminGuruController::class, 'destroy'])->name('admin.guru.delete');
     });
 
-    // KELAS ← semua nama route ditambah prefix "admin."
+    // KELAS
     Route::prefix('kelas')->group(function () {
         Route::get('/',              [AdminKelasController::class, 'index'])->name('admin.kelas.index');
         Route::get('/add',           [AdminKelasController::class, 'add'])->name('admin.kelas.add');
@@ -128,10 +128,27 @@ Route::prefix('admin')->middleware(['auth', RoleMiddleware::class . ':admin'])->
 // ================================
 Route::prefix('owner')->middleware(['auth', RoleMiddleware::class . ':owner'])->group(function () {
 
+    // DASHBOARD
     Route::get('dashboard', [OwnerDashboardController::class, 'index'])->name('owner.dashboard');
-    Route::get('users',     [OwnerUserController::class, 'index'])->name('owner.users');
+
+    // USER MANAGEMENT
+    Route::prefix('users')->group(function () {
+        Route::get('/', [OwnerUserController::class, 'index'])->name('owner.users.index');
+        Route::get('/add', [OwnerUserController::class, 'add'])->name('owner.users.add');
+        Route::post('/', [OwnerUserController::class, 'store'])->name('owner.users.store');
+        Route::get('/{id}/edit', [OwnerUserController::class, 'edit'])->name('owner.users.edit');
+        Route::put('/{id}', [OwnerUserController::class, 'update'])->name('owner.users.update');
+        Route::patch('/{id}/toggle', [OwnerUserController::class, 'toggle'])->name('owner.users.toggle');
+        Route::delete('/{id}', [OwnerUserController::class, 'destroy'])->name('owner.users.destroy');
+    });
+
+    // KELAS
     Route::get('kelas',     [OwnerKelasController::class, 'index'])->name('owner.kelas');
+    
+    // LOG
     Route::get('log',       [OwnerLogController::class, 'index'])->name('owner.log');
+    
+    // LAPORAN
     Route::get('laporan',   [OwnerLaporanController::class, 'index'])->name('owner.laporan');
 
 });
