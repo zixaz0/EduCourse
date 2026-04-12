@@ -12,19 +12,21 @@ class Tagihan extends Model
         'peserta_id',
         'total_tagihan',
         'bulan_tahun',
-        'tanggal_tagihan',     
+        'kelas_snapshot',
+        'tanggal_tagihan',
         'tanggal_jatuh_tempo',
         'status',
     ];
 
     protected $casts = [
-        'status' => 'string',
+        'status'         => 'string',
+        'kelas_snapshot' => 'array', // otomatis encode/decode JSON
     ];
 
     // Relasi ke Peserta
     public function peserta()
     {
-        return $this->belongsTo(Peserta::class, 'peserta_id'); // ← tambah 'peserta_id'
+        return $this->belongsTo(Peserta::class, 'peserta_id');
     }
 
     // Relasi ke Transaksi

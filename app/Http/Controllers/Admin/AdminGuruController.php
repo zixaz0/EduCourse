@@ -77,7 +77,18 @@ class AdminGuruController extends Controller
 
     public function destroy($id)
     {
-        $guru = Guru::findOrFail($id);
+        $guru = Guru::with('kelas')->findOrFail($id);
+
+        // Blokir hapus kalau guru masih terdaftar mengajar kelas manapun
+        if ($guru->kelas->isNotEmpty()) {
+            $namaKelas = $guru->kelas->pluck('nama_kelas')->implode(', ');
+
+            return redirect()->route('admin.guru.index')
+                             ->with('error_hapus_guru', [
+                                 'nama'       => $guru->nama,
+                                 'kelas_list' => $guru->kelas->pluck('nama_kelas')->toArray(),
+                             ]);
+        }
 
         Log::create([
             'user_id'   => Auth::id(),

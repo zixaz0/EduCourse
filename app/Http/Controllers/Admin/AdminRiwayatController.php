@@ -15,21 +15,16 @@ class AdminRiwayatController extends Controller
         $perPage = in_array($request->get('per_page'), [5, 10, 25, 50]) ? (int) $request->get('per_page') : 10;
 
         $riwayat = Transaksi::with([
-                                'peserta',           // ambil nama peserta langsung dari transaksi.peserta_id
-                                'tagihan.peserta.kelas', // untuk kolom kursus
-                                'user',              // ambil username kasir dari transaksi.user_id
+                                'tagihan.peserta.kelas', // fallback untuk tagihan lama tanpa snapshot
+                                'user',
                             ])
                             ->latest()
                             ->paginate($perPage)
                             ->withQueryString();
 
-        // Dropdown filter kasir
         $kasirList = User::where('role', 'kasir')->orderBy('username')->get();
-
-        // Dropdown filter kursus
         $kelasList = Kelas::orderBy('nama_kelas')->get();
 
-        // Stat cards
         $totalTransaksi   = Transaksi::count();
         $totalPemasukan   = Transaksi::join('tagihan', 'transaksi.tagihan_id', '=', 'tagihan.id')
                                      ->sum('tagihan.total_tagihan');

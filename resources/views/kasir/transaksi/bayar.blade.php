@@ -45,9 +45,14 @@
                         <div class="flex justify-between items-center">
                             <span class="text-gray-400">Kursus</span>
                             <div class="flex flex-wrap gap-1 justify-end max-w-[60%]">
-                                @foreach($tagihan->peserta->kelas ?? [] as $k)
+                                @php
+                                    $kelasTampil = !empty($tagihan->kelas_snapshot)
+                                        ? (is_array($tagihan->kelas_snapshot) ? $tagihan->kelas_snapshot : json_decode($tagihan->kelas_snapshot, true))
+                                        : $tagihan->peserta->kelas->pluck('nama_kelas')->toArray();
+                                @endphp
+                                @foreach($kelasTampil ?? [] as $namaKelas)
                                     <span class="bg-primary-50 text-primary-700 text-xs font-medium px-2.5 py-1 rounded-full border border-primary-100">
-                                        {{ $k->nama_kelas }}
+                                        {{ $namaKelas }}
                                     </span>
                                 @endforeach
                             </div>

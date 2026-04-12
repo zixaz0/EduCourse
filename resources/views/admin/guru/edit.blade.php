@@ -18,13 +18,13 @@
             {{-- Kiri: Form --}}
             <div class="flex-1 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
                 {{-- Header Form --}}
-                <div class="flex items-center gap-3 px-6 py-4 bg-yellow-500">
+                <div class="flex items-center gap-3 px-6 py-4 bg-primary-700">
                     <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
                         <i class="fa-solid fa-chalkboard-user text-white text-sm"></i>
                     </div>
                     <div>
                         <p class="text-white font-bold text-sm">Form Edit Guru</p>
-                        <p class="text-white/70 text-xs">Kolom bertanda <span class="text-red-200">*</span> wajib diisi</p>
+                        <p class="text-white/70 text-xs">Kolom bertanda <span class="text-red-300">*</span> wajib diisi</p>
                     </div>
                 </div>
 
@@ -88,13 +88,11 @@
             {{-- Kanan: Preview + Tombol --}}
             <div class="w-full lg:w-72 flex flex-col gap-4">
                 <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-                    <p class="text-sm font-bold text-gray-700 mb-4 border-l-4 border-yellow-500 pl-3">Preview Guru</p>
+                    <p class="text-sm font-bold text-gray-700 mb-4 border-l-4 border-primary-700 pl-3">Preview Guru</p>
 
                     <div class="flex flex-col items-center gap-3 py-4">
-                        <div id="prev_avatar" class="w-16 h-16 rounded-full flex items-center justify-center
-                            {{ $guru->jenis_kelamin === 'perempuan' ? 'bg-pink-100' : 'bg-primary-100' }}">
-                            <span id="prev_initial" class="font-bold text-2xl
-                                {{ $guru->jenis_kelamin === 'perempuan' ? 'text-pink-600' : 'text-primary-700' }}">
+                        <div id="prev_avatar" class="w-16 h-16 rounded-full flex items-center justify-center bg-primary-100">
+                            <span id="prev_initial" class="font-bold text-2xl text-primary-700">
                                 {{ strtoupper(substr($guru->nama, 0, 1)) }}
                             </span>
                         </div>
@@ -103,22 +101,12 @@
                             <p class="text-xs text-gray-400 mt-0.5" id="prev_email">{{ $guru->email }}</p>
                             <p class="text-xs text-gray-400 mt-0.5" id="prev_nohp">{{ $guru->no_hp }}</p>
                         </div>
-                        <div id="prev_jk_wrap" class="mt-1">
-                            @if($guru->jenis_kelamin === 'perempuan')
-                                <span class="inline-flex items-center gap-1.5 bg-pink-50 text-pink-600 text-xs font-semibold px-3 py-1 rounded-full border border-pink-100">
-                                    <i class="fa-solid fa-venus text-xs"></i> Perempuan
-                                </span>
-                            @else
-                                <span class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-600 text-xs font-semibold px-3 py-1 rounded-full border border-blue-100">
-                                    <i class="fa-solid fa-mars text-xs"></i> Laki-laki
-                                </span>
-                            @endif
-                        </div>
+                        <div id="prev_jk_wrap" class="mt-1"></div>
                     </div>
                 </div>
 
                 <button type="submit"
-                    class="w-full flex items-center justify-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold text-sm px-4 py-3 rounded-xl transition">
+                    class="w-full flex items-center justify-center gap-2 bg-primary-700 hover:bg-primary-800 text-white font-semibold text-sm px-4 py-3 rounded-xl transition">
                     <i class="fa-solid fa-floppy-disk"></i> Perbarui Guru
                 </button>
                 <a href="{{ route('admin.guru.index') }}"
@@ -144,25 +132,40 @@
 
             const avatar  = document.getElementById('prev_avatar');
             const initial = document.getElementById('prev_initial');
+
             if (jk === 'perempuan') {
                 avatar.className  = 'w-16 h-16 rounded-full bg-pink-100 flex items-center justify-center';
-                initial.className = 'text-pink-600 font-bold text-2xl';
+                initial.className = 'font-bold text-2xl text-pink-600';
                 document.getElementById('prev_jk_wrap').innerHTML = `
                     <span class="inline-flex items-center gap-1.5 bg-pink-50 text-pink-600 text-xs font-semibold px-3 py-1 rounded-full border border-pink-100">
                         <i class="fa-solid fa-venus text-xs"></i> Perempuan
                     </span>`;
             } else {
                 avatar.className  = 'w-16 h-16 rounded-full bg-primary-100 flex items-center justify-center';
-                initial.className = 'text-primary-700 font-bold text-2xl';
+                initial.className = 'font-bold text-2xl text-primary-700';
                 document.getElementById('prev_jk_wrap').innerHTML = `
                     <span class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-600 text-xs font-semibold px-3 py-1 rounded-full border border-blue-100">
                         <i class="fa-solid fa-mars text-xs"></i> Laki-laki
                     </span>`;
             }
 
-            // highlight selected jk card
+            // Highlight selected jk card
             document.querySelectorAll('.jk-option').forEach(el => {
                 el.classList.remove('border-primary-500', 'bg-primary-50');
                 el.classList.add('border-gray-200');
             });
             const checked = document.querySelector('input[name="jenis_kelamin"]:checked');
+            if (checked) {
+                const parentLabel = checked.closest('.jk-option');
+                parentLabel.classList.add('border-primary-500', 'bg-primary-50');
+                parentLabel.classList.remove('border-gray-200');
+            }
+        }
+
+        // Jalankan saat halaman pertama kali load
+        document.addEventListener('DOMContentLoaded', function () {
+            updatePreview();
+        });
+    </script>
+
+@endsection

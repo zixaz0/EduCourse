@@ -14,6 +14,8 @@ class DatabaseSeeder extends Seeder
             KelasSeeder::class,
             PesertaSeeder::class,
             PesertaKelasSeeder::class,
+            TagihanSeeder::class,
+            PembayaranSeeder::class,
             LogSeeder::class,
         ]);
     }

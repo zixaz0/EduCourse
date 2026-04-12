@@ -3,7 +3,7 @@
 @section('content')
     <div class="mb-6">
         <h1 class="text-xl font-bold text-gray-800">Riwayat Aktivitas User</h1>
-        <p class="text-sm text-gray-500 mt-0.5">Log aktivitas semua user — admin & kasir</p>
+        <p class="text-sm text-gray-500 mt-0.5">Log aktivitas semua user — owner, admin & kasir</p>
     </div>
 
     {{-- Stat Cards --}}
@@ -60,6 +60,7 @@
         <select id="filterRole" onchange="filterTable()"
             class="text-sm border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white text-gray-600">
             <option value="">Semua Role</option>
+            <option value="owner">Owner</option>
             <option value="admin">Admin</option>
             <option value="kasir">Kasir</option>
         </select>
@@ -139,8 +140,8 @@
                             {{-- User --}}
                             <td class="px-5 py-3.5">
                                 <div class="flex items-center gap-2.5">
-                                    <div class="w-8 h-8 rounded-full {{ ($log->user->role ?? '') === 'admin' ? 'bg-purple-100' : 'bg-primary-100' }} flex items-center justify-center flex-shrink-0">
-                                        <span class="font-bold text-xs {{ ($log->user->role ?? '') === 'admin' ? 'text-purple-700' : 'text-primary-700' }}">
+                                    <div class="w-8 h-8 rounded-full {{ ($log->user->role ?? '') === 'admin' ? 'bg-purple-100' : (($log->user->role ?? '') === 'owner' ? 'bg-yellow-100' : 'bg-primary-100') }} flex items-center justify-center flex-shrink-0">
+                                        <span class="font-bold text-xs {{ ($log->user->role ?? '') === 'admin' ? 'text-purple-700' : (($log->user->role ?? '') === 'owner' ? 'text-yellow-700' : 'text-primary-700') }}">
                                             {{ strtoupper(substr($log->user->username ?? 'U', 0, 1)) }}
                                         </span>
                                     </div>
@@ -153,7 +154,11 @@
 
                             {{-- Role --}}
                             <td class="px-5 py-3.5">
-                                @if(($log->user->role ?? '') === 'admin')
+                                @if(($log->user->role ?? '') === 'owner')
+                                    <span class="inline-flex items-center gap-1 bg-yellow-50 text-yellow-700 text-xs font-semibold px-2.5 py-1 rounded-full border border-yellow-100">
+                                        <i class="fa-solid fa-crown text-xs"></i> Owner
+                                    </span>
+                                @elseif(($log->user->role ?? '') === 'admin')
                                     <span class="inline-flex items-center gap-1 bg-purple-50 text-purple-700 text-xs font-semibold px-2.5 py-1 rounded-full border border-purple-100">
                                         <i class="fa-solid fa-user-shield text-xs"></i> Admin
                                     </span>

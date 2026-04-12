@@ -32,6 +32,95 @@
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #3373be; border-radius: 10px; }
 
+    /* ===== SIDEBAR TOGGLE ===== */
+    #sidebar {
+        width: 224px;
+        transition: width 0.3s ease;
+        overflow: hidden;
+    }
+    #sidebar.collapsed {
+        width: 64px;
+    }
+    #sidebar .sidebar-label {
+        transition: opacity 0.2s ease, width 0.2s ease;
+        opacity: 1;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+    #sidebar.collapsed .sidebar-label {
+        opacity: 0;
+        width: 0;
+    }
+    #sidebar .sidebar-section-label {
+        transition: opacity 0.2s ease, height 0.2s ease, margin 0.2s ease;
+        opacity: 1;
+        height: auto;
+        overflow: hidden;
+    }
+    #sidebar.collapsed .sidebar-section-label {
+        opacity: 0;
+        height: 0;
+        margin: 0;
+    }
+    #sidebar .brand-text {
+        transition: opacity 0.2s ease, width 0.2s ease;
+        opacity: 1;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    #sidebar.collapsed .brand-text {
+        opacity: 0;
+        width: 0;
+    }
+    #sidebar-brand {
+        transition: padding 0.3s ease, justify-content 0.3s ease;
+    }
+    #sidebar.collapsed #sidebar-brand {
+        padding-left: 0;
+        padding-right: 0;
+        justify-content: center;
+    }
+    #main-content {
+        margin-left: 224px;
+        transition: margin-left 0.3s ease;
+    }
+    #main-content.sidebar-collapsed {
+        margin-left: 64px;
+    }
+    /* Tooltip — di-render di body via JS supaya bebas dari overflow:hidden sidebar */
+    #sidebar-tooltip {
+        position: fixed;
+        background: #154286;
+        color: white;
+        font-size: 12px;
+        font-family: 'Poppins', sans-serif;
+        padding: 4px 10px;
+        border-radius: 6px;
+        white-space: nowrap;
+        pointer-events: none;
+        z-index: 9998;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+        opacity: 0;
+        transition: opacity 0.15s ease;
+    }
+    #sidebar-tooltip.show { opacity: 1; }
+    #sidebar-tooltip::before {
+        content: '';
+        position: absolute;
+        right: 100%;
+        top: 50%;
+        transform: translateY(-50%);
+        border: 5px solid transparent;
+        border-right-color: #154286;
+    }
+    /* Toggle button di navbar */
+    #sidebarToggle {
+        transition: transform 0.3s ease;
+    }
+    body.sidebar-collapsed #sidebarToggle {
+        transform: rotate(180deg);
+    }
+
     /* ===== PAGE LOADING SCREEN ===== */
     #pageLoader {
         position: fixed;
@@ -104,62 +193,78 @@
     </div>
 
 
-    <aside class="w-56 min-h-screen bg-primary-700 flex flex-col fixed top-0 left-0 z-30 shadow-xl">
-        <div class="flex items-center gap-3 px-5 py-5 border-b border-primary-600">
-            <div class="w-9 h-9 bg-white rounded-lg flex items-center justify-center shadow overflow-hidden">
+    <aside id="sidebar" class="min-h-screen bg-primary-700 flex flex-col fixed top-0 left-0 z-30 shadow-xl">
+
+        <!-- Brand -->
+        <div class="flex items-center gap-3 px-5 py-5 border-b border-primary-600" id="sidebar-brand">
+            <div class="w-9 h-9 flex-shrink-0 bg-white rounded-lg flex items-center justify-center shadow overflow-hidden">
                 <img src="{{ asset('images/logo.webp') }}" alt="Logo" class="w-7 h-7 object-contain">
             </div>
-            <span class="text-white font-bold text-lg tracking-wide">EduCourse</span>
+            <span class="brand-text text-white font-bold text-lg tracking-wide">EduCourse</span>
         </div>
 
         <div class="px-4 pt-4 pb-1">
-            <span class="text-xs font-bold text-blue-300 uppercase tracking-widest">Admin Panel</span>
+            <span class="sidebar-section-label text-xs font-bold text-blue-300 uppercase tracking-widest">Admin Panel</span>
         </div>
 
-        <nav class="flex-1 px-3 py-2 space-y-0.5 overflow-y-auto">
+        <nav class="flex-1 px-3 py-2 space-y-0.5 overflow-y-auto overflow-x-hidden">
             <a href="{{ url('/admin/dashboard') }}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium">
-                <i class="fa-solid fa-gauge-high w-5 text-center"></i><span>Dashboard</span>
+                <i class="fa-solid fa-gauge-high w-5 text-center flex-shrink-0"></i>
+                <span class="sidebar-label">Dashboard</span>
             </a>
 
-            <p class="text-xs text-blue-400 font-semibold px-3 pt-3 pb-1 uppercase tracking-wider">Master Data</p>
+            <p class="sidebar-section-label text-xs text-blue-400 font-semibold px-3 pt-3 pb-1 uppercase tracking-wider">Master Data</p>
 
             <a href="{{ url('/admin/user') }}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium">
-                <i class="fa-solid fa-user-gear w-5 text-center"></i><span>Manajemen User</span>
+                <i class="fa-solid fa-user-gear w-5 text-center flex-shrink-0"></i>
+                <span class="sidebar-label">Manajemen User</span>
             </a>
             <a href="{{ url('/admin/peserta') }}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium">
-                <i class="fa-solid fa-users w-5 text-center"></i><span>Data Peserta</span>
+                <i class="fa-solid fa-users w-5 text-center flex-shrink-0"></i>
+                <span class="sidebar-label">Data Peserta</span>
             </a>
             <a href="{{ url('/admin/guru') }}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium">
-                <i class="fa-solid fa-graduation-cap w-5 text-center"></i><span>Data Guru</span>
+                <i class="fa-solid fa-graduation-cap w-5 text-center flex-shrink-0"></i>
+                <span class="sidebar-label">Data Guru</span>
             </a>
             <a href="{{ url('/admin/kelas') }}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium">
-                <i class="fa-solid fa-chalkboard-user w-5 text-center"></i><span>Data Kelas</span>
+                <i class="fa-solid fa-chalkboard-user w-5 text-center flex-shrink-0"></i>
+                <span class="sidebar-label">Data Kelas</span>
             </a>
 
-            <p class="text-xs text-blue-400 font-semibold px-3 pt-3 pb-1 uppercase tracking-wider">Keuangan</p>
+            <p class="sidebar-section-label text-xs text-blue-400 font-semibold px-3 pt-3 pb-1 uppercase tracking-wider">Keuangan</p>
 
             <a href="{{ url('/admin/riwayat') }}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium">
-                <i class="fa-solid fa-clock-rotate-left w-5 text-center"></i><span>Riwayat Transaksi</span>
+                <i class="fa-solid fa-clock-rotate-left w-5 text-center flex-shrink-0"></i>
+                <span class="sidebar-label">Riwayat Transaksi</span>
             </a>
 
-            <p class="text-xs text-blue-400 font-semibold px-3 pt-3 pb-1 uppercase tracking-wider">Sistem</p>
+            <p class="sidebar-section-label text-xs text-blue-400 font-semibold px-3 pt-3 pb-1 uppercase tracking-wider">Sistem</p>
 
             <a href="{{ url('/admin/log') }}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium">
-                <i class="fa-solid fa-clipboard-list w-5 text-center"></i><span>Log Aktivitas</span>
+                <i class="fa-solid fa-clipboard-list w-5 text-center flex-shrink-0"></i>
+                <span class="sidebar-label">Log Aktivitas</span>
             </a>
         </nav>
 
         <div class="px-3 py-4 border-t border-primary-600">
             <form id="logoutForm" method="POST" action="{{ route('logout') }}">@csrf</form>
             <button onclick="confirmLogout(event)" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium">
-                <i class="fa-solid fa-right-from-bracket w-5 text-center"></i><span>Logout</span>
+                <i class="fa-solid fa-right-from-bracket w-5 text-center flex-shrink-0"></i>
+                <span class="sidebar-label">Logout</span>
             </button>
         </div>
     </aside>
 
-    <div class="ml-56 flex-1 flex flex-col min-h-screen min-w-0 w-0">
+    <div id="main-content" class="flex-1 flex flex-col min-h-screen min-w-0 w-0">
         <header class="bg-primary-600 text-white px-6 py-3 flex items-center justify-between shadow-md sticky top-0 z-20">
             <div class="flex items-center gap-4 text-sm font-medium">
+                <button id="sidebarToggle" onclick="toggleSidebar()"
+                    class="w-8 h-8 rounded-lg flex items-center justify-center text-blue-200 hover:bg-white/20 hover:text-white transition"
+                    title="Toggle Sidebar">
+                    <i class="fa-solid fa-bars text-sm"></i>
+                </button>
+                <div class="w-px h-4 bg-blue-400"></div>
                 <div class="flex items-center gap-2">
                     <i class="fa-solid fa-clock text-blue-200"></i>
                     <span id="jam">--:--:--</span>
@@ -214,6 +319,53 @@
             });
         }
 
+        // ===== TOOLTIP ENGINE (render di body, bebas dari overflow:hidden) =====
+        const sidebarTooltip = document.createElement('div');
+        sidebarTooltip.id = 'sidebar-tooltip';
+        document.body.appendChild(sidebarTooltip);
+        let tooltipTimeout;
+
+        document.querySelectorAll('#sidebar .sidebar-link').forEach(link => {
+            const labelEl = link.querySelector('.sidebar-label');
+            if (!labelEl) return;
+            const labelText = labelEl.textContent.trim();
+
+            link.addEventListener('mouseenter', () => {
+                if (!document.getElementById('sidebar').classList.contains('collapsed')) return;
+                clearTimeout(tooltipTimeout);
+                const rect = link.getBoundingClientRect();
+                sidebarTooltip.textContent = labelText;
+                sidebarTooltip.style.top = (rect.top + rect.height / 2) + 'px';
+                sidebarTooltip.style.left = (rect.right + 10) + 'px';
+                sidebarTooltip.style.transform = 'translateY(-50%)';
+                sidebarTooltip.classList.add('show');
+            });
+
+            link.addEventListener('mouseleave', () => {
+                tooltipTimeout = setTimeout(() => sidebarTooltip.classList.remove('show'), 80);
+            });
+        });
+
+        // ===== SIDEBAR TOGGLE =====
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const isCollapsed = sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('sidebar-collapsed', isCollapsed);
+            document.body.classList.toggle('sidebar-collapsed', isCollapsed);
+            localStorage.setItem('sidebarCollapsed', isCollapsed ? '1' : '0');
+        }
+
+        // Restore state dari localStorage
+        (function() {
+            if (localStorage.getItem('sidebarCollapsed') === '1') {
+                document.getElementById('sidebar').classList.add('collapsed');
+                document.getElementById('main-content').classList.add('sidebar-collapsed');
+                document.body.classList.add('sidebar-collapsed');
+            }
+        })();
+
+        // Active link
         const links = document.querySelectorAll('.sidebar-link');
         const currentPath = window.location.pathname;
         links.forEach(link => {
@@ -244,12 +396,11 @@
                 loader.querySelector('.loader-bar').style.animation = 'none';
                 loader.querySelector('.loader-bar').style.width = '0%';
                 loader.classList.remove('hide');
-                void loader.querySelector('.loader-bar').offsetWidth; // reflow
+                void loader.querySelector('.loader-bar').offsetWidth;
                 loader.querySelector('.loader-bar').style.animation = 'loadBar 0.5s ease forwards';
             });
         });
 
-        // Form submit juga tampilkan loader
         document.querySelectorAll('form').forEach(form => {
             form.addEventListener('submit', function() {
                 const loader = document.getElementById('pageLoader');

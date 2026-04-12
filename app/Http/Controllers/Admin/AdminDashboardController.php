@@ -15,24 +15,14 @@ class AdminDashboardController extends Controller
     public function index()
     {
         // ===== STAT CARDS =====
-        $totalPeserta       = Peserta::count();
+        $totalPeserta       = Peserta::where('status', 'aktif')->count();
         $totalKelas         = Kelas::count();
         $totalTransaksi     = Transaksi::count();
 
-        // ===== ROW 3: Transaksi Terbaru =====
-        $recentTransaksi = Transaksi::with([
-                                'tagihan.peserta.kelas',
-                                'tagihan.peserta',
-                            ])
-                            ->whereHas('tagihan.peserta')
-                            ->latest()
-                            ->take(5)
-                            ->get();
-
         // ===== ROW 3: Kelas Terpopuler =====
-        $maxPeserta = Kelas::withCount('peserta')->get()->max('peserta_count') ?: 1;
+        $maxPeserta = Kelas::withCount(['peserta' => fn($q) => $q->where('status', 'aktif')])->get()->max('peserta_count') ?: 1;
 
-        $kelasTerpopuler = Kelas::withCount('peserta')
+        $kelasTerpopuler = Kelas::withCount(['peserta' => fn($q) => $q->where('status', 'aktif')])
                             ->orderByDesc('peserta_count')
                             ->take(5)
                             ->get()
@@ -44,12 +34,14 @@ class AdminDashboardController extends Controller
 
         // ===== ROW 4: Log Aktivitas Terbaru =====
         $recentLog = Log::with('user')
+                        ->where('user_id', auth()->id())
                         ->latest()
                         ->take(8)
                         ->get();
 
         // ===== ROW 4: Tagihan Belum Lunas Terbaru =====
         $recentTagihanBelumLunas = Tagihan::with('peserta')
+                                    ->whereHas('peserta', fn($q) => $q->where('status', 'aktif'))
                                     ->where('status', 'belum_lunas')
                                     ->latest()
                                     ->take(6)
@@ -59,7 +51,6 @@ class AdminDashboardController extends Controller
             'totalPeserta',
             'totalKelas',
             'totalTransaksi',
-            'recentTransaksi',
             'kelasTerpopuler',
             'recentLog',
             'recentTagihanBelumLunas',

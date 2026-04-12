@@ -10,7 +10,7 @@ class KasirRiwayatController extends Controller
 {
     public function index()
     {
-        $riwayat   = Transaksi::with(['tagihan.peserta.kelas', 'peserta', 'user'])
+        $riwayat   = Transaksi::with(['tagihan.peserta.kelas', 'user'])
                         ->latest()
                         ->get();
 

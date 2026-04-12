@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -51,6 +52,11 @@ class OwnerUserController extends Controller
         $validated['password'] = Hash::make($validated['password']);
         $user = User::create($validated);
 
+        Log::create([
+            'user_id'   => Auth::id(),
+            'aktivitas' => 'Menambah user baru: ' . $user->username . ' (role: ' . $user->role . ')',
+        ]);
+
         return redirect()->route('owner.users.index')
                          ->with('success', 'User ' . $user->username . ' (' . $user->role . ') berhasil ditambahkan.');
     }
@@ -91,6 +97,11 @@ class OwnerUserController extends Controller
 
         $user->update($validated);
 
+        Log::create([
+            'user_id'   => Auth::id(),
+            'aktivitas' => 'Mengedit user: ' . $user->username . ' (role: ' . $user->role . ')',
+        ]);
+
         return redirect()->route('owner.users.index')
                          ->with('success', 'User ' . $user->username . ' berhasil diperbarui.');
     }
@@ -105,6 +116,11 @@ class OwnerUserController extends Controller
         $user       = User::whereNotIn('role', ['owner'])->findOrFail($id);
         $statusBaru = $user->status === 'aktif' ? 'nonaktif' : 'aktif';
         $user->update(['status' => $statusBaru]);
+
+        Log::create([
+            'user_id'   => Auth::id(),
+            'aktivitas' => 'Mengubah status user: ' . $user->username . ' menjadi ' . $statusBaru,
+        ]);
 
         $pesan = $statusBaru === 'aktif'
             ? 'User ' . $user->username . ' berhasil diaktifkan.'
@@ -122,7 +138,13 @@ class OwnerUserController extends Controller
 
         $user     = User::whereNotIn('role', ['owner'])->findOrFail($id);
         $username = $user->username;
+        $role     = $user->role;
         $user->delete();
+
+        Log::create([
+            'user_id'   => Auth::id(),
+            'aktivitas' => 'Menghapus user: ' . $username . ' (role: ' . $role . ')',
+        ]);
 
         return redirect()->route('owner.users.index')
                          ->with('success', 'User ' . $username . ' berhasil dihapus.');

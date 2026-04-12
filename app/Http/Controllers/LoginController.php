@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\Log;
 
 class LoginController extends Controller
 {
@@ -23,10 +24,8 @@ class LoginController extends Controller
 
         $loginInput = $request->input('login');
 
-        // Cek apakah input berformat email atau username
         $field = filter_var($loginInput, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
-        // Cari user berdasarkan field yang sesuai
         $user = User::where($field, $loginInput)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
@@ -43,6 +42,12 @@ class LoginController extends Controller
 
         Auth::login($user);
         $request->session()->regenerate();
+
+        // Catat log login
+        Log::create([
+            'user_id'   => $user->id,
+            'aktivitas' => 'Login ke sistem sebagai ' . $user->role,
+        ]);
 
         switch ($user->role) {
             case 'admin':
@@ -61,6 +66,16 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
+        $user = Auth::user();
+
+        // Catat log logout
+        if ($user) {
+            Log::create([
+                'user_id'   => $user->id,
+                'aktivitas' => 'Logout dari sistem',
+            ]);
+        }
+
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

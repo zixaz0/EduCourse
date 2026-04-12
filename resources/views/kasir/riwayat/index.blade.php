@@ -89,7 +89,16 @@
                                 '12' => 'Desember',
                             ];
                             $periodeLabel = ($bulanMap[$bulanAngka] ?? $bulanAngka) . ' / ' . $tahunAngka;
-                            $namaKursus = $r->tagihan->peserta->kelas->pluck('nama_kelas')->implode(', ');
+                            // Ambil kelas dari snapshot (frozen), fallback ke relasi peserta
+                            $kelasTampil = [];
+                            if (!empty($r->tagihan->kelas_snapshot)) {
+                                $kelasTampil = is_array($r->tagihan->kelas_snapshot)
+                                    ? $r->tagihan->kelas_snapshot
+                                    : json_decode($r->tagihan->kelas_snapshot, true) ?? [];
+                            } elseif ($r->tagihan && $r->tagihan->peserta) {
+                                $kelasTampil = $r->tagihan->peserta->kelas->pluck('nama_kelas')->toArray();
+                            }
+                            $namaKursus = implode(', ', $kelasTampil);
                             $kasirNama = $r->user->username ?? ($r->user->name ?? '-');
                         @endphp
                         <tr class="hover:bg-gray-50 transition riwayat-row"
@@ -124,12 +133,14 @@
                             {{-- Kursus --}}
                             <td class="px-5 py-3.5">
                                 <div class="flex flex-wrap gap-1">
-                                    @foreach ($r->tagihan->peserta->kelas ?? [] as $k)
+                                    @forelse($kelasTampil as $namaKelas)
                                         <span
                                             class="bg-primary-50 text-primary-700 text-xs font-medium px-2 py-0.5 rounded-full border border-primary-100">
-                                            {{ $k->nama_kelas }}
+                                            {{ $namaKelas }}
                                         </span>
-                                    @endforeach
+                                    @empty
+                                        <span class="text-gray-400 text-xs">-</span>
+                                    @endforelse
                                 </div>
                             </td>
 

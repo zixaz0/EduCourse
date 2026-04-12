@@ -137,7 +137,7 @@
                                         <i class="fa-solid fa-pen text-xs"></i>
                                     </a>
                                     {{-- Tombol Hapus --}}
-                                    <button onclick="confirmDelete({{ $g->id }}, '{{ addslashes($g->nama) }}')"
+                                    <button onclick="confirmDelete({{ $g->id }}, '{{ addslashes($g->nama) }}', this)"
                                         title="Hapus"
                                         class="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 hover:bg-red-100 text-red-500 transition">
                                         <i class="fa-solid fa-trash text-xs"></i>
@@ -340,7 +340,34 @@
             if (e.target === this) closeModal();
         });
 
-        function confirmDelete(id, nama) {
+        function confirmDelete(id, nama, btn) {
+            // Ambil daftar kelas dari data-kelas di <tr> parent
+            const row = btn.closest('tr');
+            const rawKelas = row ? row.dataset.kelas : '';
+            const kelasList = rawKelas
+                ? rawKelas.split('|').map(k => k.trim()).filter(k => k !== '')
+                : [];
+
+            // Kalau masih mengajar kelas, tampilkan warning + daftar kelas
+            if (kelasList.length > 0) {
+                const kelasHtml = kelasList
+                    .map(k => `<li class="flex items-center gap-1.5 py-0.5"><i class="fa-solid fa-chalkboard text-primary-500 text-xs"></i> <span class="capitalize">${k}</span></li>`)
+                    .join('');
+
+                Swal.fire({
+                    title: 'Tidak Bisa Dihapus!',
+                    html: `<p class="text-gray-600 mb-3">Guru <b>${nama}</b> masih mengajar kelas berikut:</p>
+                           <ul class="text-left text-sm text-gray-700 bg-gray-50 rounded-xl px-4 py-3 space-y-1 border border-gray-200">${kelasHtml}</ul>
+                           <p class="text-xs text-gray-400 mt-3">Pindahkan atau hapus kelas terlebih dahulu sebelum menghapus guru ini.</p>`,
+                    icon: 'warning',
+                    confirmButtonColor: '#1e5399',
+                    confirmButtonText: 'Mengerti',
+                    showCancelButton: false,
+                });
+                return;
+            }
+
+            // Aman dihapus
             Swal.fire({
                 title: 'Hapus Guru?',
                 html: `Data <b>${nama}</b> akan dihapus dari sistem.`,
@@ -364,6 +391,22 @@
         @endif
         @if(session('error'))
             Swal.fire({ icon: 'error', title: 'Gagal!', text: '{{ session("error") }}', confirmButtonColor: '#1e5399' });
+        @endif
+        @if(session('error_hapus_guru'))
+            @php $errData = session('error_hapus_guru'); @endphp
+            (function() {
+                const kelasList = @json($errData['kelas_list']);
+                const kelasHtml = kelasList.map(k => `<li class="flex items-center gap-1.5"><i class="fa-solid fa-chalkboard text-primary-500 text-xs"></i> ${k}</li>`).join('');
+                Swal.fire({
+                    title: 'Tidak Bisa Dihapus!',
+                    html: `<p class="text-gray-600 mb-3">Guru <b>{{ addslashes($errData['nama']) }}</b> masih mengajar kelas berikut:</p>
+                           <ul class="text-left text-sm text-gray-700 bg-gray-50 rounded-xl px-4 py-3 space-y-1.5 border border-gray-200">${kelasHtml}</ul>
+                           <p class="text-xs text-gray-400 mt-3">Pindahkan atau hapus kelas terlebih dahulu sebelum menghapus guru ini.</p>`,
+                    icon: 'warning',
+                    confirmButtonColor: '#1e5399',
+                    confirmButtonText: 'Mengerti',
+                });
+            })();
         @endif
     </script>
 

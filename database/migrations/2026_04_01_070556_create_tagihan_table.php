@@ -13,6 +13,7 @@ return new class extends Migration
             $table->foreignId('peserta_id')->constrained('peserta')->onDelete('cascade');
             $table->decimal('total_tagihan', 10, 2);
             $table->string('bulan_tahun');
+            $table->json('kelas_snapshot')->nullable();
             $table->date('tanggal_tagihan')->nullable();
             $table->date('tanggal_jatuh_tempo')->nullable();
             $table->enum('status', ['belum_bayar', 'lunas'])->default('belum_bayar');

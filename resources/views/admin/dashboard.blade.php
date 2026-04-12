@@ -45,70 +45,14 @@
             <div>
                 <p class="text-xs text-gray-400 font-medium">Total Transaksi</p>
                 <p class="text-2xl font-bold text-sky-600">{{ $totalTransaksi ?? 0 }}</p>
-                <p class="text-xs text-gray-400 mt-0.5">semua waktu</p>
+                <p class="text-xs text-gray-400 mt-0.5">Bulan Ini</p>
             </div>
         </div>
 
     </div>
 
-    {{-- ===== ROW 3: Tabel Recent + Info Kelas ===== --}}
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5">
-
-        {{-- Transaksi Terbaru --}}
-        <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-            <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <div class="w-1 h-5 bg-primary-700 rounded-full"></div>
-                    <h2 class="text-sm font-bold text-gray-700">Transaksi Terbaru</h2>
-                </div>
-                <a href="{{ url('/admin/transaksi') }}" class="text-xs text-primary-600 hover:text-primary-800 font-medium transition">
-                    Lihat Semua <i class="fa-solid fa-arrow-right ml-1 text-xs"></i>
-                </a>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="bg-gray-50 text-left text-xs text-gray-500 font-semibold">
-                            <th class="px-5 py-3">Peserta</th>
-                            <th class="px-5 py-3">Kursus</th>
-                            <th class="px-5 py-3">Jumlah</th>
-                            <th class="px-5 py-3">Waktu</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-50">
-                        @forelse($recentTransaksi ?? [] as $t)
-                            <tr class="hover:bg-gray-50 transition">
-                                <td class="px-5 py-3">
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-7 h-7 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
-                                            <span class="text-primary-700 font-bold text-xs">
-                                                {{ strtoupper(substr( $t->tagihan->peserta->nama ?? 'P', 0, 1)) }}
-                                            </span>
-                                        </div>
-                                        <span class="font-medium text-gray-800 text-xs">{{  $t->tagihan->peserta->nama ?? '-' }}</span>
-                                    </div>
-                                </td>
-                                <td class="px-5 py-3 text-xs text-gray-600">
-                                    {{ $t->tagihan->peserta->kelas->pluck('nama_kelas')->implode(', ') ?? '-' }}
-                                </td>
-                                <td class="px-5 py-3 text-xs font-semibold text-green-700">
-                                    Rp {{ number_format($t->uang_bayar ?? 0, 0, ',', '.') }}
-                                </td>
-                                <td class="px-5 py-3 text-xs text-gray-400">
-                                    {{ \Carbon\Carbon::parse($t->created_at)->format('d M, H:i') }}
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="px-5 py-10 text-center text-gray-300 text-xs">
-                                    <i class="fa-solid fa-receipt text-2xl mb-2 block"></i>Belum ada transaksi
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    {{-- ===== ROW 3: Kelas Terpopuler ===== --}}
+    <div class="mb-5">
 
         {{-- Kelas Terpopuler --}}
         <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
@@ -116,7 +60,7 @@
                 <div class="w-1 h-5 bg-primary-700 rounded-full"></div>
                 <h2 class="text-sm font-bold text-gray-700">Kelas Terpopuler</h2>
             </div>
-            <div class="p-5 space-y-4">
+            <div class="p-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 @forelse($kelasTerpopuler ?? [] as $kelas)
                     <div>
                         <div class="flex items-center justify-between text-xs mb-1.5">
@@ -129,7 +73,7 @@
                         </div>
                     </div>
                 @empty
-                    <p class="text-xs text-gray-300 text-center py-6">Belum ada data kelas</p>
+                    <p class="text-xs text-gray-300 text-center py-6 col-span-3">Belum ada data kelas</p>
                 @endforelse
             </div>
         </div>
@@ -189,9 +133,6 @@
                     <div class="w-1 h-5 bg-red-400 rounded-full"></div>
                     <h2 class="text-sm font-bold text-gray-700">Tagihan Belum Lunas</h2>
                 </div>
-                <a href="{{ url('/admin/tagihan') }}" class="text-xs text-primary-600 hover:text-primary-800 font-medium transition">
-                    Lihat Semua <i class="fa-solid fa-arrow-right ml-1 text-xs"></i>
-                </a>
             </div>
             <div class="divide-y divide-gray-50">
                 @forelse($recentTagihanBelumLunas ?? [] as $t)

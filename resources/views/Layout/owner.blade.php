@@ -63,66 +63,155 @@
             border-radius: 10px;
         }
 
-    /* ===== PAGE LOADING SCREEN ===== */
-    #pageLoader {
-        position: fixed;
-        inset: 0;
-        z-index: 9999;
-        background: #1e5399;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 20px;
-        transition: opacity 0.4s ease, visibility 0.4s ease;
-    }
-    #pageLoader.hide {
-        opacity: 0;
-        visibility: hidden;
-    }
-    .loader-logo {
-        width: 56px;
-        height: 56px;
-        background: white;
-        border-radius: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-        animation: logoPulse 1.2s ease-in-out infinite;
-    }
-    .loader-logo img { width: 40px; height: 40px; object-fit: contain; }
-    .loader-bar-wrap {
-        width: 180px;
-        height: 4px;
-        background: rgba(255,255,255,0.2);
-        border-radius: 99px;
-        overflow: hidden;
-    }
-    .loader-bar {
-        height: 100%;
-        width: 0%;
-        background: white;
-        border-radius: 99px;
-        animation: loadBar 0.6s ease forwards;
-    }
-    .loader-text {
-        color: rgba(255,255,255,0.7);
-        font-size: 12px;
-        font-family: 'Poppins', sans-serif;
-        letter-spacing: 0.05em;
-    }
-    @keyframes logoPulse {
-        0%, 100% { transform: scale(1); box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
-        50% { transform: scale(1.07); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
-    }
-    @keyframes loadBar {
-        to { width: 100%; }
-    }
+        /* ===== SIDEBAR TOGGLE ===== */
+        #sidebar {
+            width: 224px;
+            transition: width 0.3s ease;
+            overflow: hidden;
+        }
+        #sidebar.collapsed {
+            width: 64px;
+        }
+        #sidebar .sidebar-label {
+            transition: opacity 0.2s ease, width 0.2s ease;
+            opacity: 1;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        #sidebar.collapsed .sidebar-label {
+            opacity: 0;
+            width: 0;
+        }
+        #sidebar .sidebar-section-label {
+            transition: opacity 0.2s ease, height 0.2s ease, margin 0.2s ease;
+            opacity: 1;
+            height: auto;
+            overflow: hidden;
+        }
+        #sidebar.collapsed .sidebar-section-label {
+            opacity: 0;
+            height: 0;
+            margin: 0;
+        }
+        #sidebar .brand-text {
+            transition: opacity 0.2s ease, width 0.2s ease;
+            opacity: 1;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        #sidebar.collapsed .brand-text {
+            opacity: 0;
+            width: 0;
+        }
+        #sidebar-brand {
+            transition: padding 0.3s ease, justify-content 0.3s ease;
+        }
+        #sidebar.collapsed #sidebar-brand {
+            padding-left: 0;
+            padding-right: 0;
+            justify-content: center;
+        }
+        #main-content {
+            margin-left: 224px;
+            transition: margin-left 0.3s ease;
+        }
+        #main-content.sidebar-collapsed {
+            margin-left: 64px;
+        }
+        /* Tooltip — di-render di body via JS supaya bebas dari overflow:hidden sidebar */
+        #sidebar-tooltip {
+            position: fixed;
+            background: #154286;
+            color: white;
+            font-size: 12px;
+            font-family: 'Poppins', sans-serif;
+            padding: 4px 10px;
+            border-radius: 6px;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 9998;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+            opacity: 0;
+            transition: opacity 0.15s ease;
+        }
+        #sidebar-tooltip.show { opacity: 1; }
+        #sidebar-tooltip::before {
+            content: '';
+            position: absolute;
+            right: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 5px solid transparent;
+            border-right-color: #154286;
+        }
+        /* Toggle button di navbar */
+        #sidebarToggle {
+            transition: transform 0.3s ease;
+        }
+        body.sidebar-collapsed #sidebarToggle {
+            transform: rotate(180deg);
+        }
+
+        /* ===== PAGE LOADING SCREEN ===== */
+        #pageLoader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: #1e5399;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+        #pageLoader.hide {
+            opacity: 0;
+            visibility: hidden;
+        }
+        .loader-logo {
+            width: 56px;
+            height: 56px;
+            background: white;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            animation: logoPulse 1.2s ease-in-out infinite;
+        }
+        .loader-logo img { width: 40px; height: 40px; object-fit: contain; }
+        .loader-bar-wrap {
+            width: 180px;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 99px;
+            overflow: hidden;
+        }
+        .loader-bar {
+            height: 100%;
+            width: 0%;
+            background: white;
+            border-radius: 99px;
+            animation: loadBar 0.6s ease forwards;
+        }
+        .loader-text {
+            color: rgba(255,255,255,0.7);
+            font-size: 12px;
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: 0.05em;
+        }
+        @keyframes logoPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+            50% { transform: scale(1.07); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+        }
+        @keyframes loadBar {
+            to { width: 100%; }
+        }
     </style>
 </head>
 
-<body class="bg-gray-100 min-h-screen flex">
+<body class="bg-gray-100 min-h-screen flex overflow-x-hidden">
 
     <!-- PAGE LOADER -->
     <div id="pageLoader">
@@ -135,49 +224,55 @@
         <p class="loader-text">Memuat halaman...</p>
     </div>
 
+    <aside id="sidebar" class="min-h-screen bg-primary-700 flex flex-col fixed top-0 left-0 z-30 shadow-xl">
 
-    <aside class="w-56 min-h-screen bg-primary-700 flex flex-col fixed top-0 left-0 z-30 shadow-xl">
-        <div class="flex items-center gap-3 px-5 py-5 border-b border-primary-600">
-            <div class="w-9 h-9 bg-white rounded-lg flex items-center justify-center shadow overflow-hidden">
+        <!-- Brand -->
+        <div class="flex items-center gap-3 px-5 py-5 border-b border-primary-600" id="sidebar-brand">
+            <div class="w-9 h-9 flex-shrink-0 bg-white rounded-lg flex items-center justify-center shadow overflow-hidden">
                 <img src="{{ asset('images/logo.webp') }}" alt="Logo" class="w-7 h-7 object-contain">
             </div>
-            <span class="text-white font-bold text-lg tracking-wide">EduCourse</span>
+            <span class="brand-text text-white font-bold text-lg tracking-wide">EduCourse</span>
         </div>
 
         <div class="px-4 pt-4 pb-1">
-            <span class="text-xs font-bold text-blue-300 uppercase tracking-widest">Owner Panel</span>
+            <span class="sidebar-section-label text-xs font-bold text-blue-300 uppercase tracking-widest">Owner Panel</span>
         </div>
 
-        <nav class="flex-1 px-3 py-2 space-y-0.5 overflow-y-auto">
+        <nav class="flex-1 px-3 py-2 space-y-0.5 overflow-y-auto overflow-x-hidden">
             <a href="{{ url('/owner/dashboard') }}"
                 class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium">
-                <i class="fa-solid fa-gauge-high w-5 text-center"></i><span>Dashboard</span>
+                <i class="fa-solid fa-gauge-high w-5 text-center flex-shrink-0"></i>
+                <span class="sidebar-label">Dashboard</span>
             </a>
 
-            <p class="text-xs text-blue-400 font-semibold px-3 pt-3 pb-1 uppercase tracking-wider">Data</p>
+            <p class="sidebar-section-label text-xs text-blue-400 font-semibold px-3 pt-3 pb-1 uppercase tracking-wider">Data</p>
 
             <a href="{{ url('/owner/kelas') }}"
                 class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium">
-                <i class="fa-solid fa-chalkboard-user w-5 text-center"></i><span>Data Kelas</span>
+                <i class="fa-solid fa-chalkboard-user w-5 text-center flex-shrink-0"></i>
+                <span class="sidebar-label">Data Kelas</span>
             </a>
 
             <a href="{{ url('/owner/users') }}"
                 class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium">
-                <i class="fa-solid fa-users w-5 text-center"></i><span>Data User</span>
+                <i class="fa-solid fa-users w-5 text-center flex-shrink-0"></i>
+                <span class="sidebar-label">Data User</span>
             </a>
 
-            <p class="text-xs text-blue-400 font-semibold px-3 pt-3 pb-1 uppercase tracking-wider">Laporan</p>
+            <p class="sidebar-section-label text-xs text-blue-400 font-semibold px-3 pt-3 pb-1 uppercase tracking-wider">Laporan</p>
 
             <a href="{{ url('/owner/laporan') }}"
                 class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium">
-                <i class="fa-solid fa-clipboard-list w-5 text-center"></i><span>Laporan Transaksi</span>
+                <i class="fa-solid fa-clipboard-list w-5 text-center flex-shrink-0"></i>
+                <span class="sidebar-label">Laporan Transaksi</span>
             </a>
 
-            <p class="text-xs text-blue-400 font-semibold px-3 pt-3 pb-1 uppercase tracking-wider">Sistem</p>
+            <p class="sidebar-section-label text-xs text-blue-400 font-semibold px-3 pt-3 pb-1 uppercase tracking-wider">Sistem</p>
 
             <a href="{{ url('/owner/log') }}"
                 class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium">
-                <i class="fa-solid fa-clock w-5 text-center"></i><span>Riwayat Aktivitas</span>
+                <i class="fa-solid fa-clock w-5 text-center flex-shrink-0"></i>
+                <span class="sidebar-label">Riwayat Aktivitas</span>
             </a>
         </nav>
 
@@ -185,15 +280,23 @@
             <form id="logoutForm" method="POST" action="{{ route('logout') }}">@csrf</form>
             <button onclick="confirmLogout(event)"
                 class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium">
-                <i class="fa-solid fa-right-from-bracket w-5 text-center"></i><span>Logout</span>
+                <i class="fa-solid fa-right-from-bracket w-5 text-center flex-shrink-0"></i>
+                <span class="sidebar-label">Logout</span>
             </button>
         </div>
     </aside>
 
-    <div class="ml-56 flex-1 flex flex-col min-h-screen">
+    <div id="main-content" class="flex-1 flex flex-col min-h-screen min-w-0 w-0">
         <header
             class="bg-primary-600 text-white px-6 py-3 flex items-center justify-between shadow-md sticky top-0 z-20">
             <div class="flex items-center gap-4 text-sm font-medium">
+                <!-- Tombol Toggle Sidebar -->
+                <button id="sidebarToggle" onclick="toggleSidebar()"
+                    class="w-8 h-8 rounded-lg flex items-center justify-center text-blue-200 hover:bg-white/20 hover:text-white transition"
+                    title="Toggle Sidebar">
+                    <i class="fa-solid fa-bars text-sm"></i>
+                </button>
+                <div class="w-px h-4 bg-blue-400"></div>
                 <div class="flex items-center gap-2">
                     <i class="fa-solid fa-clock text-blue-200"></i>
                     <span id="jam">--:--:--</span>
@@ -218,7 +321,7 @@
             </div>
         </header>
 
-        <main class="flex-1 p-6 bg-gray-50">
+        <main class="flex-1 p-6 bg-gray-50 min-w-0">
             @yield('content')
         </main>
     </div>
@@ -262,6 +365,53 @@
             });
         }
 
+        // ===== TOOLTIP ENGINE (render di body, bebas dari overflow:hidden) =====
+        const sidebarTooltip = document.createElement('div');
+        sidebarTooltip.id = 'sidebar-tooltip';
+        document.body.appendChild(sidebarTooltip);
+        let tooltipTimeout;
+
+        document.querySelectorAll('#sidebar .sidebar-link').forEach(link => {
+            const labelEl = link.querySelector('.sidebar-label');
+            if (!labelEl) return;
+            const labelText = labelEl.textContent.trim();
+
+            link.addEventListener('mouseenter', () => {
+                if (!document.getElementById('sidebar').classList.contains('collapsed')) return;
+                clearTimeout(tooltipTimeout);
+                const rect = link.getBoundingClientRect();
+                sidebarTooltip.textContent = labelText;
+                sidebarTooltip.style.top = (rect.top + rect.height / 2) + 'px';
+                sidebarTooltip.style.left = (rect.right + 10) + 'px';
+                sidebarTooltip.style.transform = 'translateY(-50%)';
+                sidebarTooltip.classList.add('show');
+            });
+
+            link.addEventListener('mouseleave', () => {
+                tooltipTimeout = setTimeout(() => sidebarTooltip.classList.remove('show'), 80);
+            });
+        });
+
+        // ===== SIDEBAR TOGGLE =====
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const isCollapsed = sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('sidebar-collapsed', isCollapsed);
+            document.body.classList.toggle('sidebar-collapsed', isCollapsed);
+            localStorage.setItem('ownerSidebarCollapsed', isCollapsed ? '1' : '0');
+        }
+
+        // Restore state dari localStorage
+        (function() {
+            if (localStorage.getItem('ownerSidebarCollapsed') === '1') {
+                document.getElementById('sidebar').classList.add('collapsed');
+                document.getElementById('main-content').classList.add('sidebar-collapsed');
+                document.body.classList.add('sidebar-collapsed');
+            }
+        })();
+
+        // Active link
         const links = document.querySelectorAll('.sidebar-link');
         const currentPath = window.location.pathname;
         links.forEach(link => {
@@ -294,12 +444,11 @@
                 loader.querySelector('.loader-bar').style.animation = 'none';
                 loader.querySelector('.loader-bar').style.width = '0%';
                 loader.classList.remove('hide');
-                void loader.querySelector('.loader-bar').offsetWidth; // reflow
+                void loader.querySelector('.loader-bar').offsetWidth;
                 loader.querySelector('.loader-bar').style.animation = 'loadBar 0.5s ease forwards';
             });
         });
 
-        // Form submit juga tampilkan loader
         document.querySelectorAll('form').forEach(form => {
             form.addEventListener('submit', function() {
                 const loader = document.getElementById('pageLoader');

@@ -15,10 +15,8 @@ class OwnerLogController extends Controller
             ->latest()
             ->get();
 
-        // Dropdown filter user (admin & kasir saja, bukan owner)
-        $userList = User::whereNotIn('role', ['owner'])
-            ->orderBy('username')
-            ->get();
+        // Dropdown filter semua user
+        $userList = User::orderBy('username')->get();
 
         return view('owner.log.index', compact('logs', 'userList'));
     }

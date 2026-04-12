@@ -47,7 +47,7 @@
                 <span class="text-xs text-gray-400">Transaksi</span>
             </div>
             <p class="text-2xl font-bold text-gray-800">{{ $stats['totalTransaksi'] }}</p>
-            <p class="text-xs text-gray-400 mt-0.5">Total transaksi</p>
+            <p class="text-xs text-gray-400 mt-0.5">Transaksi bulan ini</p>
         </div>
     </div>
 

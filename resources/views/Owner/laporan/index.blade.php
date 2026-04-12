@@ -97,7 +97,7 @@
                         <th class="px-5 py-3.5 font-semibold">No</th>
                         <th class="px-5 py-3.5 font-semibold">No. Unik</th>
                         <th class="px-5 py-3.5 font-semibold">Nama Peserta</th>
-                        <th class="px-5 py-3.5 font-semibold">Kelas</th>
+                        <th class="px-4 py-3.5 font-semibold w-40">Kelas</th>
                         <th class="px-5 py-3.5 font-semibold">Periode</th>
                         <th class="px-5 py-3.5 font-semibold">Total</th>
                         <th class="px-5 py-3.5 font-semibold">Uang Bayar</th>
@@ -128,8 +128,12 @@
                                     <span class="font-semibold text-gray-800">{{ $t->peserta ?? '-' }}</span>
                                 </div>
                             </td>
-                            <td class="px-5 py-3.5">
-                                <span class="bg-primary-50 text-primary-700 text-xs font-medium px-2.5 py-1 rounded-full border border-primary-100">{{ $t->kelas ?? '-' }}</span>
+                            <td class="px-4 py-3.5 max-w-[160px]">
+                                <div class="flex flex-wrap gap-1">
+                                    @foreach(explode(',', $t->kelas ?? '-') as $k)
+                                        <span class="bg-primary-50 text-primary-700 text-xs font-medium px-2 py-0.5 rounded-md border border-primary-100 whitespace-nowrap">{{ trim($k) }}</span>
+                                    @endforeach
+                                </div>
                             </td>
                             <td class="px-5 py-3.5 text-gray-600 text-xs font-medium">{{ $t->bulan_tahun ?? '-' }}</td>
                             <td class="px-5 py-3.5 font-bold text-gray-800">Rp {{ number_format($t->total_tagihan ?? 0, 0, ',', '.') }}</td>
