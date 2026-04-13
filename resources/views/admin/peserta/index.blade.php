@@ -9,7 +9,6 @@
         </div>
     </div>
 
-    {{-- Search & Filter --}}
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 mb-5 flex flex-col sm:flex-row gap-3">
         <div class="relative flex-1">
             <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
@@ -38,7 +37,6 @@
         </select>
     </div>
 
-    {{-- Table --}}
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
@@ -106,7 +104,6 @@
                                 @endif
                             </td>
 
-                            {{-- ===== KELAS KURSUS: tampil 1 + badge +N ===== --}}
                             <td class="px-5 py-3.5">
                                 @php
                                     $kelasPeserta = $p->kelas;
@@ -130,7 +127,6 @@
                                     @endif
                                 </div>
                             </td>
-                            {{-- ===== END KELAS KURSUS ===== --}}
 
                             <td class="px-5 py-3.5">
                                 <div class="flex items-center justify-center gap-1.5">
@@ -157,11 +153,9 @@
             </table>
         </div>
 
-        {{-- ===== PAGINATION ===== --}}
         @if($peserta->total() > 0)
         <div class="px-5 py-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-500">
 
-            {{-- Kiri: info + per page --}}
             <div class="flex items-center gap-2">
                 <span>Menampilkan {{ $peserta->firstItem() }}–{{ $peserta->lastItem() }} dari {{ $peserta->total() }} peserta. Tampilkan</span>
                 <select onchange="changePerPage(this.value)"
@@ -173,23 +167,20 @@
                 <span>data</span>
             </div>
 
-            {{-- Kanan: navigasi halaman --}}
             <div class="flex items-center gap-1">
-                {{-- First --}}
+
                 @if($peserta->onFirstPage())
                     <span class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 cursor-not-allowed text-xs">«</span>
                 @else
                     <a href="{{ $peserta->url(1) }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500 transition text-xs">«</a>
                 @endif
 
-                {{-- Prev --}}
                 @if($peserta->onFirstPage())
                     <span class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 cursor-not-allowed text-xs">‹</span>
                 @else
                     <a href="{{ $peserta->previousPageUrl() }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500 transition text-xs">‹</a>
                 @endif
 
-                {{-- Page numbers --}}
                 @php
                     $current  = $peserta->currentPage();
                     $last     = $peserta->lastPage();
@@ -215,14 +206,12 @@
                     <a href="{{ $peserta->url($last) }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition text-xs">{{ $last }}</a>
                 @endif
 
-                {{-- Next --}}
                 @if($peserta->hasMorePages())
                     <a href="{{ $peserta->nextPageUrl() }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500 transition text-xs">›</a>
                 @else
                     <span class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 cursor-not-allowed text-xs">›</span>
                 @endif
 
-                {{-- Last --}}
                 @if($peserta->hasMorePages())
                     <a href="{{ $peserta->url($peserta->lastPage()) }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500 transition text-xs">»</a>
                 @else
@@ -234,7 +223,6 @@
         @endif
     </div>
 
-    {{-- Modal Detail --}}
     <div id="modalDetail" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 backdrop-blur-sm">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
             <div class="flex items-center justify-between px-6 py-4 bg-primary-700">

@@ -7,7 +7,6 @@
         <p class="text-sm text-gray-500 mt-0.5">Riwayat semua aktivitas sistem</p>
     </div>
 
-    {{-- Search & Filter --}}
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 mb-5 flex flex-col sm:flex-row gap-3">
         <div class="relative flex-1">
             <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
@@ -23,7 +22,6 @@
         </select>
     </div>
 
-    {{-- Stats Cards --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
         <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 flex items-center gap-4">
             <div class="w-10 h-10 rounded-xl bg-primary-50 flex items-center justify-center">
@@ -45,7 +43,6 @@
         </div>
     </div>
 
-    {{-- Table --}}
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
@@ -68,13 +65,13 @@
                             $isEdit   = str_contains($akt, 'edit') || str_contains($akt, 'update') || str_contains($akt, 'ubah');
                             $isHapus  = str_contains($akt, 'hapus') || str_contains($akt, 'delete');
 
-                            if ($isLogin)       { $icon = 'fa-right-to-bracket';  $color = 'green';   $label = 'Login'; }
-                            elseif ($isLogout)  { $icon = 'fa-right-from-bracket'; $color = 'gray';   $label = 'Logout'; }
-                            elseif ($isBayar)   { $icon = 'fa-money-bill-wave';   $color = 'blue';    $label = 'Pembayaran'; }
-                            elseif ($isTambah)  { $icon = 'fa-plus';              $color = 'primary'; $label = 'Tambah Data'; }
-                            elseif ($isEdit)    { $icon = 'fa-pen';               $color = 'yellow';  $label = 'Edit Data'; }
-                            elseif ($isHapus)   { $icon = 'fa-trash';             $color = 'red';     $label = 'Hapus Data'; }
-                            else                { $icon = 'fa-circle-info';       $color = 'gray';    $label = 'Aktivitas'; }
+                            if ($isLogin)       { $icon = 'fa-right-to-bracket';   $color = 'green';   $label = 'Login'; }
+                            elseif ($isLogout)  { $icon = 'fa-right-from-bracket'; $color = 'gray';    $label = 'Logout'; }
+                            elseif ($isBayar)   { $icon = 'fa-money-bill-wave';    $color = 'blue';    $label = 'Pembayaran'; }
+                            elseif ($isTambah)  { $icon = 'fa-plus';               $color = 'primary'; $label = 'Tambah Data'; }
+                            elseif ($isEdit)    { $icon = 'fa-pen';                $color = 'yellow';  $label = 'Edit Data'; }
+                            elseif ($isHapus)   { $icon = 'fa-trash';              $color = 'red';     $label = 'Hapus Data'; }
+                            else                { $icon = 'fa-circle-info';        $color = 'gray';    $label = 'Aktivitas'; }
 
                             $colorMap = [
                                 'green'   => ['bg' => 'bg-green-50',   'text' => 'text-green-600',   'border' => 'border-green-100'],
@@ -92,7 +89,6 @@
 
                             <td class="px-5 py-4 text-gray-400 font-medium text-xs">{{ $logs->firstItem() + $index }}</td>
 
-                            {{-- User --}}
                             <td class="px-5 py-4">
                                 <div class="flex items-center gap-2">
                                     <div class="w-7 h-7 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
@@ -107,7 +103,6 @@
                                 </div>
                             </td>
 
-                            {{-- Aktivitas --}}
                             <td class="px-5 py-4">
                                 <div class="flex items-center gap-3">
                                     <div class="w-8 h-8 rounded-lg {{ $c['bg'] }} flex items-center justify-center flex-shrink-0">
@@ -122,7 +117,6 @@
                                 </div>
                             </td>
 
-                            {{-- Waktu --}}
                             <td class="px-5 py-4 whitespace-nowrap">
                                 <p class="text-gray-700 text-sm font-medium">
                                     {{ \Carbon\Carbon::parse($log->created_at)->format('d M Y') }}
@@ -144,7 +138,6 @@
             </table>
         </div>
 
-        {{-- ===== PAGINATION ===== --}}
         @if($logs->total() > 0)
         <div class="px-5 py-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-500">
             <div class="flex items-center gap-2">
@@ -166,11 +159,18 @@
                     <a href="{{ $logs->previousPageUrl() }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500 transition text-xs">‹</a>
                 @endif
 
-                @php $current = $logs->currentPage(); $last = $logs->lastPage(); $start = max(1, $current-1); $end = min($last, $current+1); @endphp
+                @php
+                    $current = $logs->currentPage();
+                    $last    = $logs->lastPage();
+                    $start   = max(1, $current - 1);
+                    $end     = min($last, $current + 1);
+                @endphp
 
                 @if($start > 1)
                     <a href="{{ $logs->url(1) }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition text-xs">1</a>
-                    @if($start > 2)<span class="w-8 h-8 flex items-center justify-center text-gray-400 text-xs">…</span>@endif
+                    @if($start > 2)
+                        <span class="w-8 h-8 flex items-center justify-center text-gray-400 text-xs">…</span>
+                    @endif
                 @endif
 
                 @for($page = $start; $page <= $end; $page++)
@@ -182,7 +182,9 @@
                 @endfor
 
                 @if($end < $last)
-                    @if($end < $last - 1)<span class="w-8 h-8 flex items-center justify-center text-gray-400 text-xs">…</span>@endif
+                    @if($end < $last - 1)
+                        <span class="w-8 h-8 flex items-center justify-center text-gray-400 text-xs">…</span>
+                    @endif
                     <a href="{{ $logs->url($last) }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition text-xs">{{ $last }}</a>
                 @endif
 

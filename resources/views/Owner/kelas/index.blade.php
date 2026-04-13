@@ -7,7 +7,6 @@
         <p class="text-sm text-gray-500 mt-0.5">Daftar semua kelas beserta peserta yang terdaftar</p>
     </div>
 
-    {{-- Search --}}
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 mb-5 flex flex-col sm:flex-row gap-3">
         <div class="relative flex-1">
             <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
@@ -24,7 +23,6 @@
         </select>
     </div>
 
-    {{-- Cards Grid --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="kelasGrid">
         @forelse($kelas ?? [] as $k)
             @php
@@ -43,7 +41,6 @@
                 data-nama="{{ strtolower($k->nama_kelas) }}"
                 data-hari="{{ strtolower($k->hari_kelas) }}">
 
-                {{-- Header card --}}
                 <div class="bg-primary-700 px-5 py-4 flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
                         <i class="fa-solid fa-chalkboard-user text-white"></i>
@@ -54,10 +51,8 @@
                     </div>
                 </div>
 
-                {{-- Body --}}
                 <div class="p-5 space-y-3">
 
-                    {{-- Hari --}}
                     <div class="flex flex-wrap gap-1">
                         @foreach($hariList as $hari)
                             <span class="text-xs font-semibold px-2.5 py-1 rounded-full border {{ $hariColor[trim($hari)] ?? 'bg-gray-50 text-gray-600 border-gray-200' }}">
@@ -66,10 +61,8 @@
                         @endforeach
                     </div>
 
-                    {{-- Info rows --}}
                     <div class="space-y-2 pt-1">
 
-                        {{-- Guru --}}
                         <div class="flex items-center gap-2.5">
                             <div class="w-6 h-6 rounded-lg bg-primary-50 flex items-center justify-center flex-shrink-0">
                                 <i class="fa-solid fa-user text-primary-500 text-[10px]"></i>
@@ -78,7 +71,6 @@
                             <span class="text-xs font-semibold text-gray-700">{{ $k->guru->nama ?? '-' }}</span>
                         </div>
 
-                        {{-- Jam --}}
                         <div class="flex items-center gap-2.5">
                             <div class="w-6 h-6 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
                                 <i class="fa-solid fa-clock text-blue-400 text-[10px]"></i>
@@ -87,7 +79,6 @@
                             <span class="text-xs font-semibold text-gray-700">{{ $k->jam_mulai }} – {{ $k->jam_selesai }}</span>
                         </div>
 
-                        {{-- Deskripsi (preview singkat di card) --}}
                         @if($k->deskripsi)
                         <div class="flex items-start gap-2.5">
                             <div class="w-6 h-6 rounded-lg bg-gray-50 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -99,7 +90,6 @@
 
                     </div>
 
-                    {{-- Footer card --}}
                     <div class="border-t border-gray-100 pt-3 flex items-center justify-between">
                         <span class="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full border
                             {{ ($k->jumlah_peserta ?? 0) > 0 ? 'bg-green-50 text-green-700 border-green-100' : 'bg-gray-50 text-gray-400 border-gray-200' }}">
@@ -123,14 +113,12 @@
     </div>
 
 
-    {{-- ===================== MODAL DETAIL KELAS ===================== --}}
     <div id="modalDetailKelas"
         class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm hidden"
         onclick="closeModalOnBackdrop(event)">
 
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl mx-4 max-h-[90vh] flex flex-col overflow-hidden">
 
-            {{-- Modal Header --}}
             <div class="flex items-center justify-between px-6 py-4 bg-primary-700 rounded-t-2xl flex-shrink-0">
                 <div class="flex items-center gap-3">
                     <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
@@ -146,10 +134,8 @@
                 </button>
             </div>
 
-            {{-- Modal Body --}}
             <div class="overflow-y-auto flex-1 p-6 space-y-5">
 
-                {{-- Info Grid --}}
                 <div class="grid grid-cols-2 gap-4">
                     <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
                         <p class="text-xs text-gray-400 mb-1 flex items-center gap-1.5">
@@ -177,7 +163,6 @@
                     </div>
                 </div>
 
-                {{-- Hari --}}
                 <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
                     <p class="text-xs text-gray-400 mb-2 flex items-center gap-1.5">
                         <i class="fa-solid fa-calendar-days"></i> Hari Kelas
@@ -185,7 +170,6 @@
                     <div id="modalHari" class="flex flex-wrap gap-1.5"></div>
                 </div>
 
-                {{-- Deskripsi lengkap --}}
                 <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
                     <p class="text-xs text-gray-400 mb-2 flex items-center gap-1.5">
                         <i class="fa-solid fa-align-left"></i> Deskripsi Kelas
@@ -193,7 +177,6 @@
                     <p id="modalDeskripsi" class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">-</p>
                 </div>
 
-                {{-- Daftar Peserta --}}
                 <div>
                     <div class="flex items-center justify-between mb-2">
                         <p class="text-xs text-gray-400 flex items-center gap-1.5">
@@ -212,7 +195,6 @@
 
             </div>
 
-            {{-- Modal Footer --}}
             <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between flex-shrink-0 bg-gray-50 rounded-b-2xl">
                 <p id="modalFooterInfo" class="text-xs text-gray-400"></p>
                 <button onclick="closeDetailModal()"
@@ -222,7 +204,6 @@
             </div>
         </div>
     </div>
-    {{-- ===================== END MODAL ===================== --}}
 
     <script>
         const kelasData = @json($kelasJson);
@@ -250,7 +231,6 @@
             document.getElementById('modalFooterInfo').textContent   = 'Dibuat: ' + k.created_at;
             document.getElementById('modalSearchPeserta').value      = '';
 
-            // Hari badges
             const hariContainer = document.getElementById('modalHari');
             hariContainer.innerHTML = '';
             k.hari_kelas.split(',').map(function(h) { return h.trim(); }).forEach(function(hari) {
@@ -258,7 +238,6 @@
                 hariContainer.innerHTML += '<span class="text-xs font-semibold px-2.5 py-1 rounded-full border ' + cls + '">' + hari + '</span>';
             });
 
-            // Daftar peserta
             renderPesertaModal(k.peserta);
 
             document.getElementById('modalDetailKelas').classList.remove('hidden');

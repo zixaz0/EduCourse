@@ -2,7 +2,6 @@
 
 @section('content')
 
-    {{-- Header --}}
     <div class="mb-8">
         <div class="flex items-center justify-between">
             <div>
@@ -14,10 +13,8 @@
         </div>
     </div>
 
-    {{-- ===== STAT CARDS ===== --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
 
-        {{-- Total Kelas --}}
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
             <div class="w-12 h-12 rounded-xl bg-primary-50 flex items-center justify-center flex-shrink-0">
                 <i class="fa-solid fa-chalkboard-user text-primary-600 text-lg"></i>
@@ -29,7 +26,6 @@
             </div>
         </div>
 
-        {{-- Peserta Aktif --}}
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
             <div class="w-12 h-12 rounded-xl bg-teal-50 flex items-center justify-center flex-shrink-0">
                 <i class="fa-solid fa-user-group text-teal-600 text-lg"></i>
@@ -41,7 +37,6 @@
             </div>
         </div>
 
-        {{-- Tagihan Belum Dibayar --}}
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
             <div class="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center flex-shrink-0">
                 <i class="fa-solid fa-file-invoice-dollar text-orange-500 text-lg"></i>
@@ -53,7 +48,6 @@
             </div>
         </div>
 
-        {{-- Pemasukan Bulan Ini --}}
         <div class="bg-gradient-to-br from-primary-600 to-primary-700 rounded-2xl shadow-sm p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
             <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
                 <i class="fa-solid fa-money-bill-trend-up text-white text-lg"></i>
@@ -69,10 +63,8 @@
 
     </div>
 
-    {{-- ===== ROW 2: Tabel ===== --}}
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
 
-        {{-- Tagihan Belum Lunas --}}
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
             <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
                 <div class="flex items-center gap-2">
@@ -115,7 +107,6 @@
             </div>
         </div>
 
-        {{-- Transaksi Terbaru --}}
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
             <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
                 <div class="flex items-center gap-2">

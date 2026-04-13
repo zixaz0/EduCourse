@@ -31,8 +31,6 @@
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #3373be; border-radius: 10px; }
-
-    /* ===== SIDEBAR TOGGLE ===== */
     #sidebar {
         width: 224px;
         transition: width 0.3s ease;
@@ -87,7 +85,6 @@
     #main-content.sidebar-collapsed {
         margin-left: 64px;
     }
-    /* Tooltip — di-render di body via JS supaya bebas dari overflow:hidden sidebar */
     #sidebar-tooltip {
         position: fixed;
         background: #154286;
@@ -113,15 +110,12 @@
         border: 5px solid transparent;
         border-right-color: #154286;
     }
-    /* Toggle button di navbar */
     #sidebarToggle {
         transition: transform 0.3s ease;
     }
     body.sidebar-collapsed #sidebarToggle {
         transform: rotate(180deg);
     }
-
-    /* ===== PAGE LOADING SCREEN ===== */
     #pageLoader {
         position: fixed;
         inset: 0;
@@ -180,8 +174,6 @@
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex overflow-x-hidden">
-
-    <!-- PAGE LOADER -->
     <div id="pageLoader">
         <div class="loader-logo">
             <img src="{{ asset('images/logo.webp') }}" alt="Logo">
@@ -191,11 +183,7 @@
         </div>
         <p class="loader-text">Memuat halaman...</p>
     </div>
-
-
     <aside id="sidebar" class="min-h-screen bg-primary-700 flex flex-col fixed top-0 left-0 z-30 shadow-xl">
-
-        <!-- Brand -->
         <div class="flex items-center gap-3 px-5 py-5 border-b border-primary-600" id="sidebar-brand">
             <div class="w-9 h-9 flex-shrink-0 bg-white rounded-lg flex items-center justify-center shadow overflow-hidden">
                 <img src="{{ asset('images/logo.webp') }}" alt="Logo" class="w-7 h-7 object-contain">
@@ -212,9 +200,7 @@
                 <i class="fa-solid fa-gauge-high w-5 text-center flex-shrink-0"></i>
                 <span class="sidebar-label">Dashboard</span>
             </a>
-
             <p class="sidebar-section-label text-xs text-blue-400 font-semibold px-3 pt-3 pb-1 uppercase tracking-wider">Master Data</p>
-
             <a href="{{ url('/admin/user') }}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium">
                 <i class="fa-solid fa-user-gear w-5 text-center flex-shrink-0"></i>
                 <span class="sidebar-label">Manajemen User</span>
@@ -231,22 +217,18 @@
                 <i class="fa-solid fa-chalkboard-user w-5 text-center flex-shrink-0"></i>
                 <span class="sidebar-label">Data Kelas</span>
             </a>
-
             <p class="sidebar-section-label text-xs text-blue-400 font-semibold px-3 pt-3 pb-1 uppercase tracking-wider">Keuangan</p>
 
             <a href="{{ url('/admin/riwayat') }}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium">
                 <i class="fa-solid fa-clock-rotate-left w-5 text-center flex-shrink-0"></i>
                 <span class="sidebar-label">Riwayat Transaksi</span>
             </a>
-
             <p class="sidebar-section-label text-xs text-blue-400 font-semibold px-3 pt-3 pb-1 uppercase tracking-wider">Sistem</p>
-
             <a href="{{ url('/admin/log') }}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium">
                 <i class="fa-solid fa-clipboard-list w-5 text-center flex-shrink-0"></i>
                 <span class="sidebar-label">Log Aktivitas</span>
             </a>
         </nav>
-
         <div class="px-3 py-4 border-t border-primary-600">
             <form id="logoutForm" method="POST" action="{{ route('logout') }}">@csrf</form>
             <button onclick="confirmLogout(event)" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium">
@@ -255,7 +237,6 @@
             </button>
         </div>
     </aside>
-
     <div id="main-content" class="flex-1 flex flex-col min-h-screen min-w-0 w-0">
         <header class="bg-primary-600 text-white px-6 py-3 flex items-center justify-between shadow-md sticky top-0 z-20">
             <div class="flex items-center gap-4 text-sm font-medium">
@@ -318,8 +299,6 @@
                 }
             });
         }
-
-        // ===== TOOLTIP ENGINE (render di body, bebas dari overflow:hidden) =====
         const sidebarTooltip = document.createElement('div');
         sidebarTooltip.id = 'sidebar-tooltip';
         document.body.appendChild(sidebarTooltip);
@@ -345,8 +324,6 @@
                 tooltipTimeout = setTimeout(() => sidebarTooltip.classList.remove('show'), 80);
             });
         });
-
-        // ===== SIDEBAR TOGGLE =====
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const mainContent = document.getElementById('main-content');
@@ -355,8 +332,6 @@
             document.body.classList.toggle('sidebar-collapsed', isCollapsed);
             localStorage.setItem('sidebarCollapsed', isCollapsed ? '1' : '0');
         }
-
-        // Restore state dari localStorage
         (function() {
             if (localStorage.getItem('sidebarCollapsed') === '1') {
                 document.getElementById('sidebar').classList.add('collapsed');
@@ -364,8 +339,6 @@
                 document.body.classList.add('sidebar-collapsed');
             }
         })();
-
-        // Active link
         const links = document.querySelectorAll('.sidebar-link');
         const currentPath = window.location.pathname;
         links.forEach(link => {
@@ -381,8 +354,7 @@
                 link.classList.add('text-blue-100');
             }
         });
-
-        // ===== PAGE LOADER =====
+        
         window.addEventListener('load', () => {
             const loader = document.getElementById('pageLoader');
             setTimeout(() => loader.classList.add('hide'), 300);

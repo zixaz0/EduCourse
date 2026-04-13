@@ -2,7 +2,6 @@
 
 @section('content')
 
-    {{-- Breadcrumb --}}
     <div class="mb-6">
         <a href="{{ route('kasir.transaksi.index') }}"
             class="inline-flex items-center gap-2 text-sm text-primary-700 hover:text-primary-900 font-medium transition">
@@ -20,7 +19,6 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-            {{-- ===== KIRI: Info Tagihan ===== --}}
             <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden h-fit">
                 <div class="px-6 py-4 bg-primary-700 flex items-center gap-3">
                     <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
@@ -32,7 +30,6 @@
                     </div>
                 </div>
                 <div class="p-6 space-y-4">
-                    {{-- Nama & No HP --}}
                     <div>
                         <p class="font-bold text-gray-800 text-base">{{ $tagihan->peserta->nama ?? '-' }}</p>
                         <p class="text-sm text-gray-500 mt-0.5">{{ $tagihan->peserta->no_hp ?? '-' }}</p>
@@ -40,7 +37,6 @@
 
                     <hr class="border-gray-100">
 
-                    {{-- Info rows --}}
                     <div class="space-y-3 text-sm">
                         <div class="flex justify-between items-center">
                             <span class="text-gray-400">Kursus</span>
@@ -80,7 +76,6 @@
 
                     <hr class="border-gray-100">
 
-                    {{-- Total --}}
                     <div class="bg-primary-50 border border-primary-100 rounded-xl px-4 py-3 flex justify-between items-center">
                         <span class="text-sm text-gray-600 font-medium">Total Tagihan</span>
                         <span class="text-xl font-bold text-primary-700">
@@ -90,7 +85,6 @@
                 </div>
             </div>
 
-            {{-- ===== KANAN: Form Bayar ===== --}}
             <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden h-fit">
                 <div class="px-6 py-4 bg-primary-700 flex items-center gap-3">
                     <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
@@ -103,7 +97,6 @@
                 </div>
                 <div class="p-6 space-y-5">
 
-                    {{-- Validation Errors --}}
                     @if($errors->any())
                         <div class="bg-red-50 border border-red-200 rounded-xl px-4 py-3">
                             <ul class="list-disc list-inside text-xs text-red-600 space-y-1">
@@ -114,7 +107,6 @@
                         </div>
                     @endif
 
-                    {{-- Nomor Unik --}}
                     <div>
                         <label class="block text-xs font-semibold text-gray-600 mb-1.5">
                             Nomor Unik <span class="text-gray-400 font-normal">(otomatis)</span>
@@ -129,7 +121,6 @@
                         </div>
                     </div>
 
-                    {{-- Uang Bayar --}}
                     <div>
                         <label class="block text-xs font-semibold text-gray-600 mb-1.5">
                             Uang bayar <span class="text-red-500">*</span>
@@ -142,7 +133,6 @@
                         </div>
                     </div>
 
-                    {{-- Uang Kembalian --}}
                     <div>
                         <label class="block text-xs font-semibold text-gray-600 mb-1.5">Uang Kembalian</label>
                         <div class="relative">
@@ -158,7 +148,6 @@
                         </p>
                     </div>
 
-                    {{-- Ringkasan --}}
                     <div id="ringkasan" class="hidden bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-2 text-sm">
                         <p class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Ringkasan</p>
                         <div class="flex justify-between">
@@ -176,7 +165,6 @@
                         </div>
                     </div>
 
-                    {{-- Buttons --}}
                     <div class="flex items-center gap-3 pt-1">
                         <a href="{{ route('kasir.transaksi.index') }}"
                             class="flex-1 text-center px-5 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition">
@@ -290,7 +278,6 @@
                 cancelButtonText: 'Cek Lagi',
             }).then(result => {
                 if (result.isConfirmed) {
-                    // Set hidden inputs lalu submit form
                     document.getElementById('hidden_nomor_unik').value = nomorUnik;
                     document.getElementById('hidden_uang_bayar').value = bayar;
                     document.getElementById('form-bayar').submit();

@@ -23,13 +23,11 @@ class Tagihan extends Model
         'kelas_snapshot' => 'array', // otomatis encode/decode JSON
     ];
 
-    // Relasi ke Peserta
     public function peserta()
     {
         return $this->belongsTo(Peserta::class, 'peserta_id');
     }
 
-    // Relasi ke Transaksi
     public function transaksi()
     {
         return $this->hasMany(Transaksi::class, 'tagihan_id');

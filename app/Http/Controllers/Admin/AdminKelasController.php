@@ -26,7 +26,6 @@ class AdminKelasController extends Controller
             return $k;
         });
 
-        // Siapkan data JSON untuk modal detail (hindari arrow function di Blade @json)
         $kelasJson = $kelas->getCollection()->map(function ($k) {
             return [
                 'id'             => $k->id,
@@ -80,7 +79,6 @@ class AdminKelasController extends Controller
             'guru_id.required'     => 'Guru wajib dipilih.',
         ]);
 
-        // Cek konflik jadwal: hari sama + jam bentrok
         $hariDipilih  = $validated['hari_kelas'];
         $jamMulai     = $validated['jam_mulai'];
         $jamSelesai   = $validated['jam_selesai'];
@@ -141,7 +139,6 @@ class AdminKelasController extends Controller
             'deskripsi'   => 'nullable|string',
         ]);
 
-        // Cek konflik jadwal kecuali diri sendiri
         $hariDipilih = $validated['hari_kelas'];
         $jamMulai    = $validated['jam_mulai'];
         $jamSelesai  = $validated['jam_selesai'];

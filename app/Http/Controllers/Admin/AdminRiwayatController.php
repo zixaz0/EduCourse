@@ -15,7 +15,7 @@ class AdminRiwayatController extends Controller
         $perPage = in_array($request->get('per_page'), [5, 10, 25, 50]) ? (int) $request->get('per_page') : 10;
 
         $riwayat = Transaksi::with([
-                                'tagihan.peserta.kelas', // fallback untuk tagihan lama tanpa snapshot
+                                'tagihan.peserta.kelas',
                                 'user',
                             ])
                             ->latest()

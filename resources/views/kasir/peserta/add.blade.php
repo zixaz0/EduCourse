@@ -2,7 +2,6 @@
 
 @section('content')
 
-    {{-- Breadcrumb / Back --}}
     <div class="mb-6">
         <a href="{{ route('kasir.peserta.index') }}"
             class="inline-flex items-center gap-2 text-sm text-primary-700 hover:text-primary-900 font-medium transition">
@@ -13,12 +12,10 @@
         <p class="text-sm text-gray-500 mt-0.5">Isi data peserta dengan lengkap dan benar</p>
     </div>
 
-    {{-- Form Card --}}
     <form id="form-peserta" action="{{ route('kasir.peserta.store') }}" method="POST">
         @csrf
         <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
 
-            {{-- Card Header --}}
             <div class="px-6 py-4 bg-primary-700 flex items-center gap-3">
                 <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
                     <i class="fa-solid fa-user-plus text-white text-sm"></i>
@@ -29,7 +26,6 @@
                 </div>
             </div>
 
-            {{-- Validation Errors --}}
             @if($errors->any())
                 <div class="mx-6 mt-5 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
                     <ul class="list-disc list-inside text-xs text-red-600 space-y-1">
@@ -40,10 +36,8 @@
                 </div>
             @endif
 
-            {{-- Form Body --}}
             <div class="px-6 py-6">
 
-                {{-- Section: Data Pribadi --}}
                 <div class="mb-6">
                     <div class="flex items-center gap-2 mb-4">
                         <div class="w-1 h-5 bg-primary-700 rounded-full"></div>
@@ -51,7 +45,6 @@
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-                        {{-- Nama --}}
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">
                                 Nama Lengkap <span class="text-red-500">*</span>
@@ -60,7 +53,6 @@
                                 class="w-full text-sm border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent transition @error('nama') border-red-400 @enderror">
                         </div>
 
-                        {{-- No HP --}}
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">
                                 No. HP <span class="text-red-500">*</span>
@@ -69,7 +61,6 @@
                                 class="w-full text-sm border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent transition @error('no_hp') border-red-400 @enderror">
                         </div>
 
-                        {{-- Email --}}
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">
                                 Email <span class="text-red-500">*</span>
@@ -78,7 +69,6 @@
                                 class="w-full text-sm border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent transition @error('email') border-red-400 @enderror">
                         </div>
 
-                        {{-- Jenis Kelamin --}}
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">
                                 Jenis Kelamin <span class="text-red-500">*</span>
@@ -99,7 +89,6 @@
                             </div>
                         </div>
 
-                        {{-- Level --}}
                         <div class="sm:col-span-2 cursor-pointer">
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5 cursor-pointer">
                                 Level <span class="text-red-500">*</span>
@@ -121,7 +110,6 @@
 
                 <hr class="border-gray-100 mb-6">
 
-                {{-- Section: Data Orang Tua --}}
                 <div class="mb-6">
                     <div class="flex items-center gap-2 mb-4">
                         <div class="w-1 h-5 bg-primary-700 rounded-full"></div>
@@ -129,7 +117,6 @@
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-                        {{-- Nama Ortu --}}
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">
                                 Nama Orang Tua / Wali <span class="text-red-500">*</span>
@@ -138,7 +125,6 @@
                                 class="w-full text-sm border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent transition @error('nama_ortu') border-red-400 @enderror">
                         </div>
 
-                        {{-- No Ortu --}}
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">
                                 No. HP Orang Tua / Wali <span class="text-red-500">*</span>
@@ -152,7 +138,6 @@
 
                 <hr class="border-gray-100 mb-6">
 
-                {{-- Section: Kelas Kursus --}}
                 <div class="mb-6">
                     <div class="flex items-center gap-2 mb-4">
                         <div class="w-1 h-5 bg-primary-700 rounded-full"></div>
@@ -178,7 +163,6 @@
                     </div>
                 </div>
 
-                {{-- Action Buttons --}}
                 <div class="flex items-center justify-end gap-3 pt-2">
                     <a href="{{ route('kasir.peserta.index') }}"
                         class="px-5 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition">

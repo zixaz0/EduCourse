@@ -19,22 +19,18 @@ class KasirDashboardController extends Controller
         $totalKelas          = Kelas::count();
         $pesertaAktif        = Peserta::where('status', 'aktif')->count();
         $tagihanBelumDibayar = Tagihan::where('status', 'belum_lunas')->count();
-
-        // 5 tagihan belum lunas terbaru
         $recentTagihan = Tagihan::with('peserta')
                             ->where('status', 'belum_lunas')
                             ->latest()
                             ->take(5)
                             ->get();
 
-        // 5 transaksi terbaru oleh kasir yang login
         $recentTransaksi = Transaksi::with('tagihan.peserta')
                             ->where('user_id', Auth::id())
                             ->latest()
                             ->take(5)
                             ->get();
 
-        // Pemasukan bulan ini dari transaksi kasir yang login
         $pemasukanBulanIni = Transaksi::join('tagihan', 'transaksi.tagihan_id', '=', 'tagihan.id')
                                 ->where('transaksi.user_id', Auth::id())
                                 ->where('tagihan.bulan_tahun', $bulanIni)

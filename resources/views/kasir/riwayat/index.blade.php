@@ -2,7 +2,6 @@
 
 @section('content')
 
-    {{-- Page Title --}}
     <div class="mb-6 flex items-center justify-between">
         <div>
             <h1 class="text-xl font-bold text-gray-800">Riwayat Transaksi</h1>
@@ -10,7 +9,6 @@
         </div>
     </div>
 
-    {{-- Search & Filter --}}
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 mb-5 flex flex-col sm:flex-row gap-3">
         <div class="relative flex-1">
             <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
@@ -49,7 +47,6 @@
         </select>
     </div>
 
-    {{-- Table --}}
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
@@ -70,7 +67,6 @@
                 <tbody class="divide-y divide-gray-100">
                     @forelse($riwayat ?? [] as $index => $r)
                         @php
-                            // bulan_tahun format: "02-2026"
                             $parts = explode('-', $r->tagihan->bulan_tahun ?? '');
                             $bulanAngka = $parts[0] ?? '';
                             $tahunAngka = $parts[1] ?? '';
@@ -89,7 +85,6 @@
                                 '12' => 'Desember',
                             ];
                             $periodeLabel = ($bulanMap[$bulanAngka] ?? $bulanAngka) . ' / ' . $tahunAngka;
-                            // Ambil kelas dari snapshot (frozen), fallback ke relasi peserta
                             $kelasTampil = [];
                             if (!empty($r->tagihan->kelas_snapshot)) {
                                 $kelasTampil = is_array($r->tagihan->kelas_snapshot)
@@ -108,34 +103,27 @@
 
                             <td class="px-5 py-3.5 text-gray-500 font-medium">{{ $index + 1 }}</td>
 
-                            {{-- No Unik --}}
                             <td class="px-5 py-3.5">
-                                <span
-                                    class="font-mono text-xs bg-gray-100 text-gray-700 px-2.5 py-1 rounded-lg font-semibold">
+                                <span class="font-mono text-xs bg-gray-100 text-gray-700 px-2.5 py-1 rounded-lg font-semibold">
                                     {{ $r->nomor_unik ?? '-' }}
                                 </span>
                             </td>
 
-                            {{-- Nama --}}
                             <td class="px-5 py-3.5">
                                 <div class="flex items-center gap-2">
-                                    <div
-                                        class="w-7 h-7 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
+                                    <div class="w-7 h-7 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
                                         <span class="text-primary-700 font-bold text-xs">
                                             {{ strtoupper(substr($r->tagihan->peserta->nama ?? 'P', 0, 1)) }}
                                         </span>
                                     </div>
-                                    <span
-                                        class="font-semibold text-gray-800">{{ $r->tagihan->peserta->nama ?? '-' }}</span>
+                                    <span class="font-semibold text-gray-800">{{ $r->tagihan->peserta->nama ?? '-' }}</span>
                                 </div>
                             </td>
 
-                            {{-- Kursus --}}
                             <td class="px-5 py-3.5">
                                 <div class="flex flex-wrap gap-1">
                                     @forelse($kelasTampil as $namaKelas)
-                                        <span
-                                            class="bg-primary-50 text-primary-700 text-xs font-medium px-2 py-0.5 rounded-full border border-primary-100">
+                                        <span class="bg-primary-50 text-primary-700 text-xs font-medium px-2 py-0.5 rounded-full border border-primary-100">
                                             {{ $namaKelas }}
                                         </span>
                                     @empty
@@ -144,33 +132,26 @@
                                 </div>
                             </td>
 
-                            {{-- Bulan/Tahun --}}
                             <td class="px-5 py-3.5 text-gray-600 font-medium">
                                 {{ $periodeLabel }}
                             </td>
 
-                            {{-- Total Tagihan --}}
                             <td class="px-5 py-3.5 font-semibold text-gray-800">
                                 Rp {{ number_format($r->tagihan->total_tagihan ?? 0, 0, ',', '.') }}
                             </td>
 
-                            {{-- Uang Bayar --}}
                             <td class="px-5 py-3.5 font-semibold text-green-700">
                                 Rp {{ number_format($r->uang_bayar ?? 0, 0, ',', '.') }}
                             </td>
 
-                            {{-- Kembalian --}}
                             <td class="px-5 py-3.5 font-semibold text-blue-600">
                                 Rp {{ number_format($r->uang_kembalian ?? 0, 0, ',', '.') }}
                             </td>
 
-                            {{-- Kasir --}}
                             <td class="px-5 py-3.5 text-gray-600 text-xs">
                                 {{ $kasirNama }}
                             </td>
 
-                            {{-- Aksi: Cetak Struk PDF --}}
-                            {{-- Semua data pakai data-* attribute, TIDAK pakai @json() di onclick --}}
                             <td class="px-5 py-3.5">
                                 <div class="flex items-center justify-center">
                                     <button onclick="cetakStruk(this)" data-nomor="{{ $r->nomor_unik ?? '' }}"
@@ -199,8 +180,6 @@
         </div>
     </div>
 
-    {{-- Hapus html2pdf, ganti dengan jsPDF langsung --}}
-    {{-- Ganti CDN jsPDF --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
         function filterTable() {
@@ -236,27 +215,21 @@
 
         function cetakStruk(btn) {
             const d = btn.dataset;
-            const {
-                jsPDF
-            } = window.jspdf;
+            const { jsPDF } = window.jspdf;
 
-            // Ukuran struk 80mm x 160mm
             const doc = new jsPDF({
                 unit: 'mm',
                 format: [80, 160],
                 orientation: 'portrait'
             });
 
-            const W = 80; // lebar kertas
-            let y = 8; // posisi Y awal
+            const W = 80;
+            let y = 8;
 
-            // Helper functions
             const lineCenter = (text, size = 9, bold = false) => {
                 doc.setFontSize(size);
                 doc.setFont('courier', bold ? 'bold' : 'normal');
-                doc.text(text, W / 2, y, {
-                    align: 'center'
-                });
+                doc.text(text, W / 2, y, { align: 'center' });
                 y += size * 0.45;
             };
             const lineLeft = (text, size = 8) => {
@@ -270,9 +243,7 @@
                 doc.setFont('courier', 'normal');
                 doc.text(label, 5, y);
                 doc.setFont('courier', boldValue ? 'bold' : 'normal');
-                doc.text(value, W - 5, y, {
-                    align: 'right'
-                });
+                doc.text(value, W - 5, y, { align: 'right' });
                 y += size * 0.45;
             };
             const dashedLine = () => {
@@ -288,7 +259,6 @@
                 y += 4;
             };
 
-            // ===== HEADER =====
             lineCenter('EduCourse', 13, true);
             y += 1;
             lineCenter('Lembaga Kursus & Pelatihan', 7);
@@ -297,7 +267,6 @@
             y += 2;
             dashedLine();
 
-            // ===== INFO TRANSAKSI =====
             lineRow('No. Unik', d.nomor, 8, true);
             y += 1;
             lineRow('Tanggal', formatTanggal(d.tanggal), 7);
@@ -306,18 +275,14 @@
             y += 2;
             dashedLine();
 
-            // ===== DATA PESERTA =====
             lineRow('Peserta', d.nama, 8, true);
             y += 1;
 
-            // Kursus bisa panjang, wrap manual
             const kursusLines = doc.splitTextToSize(d.kursus, 35);
             doc.setFontSize(7);
             doc.setFont('courier', 'normal');
             doc.text('Kursus', 5, y);
-            doc.text(kursusLines, W - 5, y, {
-                align: 'right'
-            });
+            doc.text(kursusLines, W - 5, y, { align: 'right' });
             y += (kursusLines.length * 3.5);
 
             y += 1;
@@ -325,7 +290,6 @@
             y += 2;
             dashedLine();
 
-            // ===== PEMBAYARAN =====
             lineRow('Total Tagihan', rupiah(d.total), 8);
             y += 1;
             lineRow('Uang Bayar', rupiah(d.bayar), 8);
@@ -334,7 +298,6 @@
             lineRow('Kembalian', rupiah(d.kembali), 9, true);
             y += 3;
 
-            // ===== FOOTER =====
             dashedLine();
             lineCenter('Terima kasih atas kepercayaan Anda', 7);
             y += 1;
@@ -342,7 +305,6 @@
             y += 2;
             lineCenter('Dicetak: ' + new Date().toLocaleString('id-ID'), 6);
 
-            // Simpan PDF
             doc.save('Struk-' + d.nomor + '.pdf');
 
             if (typeof Swal !== 'undefined') {

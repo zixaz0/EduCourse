@@ -6,8 +6,6 @@
         <h1 class="text-xl font-bold text-gray-800">Dashboard Owner</h1>
         <p class="text-sm text-gray-500 mt-0.5">Ringkasan data & performa EduCourse</p>
     </div>
-
-    {{-- Stat Cards --}}
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
             <div class="flex items-center justify-between mb-3">
@@ -52,8 +50,6 @@
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-        {{-- Kelas Terpopuler --}}
         <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
             <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
                 <div class="flex items-center gap-2">
@@ -77,7 +73,6 @@
             </div>
         </div>
 
-        {{-- Log Aktivitas Terbaru --}}
         <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
             <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
                 <div class="flex items-center gap-2">
@@ -114,7 +109,6 @@
             </div>
         </div>
 
-        {{-- Transaksi Terbaru --}}
         <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden lg:col-span-2">
             <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
                 <div class="flex items-center gap-2">

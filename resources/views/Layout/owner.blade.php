@@ -213,7 +213,6 @@
 
 <body class="bg-gray-100 min-h-screen flex overflow-x-hidden">
 
-    <!-- PAGE LOADER -->
     <div id="pageLoader">
         <div class="loader-logo">
             <img src="{{ asset('images/logo.webp') }}" alt="Logo">
@@ -365,7 +364,6 @@
             });
         }
 
-        // ===== TOOLTIP ENGINE (render di body, bebas dari overflow:hidden) =====
         const sidebarTooltip = document.createElement('div');
         sidebarTooltip.id = 'sidebar-tooltip';
         document.body.appendChild(sidebarTooltip);
@@ -392,7 +390,6 @@
             });
         });
 
-        // ===== SIDEBAR TOGGLE =====
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const mainContent = document.getElementById('main-content');
@@ -402,7 +399,6 @@
             localStorage.setItem('ownerSidebarCollapsed', isCollapsed ? '1' : '0');
         }
 
-        // Restore state dari localStorage
         (function() {
             if (localStorage.getItem('ownerSidebarCollapsed') === '1') {
                 document.getElementById('sidebar').classList.add('collapsed');
@@ -411,7 +407,6 @@
             }
         })();
 
-        // Active link
         const links = document.querySelectorAll('.sidebar-link');
         const currentPath = window.location.pathname;
         links.forEach(link => {
@@ -430,7 +425,6 @@
             }
         });
 
-        // ===== PAGE LOADER =====
         window.addEventListener('load', () => {
             const loader = document.getElementById('pageLoader');
             setTimeout(() => loader.classList.add('hide'), 300);

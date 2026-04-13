@@ -13,7 +13,6 @@
         </button>
     </div>
 
-    {{-- Filter --}}
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 mb-5">
         <div class="flex flex-col sm:flex-row gap-3">
             <div class="relative flex-1">
@@ -53,7 +52,6 @@
         </div>
     </div>
 
-    {{-- Summary Cards --}}
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
         <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-primary-50 border border-primary-100 flex items-center justify-center flex-shrink-0">
@@ -88,7 +86,6 @@
         </div>
     </div>
 
-    {{-- Table --}}
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden" id="tabelLaporan">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
@@ -155,10 +152,8 @@
         </div>
     </div>
 
-    {{-- Template PDF (hidden) --}}
     <div id="pdf-template" class="hidden">
         <div id="pdf-content" style="font-family:'Poppins',sans-serif;padding:30px;background:white;min-width:900px;">
-            {{-- Header --}}
             <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #1e5399;padding-bottom:15px;margin-bottom:20px;">
                 <div>
                     <h1 style="font-size:22px;font-weight:700;color:#1e5399;margin:0;">EduCourse</h1>
@@ -171,7 +166,6 @@
                 </div>
             </div>
 
-            {{-- Summary --}}
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
                 <div style="background:#f0f5ff;border:1px solid #c5d5ec;border-radius:10px;padding:12px;">
                     <p style="font-size:11px;color:#666;margin:0 0 4px;">Total Transaksi</p>
@@ -187,7 +181,6 @@
                 </div>
             </div>
 
-            {{-- Table --}}
             <table style="width:100%;border-collapse:collapse;font-size:11px;">
                 <thead>
                     <tr style="background:#1e5399;color:white;">
@@ -228,7 +221,6 @@
                 row.style.display = ok ? '' : 'none';
                 if (ok) {
                     visibleRows++;
-                    // Ambil total dari cell ke-6 (index 5)
                     const totalText = row.cells[5]?.textContent.replace(/[^0-9]/g, '') || '0';
                     totalPemasukan += parseInt(totalText);
                     pesertaSet.add(row.dataset.peserta);
@@ -241,7 +233,6 @@
         }
 
         function exportPDF() {
-            // Kumpulkan baris yang visible
             const rows = [...document.querySelectorAll('.laporan-row')].filter(r => r.style.display !== 'none');
 
             if (!rows.length) {
@@ -249,7 +240,6 @@
                 return;
             }
 
-            // Isi summary PDF
             const total   = rows.length;
             let pemasukan = 0;
             const pSet    = new Set();
@@ -258,7 +248,6 @@
                 pSet.add(r.dataset.peserta);
             });
 
-            // Filter info untuk periode
             const bulan = document.getElementById('filterBulan').value;
             const tahun = document.getElementById('filterTahun').value;
             const periodeText = [bulan, tahun].filter(Boolean).join(' ') || 'Semua Periode';
@@ -269,7 +258,6 @@
             document.getElementById('pdf_total_nominal').textContent = 'Rp ' + pemasukan.toLocaleString('id-ID');
             document.getElementById('pdf_total_peserta').textContent = pSet.size;
 
-            // Isi tabel PDF
             document.getElementById('pdf-table-body').innerHTML = rows.map((row, i) => `
                 <tr style="background:${i % 2 === 0 ? '#fff' : '#f8faff'};">
                     <td style="padding:7px 10px;border-bottom:1px solid #e5e7eb;">${i + 1}</td>

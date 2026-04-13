@@ -16,19 +16,16 @@ class Transaksi extends Model
         'user_id',
     ];
 
-    // Relasi ke Tagihan
     public function tagihan()
     {
         return $this->belongsTo(Tagihan::class, 'tagihan_id');
     }
 
-    // Relasi ke Peserta
     public function peserta()
     {
         return $this->belongsTo(Peserta::class, 'peserta_id');
     }
 
-    // Relasi ke User (kasir)
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');

@@ -13,7 +13,6 @@
         </a>
     </div>
 
-    {{-- Stat Cards --}}
     <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
         <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0">
@@ -44,7 +43,6 @@
         </div>
     </div>
 
-    {{-- Search & Filter --}}
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 mb-5 flex flex-col sm:flex-row gap-3">
         <div class="relative flex-1">
             <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
@@ -59,7 +57,6 @@
         </select>
     </div>
 
-    {{-- Table --}}
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
@@ -83,7 +80,6 @@
 
                             <td class="px-5 py-4 text-gray-400 font-medium text-xs">{{ $users->firstItem() + $index }}</td>
 
-                            {{-- User --}}
                             <td class="px-5 py-4">
                                 <div class="flex items-center gap-3">
                                     <div class="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
@@ -98,13 +94,10 @@
                                 </div>
                             </td>
 
-                            {{-- Nama --}}
                             <td class="px-5 py-4 text-gray-600 text-sm">{{ $user->nama }}</td>
 
-                            {{-- Email --}}
                             <td class="px-5 py-4 text-gray-600 text-sm">{{ $user->email }}</td>
 
-                            {{-- Status --}}
                             <td class="px-5 py-4">
                                 @if($user->status === 'aktif')
                                     <span class="inline-flex items-center gap-1.5 bg-green-50 text-green-700 text-xs font-semibold px-3 py-1 rounded-full border border-green-100">
@@ -117,12 +110,10 @@
                                 @endif
                             </td>
 
-                            {{-- Dibuat --}}
                             <td class="px-5 py-4 text-gray-400 text-xs">
                                 {{ \Carbon\Carbon::parse($user->created_at)->format('d M Y') }}
                             </td>
 
-                            {{-- Aksi --}}
                             <td class="px-5 py-4">
                                 <div class="flex items-center justify-center gap-1.5">
                                     <a href="{{ route('admin.users.edit', $user->id) }}" title="Edit"
@@ -151,7 +142,6 @@
             </table>
         </div>
 
-        {{-- Pagination --}}
         @if($users->total() > 0)
         <div class="px-5 py-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-500">
             <div class="flex items-center gap-2">

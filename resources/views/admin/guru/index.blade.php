@@ -13,7 +13,6 @@
         </a>
     </div>
 
-    {{-- Search & Filter --}}
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 mb-5 flex flex-col sm:flex-row gap-3 flex-wrap">
         <div class="relative flex-1 min-w-48">
             <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
@@ -35,7 +34,6 @@
         </select>
     </div>
 
-    {{-- Table --}}
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
@@ -94,7 +92,6 @@
                                 @endif
                             </td>
 
-                            {{-- Kelas Diajarkan: tampil 1 + badge +N --}}
                             <td class="px-5 py-3.5">
                                 <div class="flex flex-wrap gap-1 items-center">
                                     @if($totalKelas === 0)
@@ -116,7 +113,7 @@
 
                             <td class="px-5 py-3.5">
                                 <div class="flex items-center justify-center gap-1.5">
-                                    {{-- Tombol View Detail --}}
+
                                     <button
                                         onclick="openDetail({
                                             nama: '{{ addslashes($g->nama) }}',
@@ -130,13 +127,13 @@
                                         class="w-8 h-8 flex items-center justify-center rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 transition">
                                         <i class="fa-solid fa-eye text-xs"></i>
                                     </button>
-                                    {{-- Tombol Edit --}}
+
                                     <a href="{{ route('admin.guru.edit', $g->id) }}"
                                         title="Edit"
                                         class="w-8 h-8 flex items-center justify-center rounded-lg bg-yellow-50 hover:bg-yellow-100 text-yellow-600 transition">
                                         <i class="fa-solid fa-pen text-xs"></i>
                                     </a>
-                                    {{-- Tombol Hapus --}}
+
                                     <button onclick="confirmDelete({{ $g->id }}, '{{ addslashes($g->nama) }}', this)"
                                         title="Hapus"
                                         class="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 hover:bg-red-100 text-red-500 transition">
@@ -157,7 +154,6 @@
             </table>
         </div>
 
-        {{-- Pagination --}}
         @if($guru->total() > 0)
         <div class="px-5 py-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-500">
             <div class="flex items-center gap-2">
@@ -188,7 +184,9 @@
 
                 @if($start > 1)
                     <a href="{{ $guru->url(1) }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition text-xs">1</a>
-                    @if($start > 2)<span class="w-8 h-8 flex items-center justify-center text-gray-400 text-xs">…</span>@endif
+                    @if($start > 2)
+                        <span class="w-8 h-8 flex items-center justify-center text-gray-400 text-xs">…</span>
+                    @endif
                 @endif
 
                 @for($page = $start; $page <= $end; $page++)
@@ -200,7 +198,9 @@
                 @endfor
 
                 @if($end < $last)
-                    @if($end < $last - 1)<span class="w-8 h-8 flex items-center justify-center text-gray-400 text-xs">…</span>@endif
+                    @if($end < $last - 1)
+                        <span class="w-8 h-8 flex items-center justify-center text-gray-400 text-xs">…</span>
+                    @endif
                     <a href="{{ $guru->url($last) }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition text-xs">{{ $last }}</a>
                 @endif
 
@@ -218,26 +218,24 @@
 
     <form id="formDelete" method="POST" class="hidden">@csrf @method('DELETE')</form>
 
-
-    {{-- ==================== MODAL DETAIL GURU ==================== --}}
     <div id="modalDetail" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 backdrop-blur-sm">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
-            {{-- Header --}}
+
             <div class="flex items-center justify-between px-6 py-4 bg-primary-700">
                 <h2 class="text-white font-bold text-base">Detail Guru</h2>
                 <button onclick="closeModal()" class="text-white/70 hover:text-white transition">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
-            {{-- Body --}}
+
             <div class="px-6 py-5 space-y-4">
-                {{-- Avatar --}}
+
                 <div class="flex justify-center">
                     <div id="modal_avatar_wrap" class="w-16 h-16 rounded-full flex items-center justify-center">
                         <span id="modal_avatar" class="font-bold text-2xl"></span>
                     </div>
                 </div>
-                {{-- Grid info --}}
+
                 <div class="grid grid-cols-2 gap-y-4 gap-x-4 text-sm">
                     <div>
                         <p class="text-xs text-gray-400 font-medium">Nama</p>
@@ -256,12 +254,12 @@
                         <p id="modal_jk" class="font-semibold text-gray-800 mt-0.5">—</p>
                     </div>
                 </div>
-                {{-- Kelas --}}
+
                 <div>
                     <p class="text-xs text-gray-400 font-medium mb-1.5">Kelas Diajarkan</p>
                     <div id="modal_kelas" class="flex flex-wrap gap-1.5"></div>
                 </div>
-                {{-- Footer --}}
+
                 <div class="flex justify-end gap-3 pt-1">
                     <button onclick="closeModal()"
                         class="px-5 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition">
@@ -275,7 +273,6 @@
             </div>
         </div>
     </div>
-
 
     <script>
         function changePerPage(val) {
@@ -304,26 +301,22 @@
         function openDetail(data) {
             const isPerempuan = data.jenis_kelamin === 'perempuan';
 
-            // Avatar
             document.getElementById('modal_avatar').textContent = data.nama.charAt(0).toUpperCase();
             const avatarWrap = document.getElementById('modal_avatar_wrap');
             avatarWrap.className = `w-16 h-16 rounded-full flex items-center justify-center ${isPerempuan ? 'bg-pink-100' : 'bg-primary-100'}`;
             document.getElementById('modal_avatar').className = `font-bold text-2xl ${isPerempuan ? 'text-pink-600' : 'text-primary-700'}`;
 
-            // Info
             document.getElementById('modal_nama').textContent   = data.nama;
             document.getElementById('modal_email').textContent  = data.email;
             document.getElementById('modal_nohp').textContent   = data.no_hp;
             document.getElementById('modal_jk').textContent     = isPerempuan ? 'Perempuan' : 'Laki-laki';
             document.getElementById('modal_edit_link').href     = data.edit_url;
 
-            // Kelas
             const kelasEl = document.getElementById('modal_kelas');
             kelasEl.innerHTML = data.kelas.length
                 ? data.kelas.map(k => `<span class="bg-primary-50 text-primary-700 text-xs font-medium px-2.5 py-1 rounded-full border border-primary-100">${k}</span>`).join('')
                 : '<span class="text-gray-400 text-sm">Belum ada kelas</span>';
 
-            // Show modal
             const modal = document.getElementById('modalDetail');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
@@ -335,20 +328,18 @@
             modal.classList.remove('flex');
         }
 
-        // Tutup modal klik di luar
         document.getElementById('modalDetail').addEventListener('click', function(e) {
             if (e.target === this) closeModal();
         });
 
         function confirmDelete(id, nama, btn) {
-            // Ambil daftar kelas dari data-kelas di <tr> parent
+
             const row = btn.closest('tr');
             const rawKelas = row ? row.dataset.kelas : '';
             const kelasList = rawKelas
                 ? rawKelas.split('|').map(k => k.trim()).filter(k => k !== '')
                 : [];
 
-            // Kalau masih mengajar kelas, tampilkan warning + daftar kelas
             if (kelasList.length > 0) {
                 const kelasHtml = kelasList
                     .map(k => `<li class="flex items-center gap-1.5 py-0.5"><i class="fa-solid fa-chalkboard text-primary-500 text-xs"></i> <span class="capitalize">${k}</span></li>`)
@@ -367,7 +358,6 @@
                 return;
             }
 
-            // Aman dihapus
             Swal.fire({
                 title: 'Hapus Guru?',
                 html: `Data <b>${nama}</b> akan dihapus dari sistem.`,

@@ -15,7 +15,6 @@ class AdminUserController extends Controller
     {
         $perPage = in_array($request->get('per_page'), [5, 10, 25, 50]) ? (int) $request->get('per_page') : 10;
 
-        // Admin hanya bisa lihat & kelola kasir
         $users = User::where('role', 'kasir')
                      ->latest()
                      ->paginate($perPage)
@@ -47,8 +46,6 @@ class AdminUserController extends Controller
             'password.min'       => 'Password minimal 8 karakter.',
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
         ]);
-
-        // Role dikunci kasir, abaikan input role dari request
         $validated['role']     = 'kasir';
         $validated['password'] = Hash::make($validated['password']);
 
@@ -65,14 +62,12 @@ class AdminUserController extends Controller
 
     public function edit($id)
     {
-        // Admin hanya boleh edit kasir
         $user = User::where('role', 'kasir')->findOrFail($id);
         return view('admin.users.edit', compact('user'));
     }
 
     public function update(Request $request, $id)
     {
-        // Admin hanya boleh update kasir
         $user = User::where('role', 'kasir')->findOrFail($id);
 
         $validated = $request->validate([
@@ -91,7 +86,6 @@ class AdminUserController extends Controller
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
         ]);
 
-        // Role tetap kasir, tidak bisa diubah lewat admin
         $validated['role'] = 'kasir';
 
         if (!empty($validated['password'])) {
@@ -118,7 +112,6 @@ class AdminUserController extends Controller
                              ->with('error', 'Tidak dapat mengubah status akun Anda sendiri.');
         }
 
-        // Admin hanya boleh toggle kasir
         $user       = User::where('role', 'kasir')->findOrFail($id);
         $statusBaru = $user->status === 'aktif' ? 'nonaktif' : 'aktif';
         $user->update(['status' => $statusBaru]);

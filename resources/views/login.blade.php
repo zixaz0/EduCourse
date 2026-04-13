@@ -37,8 +37,6 @@
     </style>
 </head>
 <body class="h-screen flex overflow-hidden">
-
-    <!-- Kiri: Gambar — tepat 50% lebar layar -->
     <div class="hidden md:block" style="width: 50%; flex-shrink: 0; position: relative; overflow: hidden;">
         <img
             src="images/panel_kiri.webp"
@@ -46,8 +44,6 @@
             style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center;"
         >
     </div>
-
-    <!-- Kanan: Form — tepat 50% lebar layar -->
     <div style="width: 50%; flex-shrink: 0; background-color: #e2e2e2; overflow-y: auto;" class="flex items-center justify-center px-10 py-8">
         <div class="w-full max-w-md rounded-3xl flex flex-col items-center px-10 py-12" style="background-color: #ebebeb;">
             <div class="mb-4">
@@ -61,8 +57,6 @@
             </p>
             <form class="w-full" method="POST" action="{{ route('login') }}" id="loginForm">
                 @csrf
-
-                {{-- ── Field Email / Username ── --}}
                 <div class="mb-5">
                     <label class="block text-sm mb-1.5" style="color: #999;">Email / Username</label>
                     <div class="relative">
@@ -88,8 +82,6 @@
                         <p class="text-xs mt-1.5 ml-4" style="color: #ef4444;">{{ $message }}</p>
                     @enderror
                 </div>
-
-                {{-- ── Field Password ── --}}
                 <div class="mb-8">
                     <label class="block text-sm mb-1.5" style="color: #999;">Password</label>
                     <div class="relative">

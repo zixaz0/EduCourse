@@ -2,13 +2,11 @@
 
 @section('content')
 
-    {{-- Page Title --}}
     <div class="mb-6">
         <h1 class="text-xl font-bold text-gray-800">Transaksi Tagihan</h1>
         <p class="text-sm text-gray-500 mt-0.5">Kelola tagihan dan pembayaran peserta</p>
     </div>
 
-    {{-- Search & Filter --}}
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 mb-5 flex flex-col sm:flex-row gap-3">
         <div class="relative flex-1">
             <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
@@ -46,7 +44,6 @@
         </select>
     </div>
 
-    {{-- Table --}}
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
@@ -62,12 +59,10 @@
                     </tr>
                 </thead>
                 <tbody id="tableBody" class="divide-y divide-gray-100">
-                    {{-- diisi JS --}}
                 </tbody>
             </table>
         </div>
 
-        {{-- Pagination Bar --}}
         <div class="px-5 py-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3">
             <div class="flex items-center gap-3 text-sm text-gray-500">
                 <span id="paginationInfo" class="text-xs">—</span>
@@ -88,7 +83,6 @@
         </div>
     </div>
 
-    {{-- Modal Konfirmasi Hapus --}}
     <div id="modalHapus" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 backdrop-blur-sm">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden">
             <div class="px-6 py-4 bg-red-600 flex items-center gap-3">
@@ -115,7 +109,6 @@
         </div>
     </div>
 
-    {{-- Data tagihan dari Blade ke JS --}}
     @php
         $tagihanJs = collect($tagihan ?? [])->map(function($t) {
             $parts = explode('-', $t->bulan_tahun);
@@ -127,17 +120,14 @@
             $bulanLabel = $parts[1] ?? '';
             $bulanRaw   = strtolower($bulanMap[$parts[0]] ?? $parts[0]);
 
-            // ── Ambil kelas dari snapshot (frozen), fallback ke relasi peserta ──
             $kelasArr = [];
             if (!empty($t->kelas_snapshot)) {
                 $kelasArr = is_array($t->kelas_snapshot)
                     ? $t->kelas_snapshot
                     : json_decode($t->kelas_snapshot, true) ?? [];
             } else {
-                // Fallback untuk tagihan lama yang belum punya snapshot
                 $kelasArr = $t->peserta->kelas->pluck('nama_kelas')->toArray();
             }
-            // ───────────────────────────────────────────────────────────────────
 
             return [
                 'id'                  => $t->id,
@@ -168,7 +158,6 @@
         let currentPage  = 1;
         let perPage      = 5;
 
-        // ===== Filter =====
         function applyFilter() {
             const search = document.getElementById('searchInput').value.toLowerCase();
             const bulan  = document.getElementById('filterBulan').value.toLowerCase();
@@ -193,7 +182,6 @@
             render();
         }
 
-        // ===== Render =====
         function render() {
             const isAll      = perPage === 9999;
             const start      = isAll ? 0 : (currentPage - 1) * perPage;
@@ -257,7 +245,6 @@
             renderPagination(totalPages);
         }
 
-        // ===== Pagination =====
         function renderPagination(totalPages) {
             const nav = document.getElementById('paginationNav');
             if (totalPages <= 1) { nav.innerHTML = ''; return; }
@@ -300,7 +287,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // ===== Modal Hapus =====
         function openHapus(id, nama, url) {
             document.getElementById('hapus_nama').textContent = nama;
             document.getElementById('hapus_form').action = url;
@@ -311,7 +297,6 @@
         function closeModal(id) { const el = document.getElementById(id); el.classList.add('hidden'); el.classList.remove('flex'); }
         document.getElementById('modalHapus').addEventListener('click', function(e) { if (e.target === this) closeModal('modalHapus'); });
 
-        // ===== Flash =====
         @if(session('success'))
             Swal.fire({ icon: 'success', title: 'Berhasil!', text: '{{ session("success") }}', confirmButtonColor: '#1e5399' });
         @endif

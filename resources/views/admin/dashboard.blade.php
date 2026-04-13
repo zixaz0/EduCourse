@@ -2,7 +2,6 @@
 
 @section('content')
 
-    {{-- Greeting --}}
     <div class="mb-6">
         <h1 class="text-xl font-bold text-gray-800">
             Selamat datang, {{ Auth::user()->nama ?? Auth::user()->username ?? 'Admin' }} 👋
@@ -10,10 +9,8 @@
         <p class="text-sm text-gray-500 mt-0.5">Berikut ringkasan data sistem EduCourse hari ini</p>
     </div>
 
-    {{-- ===== STAT CARDS ===== --}}
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
 
-        {{-- Total Peserta --}}
         <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 flex items-center gap-4">
             <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
                 <i class="fa-solid fa-users text-blue-600 text-lg"></i>
@@ -25,7 +22,6 @@
             </div>
         </div>
 
-        {{-- Total Kelas --}}
         <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 flex items-center gap-4">
             <div class="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center flex-shrink-0">
                 <i class="fa-solid fa-chalkboard-user text-purple-600 text-lg"></i>
@@ -37,7 +33,6 @@
             </div>
         </div>
 
-        {{-- Total Transaksi --}}
         <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 flex items-center gap-4">
             <div class="w-12 h-12 rounded-xl bg-sky-50 flex items-center justify-center flex-shrink-0">
                 <i class="fa-solid fa-receipt text-sky-600 text-lg"></i>
@@ -51,10 +46,8 @@
 
     </div>
 
-    {{-- ===== ROW 3: Kelas Terpopuler ===== --}}
     <div class="mb-5">
 
-        {{-- Kelas Terpopuler --}}
         <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
             <div class="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
                 <div class="w-1 h-5 bg-primary-700 rounded-full"></div>
@@ -80,10 +73,8 @@
 
     </div>
 
-    {{-- ===== ROW 4: Log Terbaru + Tagihan Belum Lunas ===== --}}
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
 
-        {{-- Log Aktivitas Terbaru --}}
         <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
             <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
                 <div class="flex items-center gap-2">
@@ -126,7 +117,6 @@
             </div>
         </div>
 
-        {{-- Tagihan Belum Lunas --}}
         <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
             <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
                 <div class="flex items-center gap-2">
@@ -159,7 +149,5 @@
                 @endforelse
             </div>
         </div>
-
     </div>
-
 @endsection

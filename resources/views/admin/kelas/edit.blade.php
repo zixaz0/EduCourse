@@ -17,7 +17,6 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-            {{-- KIRI: Form --}}
             <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden h-fit">
                 <div class="px-6 py-4 bg-primary-700 flex items-center gap-3">
                     <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
@@ -31,7 +30,6 @@
 
                 <div class="px-6 py-6 space-y-5">
 
-                    {{-- Nama Kelas --}}
                     <div>
                         <label class="block text-xs font-semibold text-gray-600 mb-1.5">Nama Kelas <span class="text-red-500">*</span></label>
                         <input type="text" name="nama_kelas" value="{{ old('nama_kelas', $kelas->nama_kelas) }}" id="inp_nama"
@@ -41,7 +39,6 @@
                         @enderror
                     </div>
 
-                    {{-- Guru --}}
                     <div>
                         <label class="block text-xs font-semibold text-gray-600 mb-1.5">Guru Pengajar <span class="text-red-500">*</span></label>
                         <select name="guru_id" id="inp_guru"
@@ -58,7 +55,6 @@
                         @enderror
                     </div>
 
-                    {{-- Harga --}}
                     <div>
                         <label class="block text-xs font-semibold text-gray-600 mb-1.5">Harga Kelas <span class="text-red-500">*</span> <span class="text-gray-400 font-normal">(per bulan)</span></label>
                         <div class="relative">
@@ -72,7 +68,6 @@
                         @enderror
                     </div>
 
-                    {{-- Jam --}}
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">Jam Mulai <span class="text-red-500">*</span></label>
@@ -92,7 +87,6 @@
                         </div>
                     </div>
 
-                    {{-- Hari Kelas --}}
                     <div>
                         <label class="block text-xs font-semibold text-gray-600 mb-2">
                             Hari Kelas <span class="text-red-500">*</span>
@@ -131,7 +125,6 @@
                         @enderror
                     </div>
 
-                    {{-- Deskripsi --}}
                     <div>
                         <label class="block text-xs font-semibold text-gray-600 mb-1.5">Deskripsi <span class="text-gray-400 font-normal">(opsional)</span></label>
                         <textarea name="deskripsi" rows="3"
@@ -141,10 +134,8 @@
                 </div>
             </div>
 
-            {{-- KANAN: Preview + Info + Aksi --}}
             <div class="space-y-4">
 
-                {{-- Preview --}}
                 <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
                     <div class="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
                         <div class="w-1 h-5 bg-primary-700 rounded-full"></div>
@@ -192,7 +183,6 @@
                     </div>
                 </div>
 
-                {{-- Info Kelas --}}
                 <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
                     <div class="flex items-center gap-2 mb-3">
                         <div class="w-1 h-5 bg-primary-700 rounded-full"></div>
@@ -212,7 +202,6 @@
                     </div>
                 </div>
 
-                {{-- Tombol --}}
                 <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 space-y-3">
                     <button type="submit"
                         class="w-full px-5 py-2.5 text-sm font-medium text-white bg-primary-700 hover:bg-primary-800 rounded-xl shadow transition flex items-center justify-center gap-2">

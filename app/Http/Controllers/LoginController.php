@@ -43,7 +43,6 @@ class LoginController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
-        // Catat log login
         Log::create([
             'user_id'   => $user->id,
             'aktivitas' => 'Login ke sistem sebagai ' . $user->role,
@@ -68,7 +67,6 @@ class LoginController extends Controller
     {
         $user = Auth::user();
 
-        // Catat log logout
         if ($user) {
             Log::create([
                 'user_id'   => $user->id,

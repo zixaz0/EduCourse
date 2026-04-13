@@ -12,14 +12,13 @@ class OwnerLaporanController extends Controller
     public function index()
     {
         $rawTransaksi = Transaksi::with([
-                'tagihan.peserta.kelas', // fallback untuk tagihan lama tanpa snapshot
+                'tagihan.peserta.kelas',
                 'user',
             ])
             ->latest()
             ->get();
 
         $transaksi = $rawTransaksi->map(function ($t) {
-            // ── Ambil kelas dari snapshot (frozen), fallback ke relasi peserta ──
             $kelasTampil = [];
             if (!empty($t->tagihan->kelas_snapshot)) {
                 $kelasTampil = is_array($t->tagihan->kelas_snapshot)
@@ -29,8 +28,6 @@ class OwnerLaporanController extends Controller
                 $kelasTampil = $t->tagihan->peserta->kelas->pluck('nama_kelas')->toArray();
             }
             $namaKelas = implode(', ', $kelasTampil) ?: '-';
-            // ────────────────────────────────────────────────────────────────────
-
             $bulanTahun  = $t->tagihan->bulan_tahun ?? '';
             $parts       = explode('-', $bulanTahun);
             $bulanAngka  = $parts[0] ?? '';

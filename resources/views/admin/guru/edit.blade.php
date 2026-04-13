@@ -15,9 +15,8 @@
         @method('PUT')
         <div class="flex flex-col lg:flex-row gap-6">
 
-            {{-- Kiri: Form --}}
             <div class="flex-1 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-                {{-- Header Form --}}
+
                 <div class="flex items-center gap-3 px-6 py-4 bg-primary-700">
                     <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
                         <i class="fa-solid fa-chalkboard-user text-white text-sm"></i>
@@ -28,7 +27,6 @@
                     </div>
                 </div>
 
-                {{-- Fields --}}
                 <div class="px-6 py-6 grid grid-cols-1 sm:grid-cols-2 gap-5">
 
                     <div class="sm:col-span-2">
@@ -85,7 +83,6 @@
                 </div>
             </div>
 
-            {{-- Kanan: Preview + Tombol --}}
             <div class="w-full lg:w-72 flex flex-col gap-4">
                 <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
                     <p class="text-sm font-bold text-gray-700 mb-4 border-l-4 border-primary-700 pl-3">Preview Guru</p>
@@ -149,7 +146,6 @@
                     </span>`;
             }
 
-            // Highlight selected jk card
             document.querySelectorAll('.jk-option').forEach(el => {
                 el.classList.remove('border-primary-500', 'bg-primary-50');
                 el.classList.add('border-gray-200');
@@ -162,7 +158,6 @@
             }
         }
 
-        // Jalankan saat halaman pertama kali load
         document.addEventListener('DOMContentLoaded', function () {
             updatePreview();
         });

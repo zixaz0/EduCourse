@@ -14,9 +14,9 @@ class BuatTagihanBulanan extends Command
 
     public function handle()
     {
-        $bulanIni        = Carbon::now()->format('Y-m');        // ✅ "2026-04"
-        $tanggalTagihan  = Carbon::now()->startOfMonth();       // ✅ 2026-04-01
-        $tanggalJatuhTempo = Carbon::now()->endOfMonth();       // ✅ 2026-04-30
+        $bulanIni        = Carbon::now()->format('Y-m');
+        $tanggalTagihan  = Carbon::now()->startOfMonth();    
+        $tanggalJatuhTempo = Carbon::now()->endOfMonth();       
 
         $pesertaList = Peserta::where('status', 'aktif')
             ->with('kelas')

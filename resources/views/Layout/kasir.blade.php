@@ -33,7 +33,6 @@
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #3373be; border-radius: 10px; }
 
-    /* ===== SIDEBAR TOGGLE ===== */
     #sidebar {
         width: 224px;
         transition: width 0.3s ease;
@@ -88,7 +87,6 @@
     #main-content.sidebar-collapsed {
         margin-left: 64px;
     }
-    /* Tooltip — di-render di body via JS supaya bebas dari overflow:hidden sidebar */
     #sidebar-tooltip {
         position: fixed;
         background: #154286;
@@ -114,7 +112,6 @@
         border: 5px solid transparent;
         border-right-color: #154286;
     }
-    /* Toggle button di navbar */
     #sidebarToggle {
         transition: transform 0.3s ease;
     }
@@ -122,7 +119,6 @@
         transform: rotate(180deg);
     }
 
-    /* ===== PAGE LOADING SCREEN ===== */
     #pageLoader {
         position: fixed;
         inset: 0;
@@ -181,8 +177,6 @@
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex overflow-x-hidden">
-
-    <!-- PAGE LOADER -->
     <div id="pageLoader">
         <div class="loader-logo">
             <img src="{{ asset('images/logo.webp') }}" alt="Logo">
@@ -194,8 +188,6 @@
     </div>
 
     <aside id="sidebar" class="min-h-screen bg-primary-700 flex flex-col fixed top-0 left-0 z-30 shadow-xl">
-
-        <!-- Brand -->
         <div id="sidebar-brand" class="flex items-center gap-3 px-5 py-5 border-b border-primary-600">
             <div class="w-9 h-9 flex-shrink-0 bg-white rounded-lg flex items-center justify-center shadow overflow-hidden">
                 <img src="{{ asset('images/logo.webp') }}" alt="Logo" class="w-7 h-7 object-contain">
@@ -315,7 +307,6 @@
             });
         }
 
-        // ===== TOOLTIP ENGINE (render di body, bebas dari overflow:hidden) =====
         const sidebarTooltip = document.createElement('div');
         sidebarTooltip.id = 'sidebar-tooltip';
         document.body.appendChild(sidebarTooltip);
@@ -342,7 +333,6 @@
             });
         });
 
-        // ===== SIDEBAR TOGGLE =====
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const mainContent = document.getElementById('main-content');
@@ -352,7 +342,6 @@
             localStorage.setItem('sidebarCollapsed', isCollapsed ? '1' : '0');
         }
 
-        // Restore state dari localStorage
         (function() {
             if (localStorage.getItem('sidebarCollapsed') === '1') {
                 document.getElementById('sidebar').classList.add('collapsed');
@@ -361,7 +350,6 @@
             }
         })();
 
-        // Active link
         const links = document.querySelectorAll('.sidebar-link');
         const currentPath = window.location.pathname;
         links.forEach(link => {
@@ -378,7 +366,6 @@
             }
         });
 
-        // ===== PAGE LOADER =====
         window.addEventListener('load', () => {
             const loader = document.getElementById('pageLoader');
             setTimeout(() => loader.classList.add('hide'), 300);

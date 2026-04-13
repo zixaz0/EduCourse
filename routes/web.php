@@ -29,11 +29,10 @@ Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-// ================================
 // KASIR ROUTES
-// ================================
 Route::prefix('kasir')->middleware(['auth', RoleMiddleware::class . ':kasir'])->group(function () {
 
+    //DASHBOARD
     Route::get('/dashboard', [KasirDashboardController::class, 'index'])->name('kasir.dashboard');
 
     // PESERTA
@@ -70,11 +69,10 @@ Route::prefix('kasir')->middleware(['auth', RoleMiddleware::class . ':kasir'])->
 
 });
 
-// ================================
 // ADMIN ROUTES
-// ================================
 Route::prefix('admin')->middleware(['auth', RoleMiddleware::class . ':admin'])->group(function () {
 
+    // DASHBOARD
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
     // USER MANAGEMENT
@@ -123,9 +121,7 @@ Route::prefix('admin')->middleware(['auth', RoleMiddleware::class . ':admin'])->
 
 });
 
-// ================================
 // OWNER ROUTES
-// ================================
 Route::prefix('owner')->middleware(['auth', RoleMiddleware::class . ':owner'])->group(function () {
 
     // DASHBOARD

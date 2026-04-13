@@ -2,7 +2,6 @@
 
 @section('content')
 
-    {{-- Page Title --}}
     <div class="mb-6">
         <h1 class="text-xl font-bold text-gray-800">Log Aktivitas Saya</h1>
         <p class="text-sm text-gray-500 mt-0.5">
@@ -11,7 +10,6 @@
         </p>
     </div>
 
-    {{-- Search & Filter --}}
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 mb-5 flex flex-col sm:flex-row gap-3">
         <div class="relative flex-1">
             <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
@@ -27,7 +25,6 @@
         </select>
     </div>
 
-    {{-- Stats Cards --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
         <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 flex items-center gap-4">
             <div class="w-10 h-10 rounded-xl bg-primary-50 flex items-center justify-center">
@@ -51,7 +48,6 @@
         </div>
     </div>
 
-    {{-- Table --}}
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
@@ -79,7 +75,6 @@
 
                             <td class="px-5 py-4 text-gray-400 font-medium text-xs">{{ $index + 1 }}</td>
 
-                            {{-- Aktivitas --}}
                             <td class="px-5 py-4">
                                 <div class="flex items-center gap-3">
                                     @if($isLogin)
@@ -142,7 +137,6 @@
                                 </div>
                             </td>
 
-                            {{-- Waktu --}}
                             <td class="px-5 py-4 whitespace-nowrap">
                                 <p class="text-gray-700 text-sm font-medium">
                                     {{ \Carbon\Carbon::parse($log->created_at)->format('d M Y') }}
@@ -164,7 +158,6 @@
             </table>
         </div>
 
-        {{-- Pagination --}}
         @if(isset($logs) && method_exists($logs, 'hasPages') && $logs->hasPages())
             <div class="px-5 py-4 border-t border-gray-100 flex items-center justify-between text-sm text-gray-500">
                 <span>Menampilkan {{ $logs->firstItem() }}–{{ $logs->lastItem() }} dari {{ $logs->total() }} aktivitas</span>

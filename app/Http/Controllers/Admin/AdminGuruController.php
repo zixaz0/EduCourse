@@ -79,7 +79,6 @@ class AdminGuruController extends Controller
     {
         $guru = Guru::with('kelas')->findOrFail($id);
 
-        // Blokir hapus kalau guru masih terdaftar mengajar kelas manapun
         if ($guru->kelas->isNotEmpty()) {
             $namaKelas = $guru->kelas->pluck('nama_kelas')->implode(', ');
 

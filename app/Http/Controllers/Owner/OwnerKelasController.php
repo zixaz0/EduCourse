@@ -18,7 +18,6 @@ class OwnerKelasController extends Controller
             $k->jumlah_peserta = $k->peserta_count;
         });
 
-        // Siapkan data JSON untuk modal detail (hindari arrow function di Blade @json)
         $kelasJson = $kelas->map(function ($k) {
             return [
                 'id'             => $k->id,

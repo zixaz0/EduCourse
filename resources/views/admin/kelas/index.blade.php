@@ -13,7 +13,6 @@
         </a>
     </div>
 
-    {{-- Search & Filter --}}
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 mb-5 flex flex-col sm:flex-row gap-3">
         <div class="relative flex-1">
             <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
@@ -33,7 +32,6 @@
         </select>
     </div>
 
-    {{-- Table --}}
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
@@ -68,12 +66,10 @@
                             data-guru="{{ strtolower($k->guru->nama ?? '') }}"
                             data-hari="{{ strtolower($k->hari_kelas) }}">
 
-                            {{-- No --}}
                             <td class="px-5 py-4 text-gray-400 font-medium text-xs">
                                 {{ $kelas->firstItem() + $index }}
                             </td>
 
-                            {{-- Nama Kelas --}}
                             <td class="px-5 py-4">
                                 <div class="flex items-center gap-3">
                                     <div class="w-9 h-9 rounded-xl bg-primary-50 flex items-center justify-center flex-shrink-0 border border-primary-100">
@@ -88,7 +84,6 @@
                                 </div>
                             </td>
 
-                            {{-- Guru --}}
                             <td class="px-5 py-4">
                                 <div class="flex items-center gap-2">
                                     <div class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
@@ -98,7 +93,6 @@
                                 </div>
                             </td>
 
-                            {{-- Hari --}}
                             <td class="px-5 py-4">
                                 <div class="flex flex-wrap gap-1">
                                     @foreach($hariList as $hari)
@@ -109,7 +103,6 @@
                                 </div>
                             </td>
 
-                            {{-- Jam --}}
                             <td class="px-5 py-4">
                                 <div class="flex items-center gap-1.5 text-gray-700">
                                     <i class="fa-solid fa-clock text-gray-300 text-xs"></i>
@@ -119,13 +112,11 @@
                                 </div>
                             </td>
 
-                            {{-- Harga --}}
                             <td class="px-5 py-4">
                                 <span class="font-semibold text-gray-800">Rp {{ number_format($k->harga_kelas, 0, ',', '.') }}</span>
                                 <span class="text-xs text-gray-400">/bln</span>
                             </td>
 
-                            {{-- Peserta Aktif --}}
                             <td class="px-5 py-4">
                                 <span class="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full border
                                     {{ ($k->jumlah_peserta ?? 0) > 0 ? 'bg-green-50 text-green-700 border-green-100' : 'bg-gray-50 text-gray-400 border-gray-200' }}">
@@ -134,20 +125,19 @@
                                 </span>
                             </td>
 
-                            {{-- Aksi --}}
                             <td class="px-5 py-4">
                                 <div class="flex items-center justify-center gap-1.5">
-                                    {{-- Tombol View --}}
+
                                     <button onclick="openDetailModal({{ $k->id }})" title="Lihat Detail"
                                         class="w-8 h-8 flex items-center justify-center rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-500 border border-blue-100 transition">
                                         <i class="fa-solid fa-eye text-xs"></i>
                                     </button>
-                                    {{-- Tombol Edit --}}
+
                                     <a href="{{ route('admin.kelas.edit', $k->id) }}" title="Edit"
                                         class="w-8 h-8 flex items-center justify-center rounded-lg bg-yellow-50 hover:bg-yellow-100 text-yellow-500 border border-yellow-100 transition">
                                         <i class="fa-solid fa-pen text-xs"></i>
                                     </a>
-                                    {{-- Tombol Hapus --}}
+
                                     <button onclick="confirmDelete({{ $k->id }}, '{{ addslashes($k->nama_kelas) }}', '{{ route('admin.kelas.destroy', $k->id) }}')" title="Hapus"
                                         class="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 hover:bg-red-100 text-red-500 border border-red-100 transition">
                                         <i class="fa-solid fa-trash text-xs"></i>
@@ -168,11 +158,9 @@
             </table>
         </div>
 
-        {{-- Pagination --}}
         @if($kelas->total() > 0)
         <div class="px-5 py-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-500">
 
-            {{-- Kiri: info + per page --}}
             <div class="flex items-center gap-2">
                 <span>Menampilkan {{ $kelas->firstItem() }}–{{ $kelas->lastItem() }} dari {{ $kelas->total() }} kelas. Tampilkan</span>
                 <select onchange="changePerPage(this.value)"
@@ -184,7 +172,6 @@
                 <span>data</span>
             </div>
 
-            {{-- Kanan: navigasi halaman --}}
             <div class="flex items-center gap-1">
                 @if($kelas->onFirstPage())
                     <span class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-300 cursor-not-allowed text-xs">«</span>
@@ -203,7 +190,9 @@
 
                 @if($start > 1)
                     <a href="{{ $kelas->url(1) }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition text-xs">1</a>
-                    @if($start > 2)<span class="w-8 h-8 flex items-center justify-center text-gray-400 text-xs">…</span>@endif
+                    @if($start > 2)
+                        <span class="w-8 h-8 flex items-center justify-center text-gray-400 text-xs">…</span>
+                    @endif
                 @endif
 
                 @for($page = $start; $page <= $end; $page++)
@@ -215,7 +204,9 @@
                 @endfor
 
                 @if($end < $last)
-                    @if($end < $last - 1)<span class="w-8 h-8 flex items-center justify-center text-gray-400 text-xs">…</span>@endif
+                    @if($end < $last - 1)
+                        <span class="w-8 h-8 flex items-center justify-center text-gray-400 text-xs">…</span>
+                    @endif
                     <a href="{{ $kelas->url($last) }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition text-xs">{{ $last }}</a>
                 @endif
 
@@ -232,14 +223,12 @@
         @endif
     </div>
 
-    {{-- ===================== MODAL DETAIL KELAS ===================== --}}
     <div id="modalDetailKelas"
         class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm hidden"
         onclick="closeModalOnBackdrop(event)">
 
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl mx-4 max-h-[90vh] flex flex-col overflow-hidden">
 
-            {{-- Modal Header --}}
             <div class="flex items-center justify-between px-6 py-4 bg-primary-700 rounded-t-2xl flex-shrink-0">
                 <div class="flex items-center gap-3">
                     <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
@@ -255,10 +244,8 @@
                 </button>
             </div>
 
-            {{-- Modal Body --}}
             <div class="overflow-y-auto flex-1 p-6 space-y-5">
 
-                {{-- Info Grid --}}
                 <div class="grid grid-cols-2 gap-4">
                     <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
                         <p class="text-xs text-gray-400 mb-1 flex items-center gap-1.5">
@@ -286,7 +273,6 @@
                     </div>
                 </div>
 
-                {{-- Hari --}}
                 <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
                     <p class="text-xs text-gray-400 mb-2 flex items-center gap-1.5">
                         <i class="fa-solid fa-calendar-days"></i> Hari Kelas
@@ -294,7 +280,6 @@
                     <div id="modalHari" class="flex flex-wrap gap-1.5"></div>
                 </div>
 
-                {{-- Deskripsi --}}
                 <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
                     <p class="text-xs text-gray-400 mb-2 flex items-center gap-1.5">
                         <i class="fa-solid fa-align-left"></i> Deskripsi Kelas
@@ -302,7 +287,6 @@
                     <p id="modalDeskripsi" class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">-</p>
                 </div>
 
-                {{-- Daftar Peserta --}}
                 <div>
                     <p class="text-xs text-gray-400 mb-2 flex items-center gap-1.5">
                         <i class="fa-solid fa-list-ul"></i> Daftar Peserta Aktif
@@ -314,7 +298,6 @@
 
             </div>
 
-            {{-- Modal Footer --}}
             <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between flex-shrink-0 bg-gray-50 rounded-b-2xl">
                 <p id="modalFooterInfo" class="text-xs text-gray-400"></p>
                 <div class="flex gap-2">
@@ -330,9 +313,7 @@
             </div>
         </div>
     </div>
-    {{-- ===================== END MODAL ===================== --}}
 
-    {{-- Data Kelas untuk JS (embed JSON) --}}
     <script>
         const kelasData = @json($kelasJson);
 
@@ -350,7 +331,6 @@
             const k = kelasData.find(x => x.id === id);
             if (!k) return;
 
-            // Isi field
             document.getElementById('modalNamaKelas').textContent    = k.nama_kelas;
             document.getElementById('modalGuru').textContent         = k.guru;
             document.getElementById('modalHarga').textContent        = 'Rp ' + Number(k.harga_kelas).toLocaleString('id-ID') + ' /bln';
@@ -359,16 +339,12 @@
             document.getElementById('modalDeskripsi').textContent    = k.deskripsi || 'Tidak ada deskripsi.';
             document.getElementById('modalFooterInfo').textContent   = 'Dibuat: ' + k.created_at;
             document.getElementById('modalEditBtn').href             = k.edit_url;
-
-            // Hari badges
             const hariContainer = document.getElementById('modalHari');
             hariContainer.innerHTML = '';
             k.hari_kelas.split(',').map(h => h.trim()).forEach(hari => {
                 const cls = hariColorClass[hari.toLowerCase()] || 'bg-gray-50 text-gray-600 border-gray-200';
                 hariContainer.innerHTML += `<span class="text-xs font-semibold px-2.5 py-1 rounded-full border ${cls}">${hari}</span>`;
             });
-
-            // Daftar peserta
             const listEl = document.getElementById('modalPesertaList');
             if (k.peserta.length === 0) {
                 listEl.innerHTML = `<p class="text-sm text-gray-400 italic py-2">Belum ada peserta aktif di kelas ini.</p>`;
@@ -386,8 +362,6 @@
                     </div>
                 `).join('');
             }
-
-            // Tampilkan modal
             document.getElementById('modalDetailKelas').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
@@ -402,8 +376,6 @@
                 closeDetailModal();
             }
         }
-
-        // Tutup modal dengan Escape
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') closeDetailModal();
         });

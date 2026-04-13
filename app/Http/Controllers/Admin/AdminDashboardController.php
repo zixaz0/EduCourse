@@ -14,12 +14,11 @@ class AdminDashboardController extends Controller
 {
     public function index()
     {
-        // ===== STAT CARDS =====
+
         $totalPeserta       = Peserta::where('status', 'aktif')->count();
         $totalKelas         = Kelas::count();
         $totalTransaksi     = Transaksi::count();
 
-        // ===== ROW 3: Kelas Terpopuler =====
         $maxPeserta = Kelas::withCount(['peserta' => fn($q) => $q->where('status', 'aktif')])->get()->max('peserta_count') ?: 1;
 
         $kelasTerpopuler = Kelas::withCount(['peserta' => fn($q) => $q->where('status', 'aktif')])
@@ -32,14 +31,12 @@ class AdminDashboardController extends Controller
                                 return $kelas;
                             });
 
-        // ===== ROW 4: Log Aktivitas Terbaru =====
         $recentLog = Log::with('user')
                         ->where('user_id', auth()->id())
                         ->latest()
                         ->take(8)
                         ->get();
 
-        // ===== ROW 4: Tagihan Belum Lunas Terbaru =====
         $recentTagihanBelumLunas = Tagihan::with('peserta')
                                     ->whereHas('peserta', fn($q) => $q->where('status', 'aktif'))
                                     ->where('status', 'belum_lunas')

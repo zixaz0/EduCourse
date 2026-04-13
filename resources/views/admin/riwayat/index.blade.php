@@ -9,7 +9,6 @@
         </div>
     </div>
 
-    {{-- Stat Cards --}}
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 flex items-center gap-4">
             <div class="w-11 h-11 rounded-xl bg-primary-50 border border-primary-100 flex items-center justify-center flex-shrink-0">
@@ -40,7 +39,6 @@
         </div>
     </div>
 
-    {{-- Search & Filter --}}
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 mb-5">
         <div class="flex flex-col sm:flex-row gap-3">
             <div class="relative flex-1">
@@ -79,7 +77,6 @@
         </div>
     </div>
 
-    {{-- Table --}}
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
@@ -100,7 +97,6 @@
                 <tbody class="divide-y divide-gray-100">
                     @forelse($riwayat as $index => $r)
                         @php
-                            // Ambil kelas dari snapshot (frozen), fallback ke relasi peserta
                             $kelasTampil = [];
                             if (!empty($r->tagihan->kelas_snapshot)) {
                                 $kelasTampil = is_array($r->tagihan->kelas_snapshot)
@@ -111,7 +107,6 @@
                             }
                             $namaKursus = implode(', ', $kelasTampil);
                             $bulanTahun  = $r->tagihan->bulan_tahun ?? '';
-                            // support format "MM-YYYY" atau "bulanname/YYYY"
                             $parts       = explode('-', $bulanTahun);
                             $bulanAngka  = $parts[0] ?? '';
                             $tahunAngka  = $parts[1] ?? '';
@@ -178,7 +173,6 @@
                                 </div>
                             </td>
 
-                            {{-- Aksi: Cetak Struk — pakai data-* attribute, TIDAK pakai @json() di onclick --}}
                             <td class="px-5 py-3.5">
                                 <div class="flex items-center justify-center">
                                     <button
@@ -211,7 +205,6 @@
             </table>
         </div>
 
-        {{-- ===== PAGINATION ===== --}}
         @if($riwayat->total() > 0)
         <div class="px-5 py-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-500">
             <div class="flex items-center gap-2">
@@ -265,7 +258,6 @@
         @endif
     </div>
 
-    {{-- jsPDF CDN --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <script>
@@ -340,7 +332,6 @@
                 y += 4;
             };
 
-            // HEADER
             lineCenter('EduCourse', 13, true);
             y += 1;
             lineCenter('Lembaga Kursus & Pelatihan', 7);
@@ -349,7 +340,6 @@
             y += 2;
             dashedLine();
 
-            // INFO TRANSAKSI
             lineRow('No. Unik', d.nomor, 8, true);
             y += 1;
             lineRow('Tanggal', formatTanggal(d.tanggal), 7);
@@ -358,11 +348,9 @@
             y += 2;
             dashedLine();
 
-            // DATA PESERTA
             lineRow('Peserta', d.nama, 8, true);
             y += 1;
 
-            // Kursus — wrap jika panjang
             doc.setFontSize(7);
             doc.setFont('courier', 'normal');
             doc.text('Kursus', 5, y);
@@ -383,7 +371,6 @@
             y += 2;
             dashedLine();
 
-            // PEMBAYARAN
             lineRow('Total Tagihan', rupiah(d.total), 8);
             y += 1;
             lineRow('Uang Bayar', rupiah(d.bayar), 8);
@@ -392,7 +379,6 @@
             lineRow('Kembalian', rupiah(d.kembali), 9, true);
             y += 3;
 
-            // FOOTER
             dashedLine();
             lineCenter('Terima kasih atas kepercayaan Anda', 7);
             y += 1;

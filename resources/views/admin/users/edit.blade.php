@@ -14,12 +14,10 @@
     <form method="POST" action="{{ route('admin.users.update', $user->id) }}">
         @csrf
         @method('PUT')
-        {{-- Role dikunci kasir --}}
         <input type="hidden" name="role" value="kasir">
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-            {{-- KIRI: Form --}}
             <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
                 <div class="px-6 py-4 bg-primary-700 flex items-center gap-3">
                     <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
@@ -33,7 +31,6 @@
 
                 <div class="px-6 py-6 space-y-5">
 
-                    {{-- Username --}}
                     <div>
                         <label class="block text-xs font-semibold text-gray-600 mb-1.5">Username <span class="text-red-500">*</span></label>
                         <input type="text" name="username" value="{{ old('username', $user->username) }}" id="inp_username"
@@ -43,7 +40,6 @@
                         @enderror
                     </div>
 
-                    {{-- Nama --}}
                     <div>
                         <label class="block text-xs font-semibold text-gray-600 mb-1.5">Nama Lengkap <span class="text-red-500">*</span></label>
                         <input type="text" name="nama" value="{{ old('nama', $user->nama) }}" id="inp_nama"
@@ -53,7 +49,6 @@
                         @enderror
                     </div>
 
-                    {{-- Email --}}
                     <div>
                         <label class="block text-xs font-semibold text-gray-600 mb-1.5">Email <span class="text-red-500">*</span></label>
                         <input type="email" name="email" value="{{ old('email', $user->email) }}"
@@ -63,7 +58,6 @@
                         @enderror
                     </div>
 
-                    {{-- Password --}}
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">
@@ -92,7 +86,6 @@
                         </div>
                     </div>
 
-                    {{-- Status --}}
                     <div>
                         <label class="block text-xs font-semibold text-gray-600 mb-1.5">Status <span class="text-red-500">*</span></label>
                         <select name="status"
@@ -108,10 +101,8 @@
                 </div>
             </div>
 
-            {{-- KANAN: Preview + Aksi --}}
             <div class="space-y-4">
 
-                {{-- Preview Card --}}
                 <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
                     <div class="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
                         <div class="w-1 h-5 bg-primary-700 rounded-full"></div>
@@ -143,7 +134,6 @@
                     </div>
                 </div>
 
-                {{-- Tombol --}}
                 <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 space-y-3">
                     <button type="submit"
                         class="w-full px-5 py-2.5 text-sm font-medium text-white bg-primary-700 hover:bg-primary-800 rounded-xl shadow transition flex items-center justify-center gap-2">

@@ -2,7 +2,6 @@
 
 @section('content')
 
-    {{-- Page Title --}}
     <div class="mb-6 flex items-center justify-between">
         <div>
             <h1 class="text-xl font-bold text-gray-800">Data Peserta</h1>
@@ -15,7 +14,6 @@
         </a>
     </div>
 
-    {{-- Search & Filter --}}
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 mb-5 flex flex-col sm:flex-row gap-3">
         <div class="relative flex-1">
             <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
@@ -31,7 +29,6 @@
         <select id="filterLevel" onchange="applyFilter()"
             class="text-sm border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent bg-white text-gray-600">
             <option value="">Semua Level</option>
-            {{-- diisi dinamis dari JS --}}
         </select>
         <select id="filterKelas" onchange="applyFilter()"
             class="text-sm border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent bg-white text-gray-600">
@@ -42,7 +39,6 @@
         </select>
     </div>
 
-    {{-- Table --}}
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
@@ -58,12 +54,10 @@
                     </tr>
                 </thead>
                 <tbody id="tableBody" class="divide-y divide-gray-100">
-                    {{-- diisi JS --}}
                 </tbody>
             </table>
         </div>
 
-        {{-- Pagination Bar --}}
         <div class="px-5 py-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3">
             <div class="flex items-center gap-3 text-sm text-gray-500">
                 <span id="paginationInfo" class="text-xs">—</span>
@@ -80,14 +74,10 @@
                     <span class="text-xs text-gray-400">data</span>
                 </div>
             </div>
-            <div id="paginationNav" class="flex items-center gap-1">
-                {{-- diisi JS --}}
-            </div>
+            <div id="paginationNav" class="flex items-center gap-1"></div>
         </div>
     </div>
 
-
-    {{-- ==================== MODAL DETAIL ==================== --}}
     <div id="modalDetail" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 backdrop-blur-sm">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
             <div class="flex items-center justify-between px-6 py-4 bg-primary-700">
@@ -146,8 +136,6 @@
         </div>
     </div>
 
-
-    {{-- ===== Data peserta dari Blade ke JS ===== --}}
     @php
         $pesertaJs = collect($peserta ?? [])->map(function($p) {
             return [
@@ -169,7 +157,6 @@
     <script>
         const allData = @json($pesertaJs);
 
-        // Isi dropdown level secara dinamis
         const levelSet = [...new Set(allData.map(p => p.level).filter(k => k && k !== '-'))].sort();
         const selectLevel = document.getElementById('filterLevel');
         levelSet.forEach(k => {
@@ -179,12 +166,10 @@
             selectLevel.appendChild(opt);
         });
 
-        // ===== State =====
         let filteredData = [...allData];
         let currentPage  = 1;
         let perPage      = 5;
 
-        // ===== Filter =====
         function applyFilter() {
             const search = document.getElementById('searchInput').value.toLowerCase();
             const jk     = document.getElementById('filterJK').value;
@@ -209,7 +194,6 @@
             render();
         }
 
-        // ===== Helper: render badge kelas (1 tampil + sisanya jadi +N) =====
         function renderKelasBadges(kelasList) {
             if (!kelasList.length) return '<span class="text-gray-400 text-xs">—</span>';
 
@@ -226,7 +210,6 @@
             `;
         }
 
-        // ===== Render Tabel =====
         function render() {
             const isAll      = perPage === 9999;
             const start      = isAll ? 0 : (currentPage - 1) * perPage;
@@ -302,7 +285,6 @@
             renderPagination(totalPages);
         }
 
-        // ===== Render Pagination =====
         function renderPagination(totalPages) {
             const nav = document.getElementById('paginationNav');
             if (totalPages <= 1) { nav.innerHTML = ''; return; }
@@ -357,7 +339,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // ===== Modal =====
         function openDetail(id) {
             const p = allData.find(x => x.id === id);
             if (!p) return;
@@ -370,7 +351,6 @@
             document.getElementById('detail_noorangtua').textContent = p.no_orangtua;
             document.getElementById('detail_edit_link').href         = p.edit_url;
 
-            // Modal detail tetap tampil semua kelas
             document.getElementById('detail_kelas').innerHTML = p.kelas.length
                 ? p.kelas.map(k => `<span class="bg-primary-50 text-primary-700 text-xs font-medium px-2.5 py-1 rounded-full border border-primary-100">${k}</span>`).join('')
                 : '<span class="text-gray-400 text-sm">Belum ada kelas</span>';
@@ -382,7 +362,6 @@
         function closeModal(id) { const el = document.getElementById(id); el.classList.add('hidden'); el.classList.remove('flex'); }
         document.getElementById('modalDetail').addEventListener('click', function(e) { if (e.target === this) closeModal('modalDetail'); });
 
-        // ===== Flash =====
         @if(session('success'))
             Swal.fire({
                 icon: 'success',
@@ -402,7 +381,6 @@
             });
         @endif
 
-        // ===== Init =====
         render();
     </script>
 
